@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         :root {
             --primary: #0066cc;
             --primary-dark: #004d99;
@@ -19,6 +19,103 @@
             --gray-200: #dee2e6;
             --gray-700: #495057;
             --gray-900: #212529;
+            --bg-primary: #ffffff;
+            --bg-secondary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --text-primary: #212529;
+            --text-secondary: #495057;
+        }
+
+        /* Dark Mode */
+        [data-theme="dark"] {
+            --primary: #4da3ff;
+            --primary-dark: #2b8aff;
+            --success: #48c774;
+            --warning: #ffdd57;
+            --danger: #f14668;
+            --gray-50: #2d2d2d;
+            --gray-100: #3d3d3d;
+            --gray-200: #4d4d4d;
+            --gray-700: #b5b5b5;
+            --gray-900: #f5f5f5;
+            --bg-primary: #1a1a2e;
+            --bg-secondary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --text-primary: #f5f5f5;
+            --text-secondary: #b5b5b5;
+        }
+
+        [data-theme="dark"] body {
+            background: var(--bg-secondary);
+        }
+
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .nav-tabs,
+        [data-theme="dark"] .card,
+        [data-theme="dark"] .modal-content,
+        [data-theme="dark"] .vendor-card,
+        [data-theme="dark"] .task-item,
+        [data-theme="dark"] .risk-card,
+        [data-theme="dark"] .folder-header,
+        [data-theme="dark"] .document-item {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .form-input,
+        [data-theme="dark"] .form-textarea,
+        [data-theme="dark"] .form-select {
+            background: var(--gray-100);
+            color: var(--text-primary);
+            border-color: var(--gray-200);
+        }
+
+        [data-theme="dark"] .evaluation-table th {
+            background: var(--gray-100);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .evaluation-table td {
+            border-color: var(--gray-200);
+        }
+
+        [data-theme="dark"] .calendar-day {
+            background: var(--bg-primary);
+        }
+
+        [data-theme="dark"] .filter-btn {
+            background: var(--gray-100);
+            color: var(--text-primary);
+            border-color: var(--gray-200);
+        }
+
+        /* Skip to content link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Focus styles for accessibility */
+        *:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        *:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
         }
 
         body {
@@ -341,9 +438,134 @@
             font-weight: 600;
         }
 
+        /* Overdue and warning styles */
+        .overdue {
+            border-left-color: var(--danger) !important;
+            background: #fff5f5 !important;
+        }
+
+        .overdue .task-title::after {
+            content: ' (OVERDUE)';
+            color: var(--danger);
+            font-weight: 700;
+            font-size: 0.8em;
+        }
+
+        .due-soon {
+            border-left-color: var(--warning) !important;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+        }
+
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.warning { background: var(--warning); color: #333; }
+        .toast.info { background: var(--primary); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Theme toggle button */
+        .theme-toggle {
+            background: var(--gray-100);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--gray-200);
+        }
+
+        /* Score badge */
+        .score-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+
+        .score-high { background: #e8f5e9; color: #2e7d32; }
+        .score-medium { background: #fff9e5; color: #996600; }
+        .score-low { background: #ffe5e5; color: #c62828; }
+
+        /* Risk Matrix */
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: auto repeat(3, 1fr);
+            gap: 2px;
+            background: var(--gray-200);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .risk-matrix-cell {
+            padding: 15px;
+            text-align: center;
+            font-size: 0.85em;
+        }
+
+        .risk-matrix-header {
+            background: var(--gray-100);
+            font-weight: 600;
+        }
+
+        .risk-matrix-label {
+            background: var(--gray-100);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .risk-cell-high { background: #ffe5e5; }
+        .risk-cell-medium { background: #fff9e5; }
+        .risk-cell-low { background: #e8f5e9; }
+
+        /* Decision Log */
+        .decision-card {
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin-bottom: 15px;
+            background: var(--gray-50);
+            border-radius: 4px;
+        }
+
+        .decision-card.approved { border-left-color: var(--success); }
+        .decision-card.pending { border-left-color: var(--warning); }
+        .decision-card.rejected { border-left-color: var(--danger); }
+
         @media print {
-            body { background: white; padding: 0; }
-            .nav-tabs, .btn { display: none; }
+            body { background: white !important; padding: 0; }
+            .nav-tabs, .btn, .theme-toggle, .modal { display: none !important; }
+            .header { box-shadow: none; border-bottom: 2px solid #333; }
+            .card { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+            .tab-content { display: block !important; page-break-before: always; }
+            .tab-content:first-of-type { page-break-before: avoid; }
+            .stat-card { background: #f5f5f5 !important; color: #333 !important; }
+            .vendor-card, .risk-card, .task-item { page-break-inside: avoid; }
+            .gantt-container { overflow: visible; }
+            a { text-decoration: none; color: inherit; }
+            .evaluation-table { font-size: 10pt; }
+            .evaluation-table th, .evaluation-table td { padding: 8px; }
         }
 
         @media (max-width: 768px) {
@@ -351,6 +573,8 @@
             .grid-4 { grid-template-columns: 1fr; }
             .task-item { grid-template-columns: 1fr; }
             .vendor-grid { grid-template-columns: 1fr; }
+            .nav-tabs { overflow-x: auto; flex-wrap: nowrap; }
+            .nav-tab { white-space: nowrap; flex-shrink: 0; }
         }
 
         /* Calendar Styles */
@@ -549,51 +773,67 @@
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <div class="container">
-        <div class="header">
+        <header class="header" role="banner">
             <div>
-                <h1>🎯 Hexagon SAP AMS RFP</h1>
+                <h1>Hexagon SAP AMS RFP</h1>
                 <p>Complete Programme Management Platform | Start: 8 December 2025</p>
             </div>
-            <div style="text-align: right;">
-                <div style="font-size: 0.9em; color: var(--gray-700); margin-bottom: 5px;">Programme Day</div>
-                <div class="days-counter" id="daysCounter">Day 1</div>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+                    <span id="themeIcon">🌙</span>
+                </button>
+                <div style="text-align: right;">
+                    <div style="font-size: 0.9em; color: var(--gray-700); margin-bottom: 5px;">Programme Day</div>
+                    <div class="days-counter" id="daysCounter" aria-live="polite">Day 1</div>
+                </div>
             </div>
-        </div>
+        </header>
 
-        <div class="nav-tabs">
-            <button class="nav-tab active" onclick="switchTab('dashboard')">📊 Dashboard</button>
-            <button class="nav-tab" onclick="switchTab('workplan')">📋 Work Plan</button>
-            <button class="nav-tab" onclick="switchTab('calendar')">📅 Calendar</button>
-            <button class="nav-tab" onclick="switchTab('gantt')">📊 Gantt</button>
-            <button class="nav-tab" onclick="switchTab('milestones')">🎯 Milestones</button>
-            <button class="nav-tab" onclick="switchTab('evaluation')">✅ Evaluation</button>
-            <button class="nav-tab" onclick="switchTab('vendors')">🏢 Vendors</button>
-            <button class="nav-tab" onclick="switchTab('documents')">📁 Documents</button>
-            <button class="nav-tab" onclick="switchTab('risks')">⚠️ Risks</button>
-            <button class="nav-tab" onclick="switchTab('stakeholders')">👥 Stakeholders</button>
-            <button class="nav-tab" onclick="switchTab('reports')">📈 Reports</button>
-        </div>
+        <nav class="nav-tabs" role="tablist" aria-label="Main navigation">
+            <button class="nav-tab active" onclick="switchTab('dashboard', event)" role="tab" aria-selected="true" aria-controls="dashboard" id="tab-dashboard">Dashboard</button>
+            <button class="nav-tab" onclick="switchTab('workplan', event)" role="tab" aria-selected="false" aria-controls="workplan" id="tab-workplan">Work Plan</button>
+            <button class="nav-tab" onclick="switchTab('calendar', event)" role="tab" aria-selected="false" aria-controls="calendar" id="tab-calendar">Calendar</button>
+            <button class="nav-tab" onclick="switchTab('gantt', event)" role="tab" aria-selected="false" aria-controls="gantt" id="tab-gantt">Gantt</button>
+            <button class="nav-tab" onclick="switchTab('milestones', event)" role="tab" aria-selected="false" aria-controls="milestones" id="tab-milestones">Milestones</button>
+            <button class="nav-tab" onclick="switchTab('evaluation', event)" role="tab" aria-selected="false" aria-controls="evaluation" id="tab-evaluation">Evaluation</button>
+            <button class="nav-tab" onclick="switchTab('scoring', event)" role="tab" aria-selected="false" aria-controls="scoring" id="tab-scoring">Scoring</button>
+            <button class="nav-tab" onclick="switchTab('vendors', event)" role="tab" aria-selected="false" aria-controls="vendors" id="tab-vendors">Vendors</button>
+            <button class="nav-tab" onclick="switchTab('documents', event)" role="tab" aria-selected="false" aria-controls="documents" id="tab-documents">Documents</button>
+            <button class="nav-tab" onclick="switchTab('risks', event)" role="tab" aria-selected="false" aria-controls="risks" id="tab-risks">Risks</button>
+            <button class="nav-tab" onclick="switchTab('decisions', event)" role="tab" aria-selected="false" aria-controls="decisions" id="tab-decisions">Decisions</button>
+            <button class="nav-tab" onclick="switchTab('stakeholders', event)" role="tab" aria-selected="false" aria-controls="stakeholders" id="tab-stakeholders">Stakeholders</button>
+            <button class="nav-tab" onclick="switchTab('reports', event)" role="tab" aria-selected="false" aria-controls="reports" id="tab-reports">Reports</button>
+        </nav>
+
+        <main id="main-content" role="main">
 
         <!-- Dashboard -->
-        <div id="dashboard" class="tab-content active">
+        <div id="dashboard" class="tab-content active" role="tabpanel" aria-labelledby="tab-dashboard">
             <div class="grid grid-4">
-                <div class="stat-card" onclick="switchTab('workplan')">
+                <div class="stat-card" onclick="switchTab('workplan', event)" role="button" tabindex="0" aria-label="View work plan - Tasks complete">
                     <div class="stat-value" id="taskProgress">0%</div>
                     <div class="stat-label">Tasks Complete</div>
                 </div>
-                <div class="stat-card" onclick="switchTab('vendors')">
+                <div class="stat-card" onclick="switchTab('vendors', event)" role="button" tabindex="0" aria-label="View vendors">
                     <div class="stat-value" id="vendorCount">13</div>
                     <div class="stat-label">Vendors Tracking</div>
                 </div>
-                <div class="stat-card" onclick="switchTab('milestones')">
+                <div class="stat-card" onclick="switchTab('milestones', event)" role="button" tabindex="0" aria-label="View milestones">
                     <div class="stat-value" id="daysToGoLive">268</div>
                     <div class="stat-label">Days to Go-Live</div>
                 </div>
-                <div class="stat-card" onclick="switchTab('risks')">
+                <div class="stat-card" onclick="switchTab('risks', event)" role="button" tabindex="0" aria-label="View risks">
                     <div class="stat-value" id="riskCount">3</div>
                     <div class="stat-label">Active Risks</div>
                 </div>
+            </div>
+
+            <!-- Overdue Warnings Banner -->
+            <div id="overdueWarning" class="card" style="display: none; background: #fff5f5; border-left: 4px solid var(--danger);">
+                <h3 style="color: var(--danger); margin-bottom: 10px;">Overdue Items Require Attention</h3>
+                <div id="overdueList"></div>
             </div>
 
             <div class="card">
@@ -621,11 +861,11 @@
                     <button class="btn btn-primary" onclick="addTask()">➕ Add Task</button>
                 </div>
                 <div class="filter-bar">
-                    <input type="text" class="form-input" style="max-width: 300px;" placeholder="Search tasks..." id="taskSearch" oninput="renderTaskList()">
-                    <button class="filter-btn active" onclick="filterTasks('all')">All Tasks</button>
-                    <button class="filter-btn" onclick="filterTasks('notstarted')">Not Started</button>
-                    <button class="filter-btn" onclick="filterTasks('inprogress')">In Progress</button>
-                    <button class="filter-btn" onclick="filterTasks('done')">Done</button>
+                    <input type="text" class="form-input" style="max-width: 300px;" placeholder="Search tasks..." id="taskSearch" oninput="renderTaskList()" aria-label="Search tasks">
+                    <button class="filter-btn active" onclick="filterTasks('all', event)">All Tasks</button>
+                    <button class="filter-btn" onclick="filterTasks('notstarted', event)">Not Started</button>
+                    <button class="filter-btn" onclick="filterTasks('inprogress', event)">In Progress</button>
+                    <button class="filter-btn" onclick="filterTasks('done', event)">Done</button>
                 </div>
                 <div id="taskList"></div>
             </div>
@@ -720,20 +960,42 @@
         </div>
 
         <!-- Vendors -->
-        <div id="vendors" class="tab-content">
+        <div id="vendors" class="tab-content" role="tabpanel" aria-labelledby="tab-vendors">
             <div class="card">
                 <div class="card-header">
                     <h2>Vendor Management</h2>
-                    <button class="btn btn-primary" onclick="addVendor()">➕ Add Vendor</button>
+                    <button class="btn btn-primary" onclick="openVendorModal()" aria-label="Add new vendor">+ Add Vendor</button>
                 </div>
                 <div class="filter-bar">
-                    <button class="filter-btn active" onclick="filterVendors('all')">All Vendors</button>
-                    <button class="filter-btn" onclick="filterVendors('tier1')">Tier 1</button>
-                    <button class="filter-btn" onclick="filterVendors('tier2')">Tier 2</button>
-                    <button class="filter-btn" onclick="filterVendors('warm')">Warm Leads</button>
-                    <button class="filter-btn" onclick="filterVendors('shortlist')">Shortlist</button>
+                    <input type="text" class="form-input" style="max-width: 300px;" placeholder="Search vendors..." id="vendorSearch" oninput="renderVendorGrid()" aria-label="Search vendors">
+                    <button class="filter-btn active" onclick="filterVendors('all', event)">All Vendors</button>
+                    <button class="filter-btn" onclick="filterVendors('tier1', event)">Tier 1</button>
+                    <button class="filter-btn" onclick="filterVendors('tier2', event)">Tier 2</button>
+                    <button class="filter-btn" onclick="filterVendors('warm', event)">Warm Leads</button>
+                    <button class="filter-btn" onclick="filterVendors('shortlist', event)">Shortlist</button>
                 </div>
-                <div class="vendor-grid" id="vendorGrid"></div>
+                <div class="vendor-grid" id="vendorGrid" role="list"></div>
+            </div>
+        </div>
+
+        <!-- Vendor Scoring -->
+        <div id="scoring" class="tab-content" role="tabpanel" aria-labelledby="tab-scoring">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Vendor Scorecard</h2>
+                    <div>
+                        <button class="btn btn-success" onclick="saveScores()">Save Scores</button>
+                        <button class="btn btn-primary" onclick="generateScoreReport()">Generate Report</button>
+                    </div>
+                </div>
+                <p style="margin-bottom: 20px; color: var(--gray-700);">Score each vendor against evaluation criteria (0-10 scale). Weighted scores are calculated automatically.</p>
+                <div style="overflow-x: auto;">
+                    <table class="evaluation-table" id="scoringTable">
+                        <thead id="scoringHeader"></thead>
+                        <tbody id="scoringBody"></tbody>
+                    </table>
+                </div>
+                <div id="scoringSummary" style="margin-top: 20px;"></div>
             </div>
         </div>
 
@@ -749,13 +1011,53 @@
         </div>
 
         <!-- Risks -->
-        <div id="risks" class="tab-content">
+        <div id="risks" class="tab-content" role="tabpanel" aria-labelledby="tab-risks">
             <div class="card">
                 <div class="card-header">
                     <h2>Risk Register</h2>
-                    <button class="btn btn-primary" onclick="addRisk()">➕ Add Risk</button>
+                    <button class="btn btn-primary" onclick="openRiskModal()" aria-label="Add new risk">+ Add Risk</button>
                 </div>
                 <div id="riskList"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Risk Matrix</h2>
+                </div>
+                <p style="margin-bottom: 15px; color: var(--gray-700);">Visual representation of risks by probability and impact.</p>
+                <div class="risk-matrix" id="riskMatrix">
+                    <div class="risk-matrix-cell"></div>
+                    <div class="risk-matrix-cell risk-matrix-header">Low Impact</div>
+                    <div class="risk-matrix-cell risk-matrix-header">Medium Impact</div>
+                    <div class="risk-matrix-cell risk-matrix-header">High Impact</div>
+
+                    <div class="risk-matrix-cell risk-matrix-label">High Probability</div>
+                    <div class="risk-matrix-cell risk-cell-medium" id="matrix-high-low"></div>
+                    <div class="risk-matrix-cell risk-cell-high" id="matrix-high-med"></div>
+                    <div class="risk-matrix-cell risk-cell-high" id="matrix-high-high"></div>
+
+                    <div class="risk-matrix-cell risk-matrix-label">Medium Probability</div>
+                    <div class="risk-matrix-cell risk-cell-low" id="matrix-med-low"></div>
+                    <div class="risk-matrix-cell risk-cell-medium" id="matrix-med-med"></div>
+                    <div class="risk-matrix-cell risk-cell-high" id="matrix-med-high"></div>
+
+                    <div class="risk-matrix-cell risk-matrix-label">Low Probability</div>
+                    <div class="risk-matrix-cell risk-cell-low" id="matrix-low-low"></div>
+                    <div class="risk-matrix-cell risk-cell-low" id="matrix-low-med"></div>
+                    <div class="risk-matrix-cell risk-cell-medium" id="matrix-low-high"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decision Log -->
+        <div id="decisions" class="tab-content" role="tabpanel" aria-labelledby="tab-decisions">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Decision Log</h2>
+                    <button class="btn btn-primary" onclick="openDecisionModal()" aria-label="Add new decision">+ Add Decision</button>
+                </div>
+                <p style="margin-bottom: 20px; color: var(--gray-700);">Track key programme decisions, rationale, and outcomes.</p>
+                <div id="decisionList"></div>
             </div>
         </div>
 
@@ -799,18 +1101,35 @@
         </div>
 
         <!-- Reports -->
-        <div id="reports" class="tab-content">
+        <div id="reports" class="tab-content" role="tabpanel" aria-labelledby="tab-reports">
             <div class="card">
                 <div class="card-header"><h2>Report Generator</h2></div>
                 <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-                    <button class="btn btn-primary" onclick="generateStatusReport()">📄 Status Report</button>
-                    <button class="btn btn-primary" onclick="generateVendorReport()">🏢 Vendor Analysis</button>
-                    <button class="btn btn-primary" onclick="generateRiskReport()">⚠️ Risk Report</button>
-                    <button class="btn btn-success" onclick="exportData()">📊 Export All Data</button>
+                    <button class="btn btn-primary" onclick="generateStatusReport()">Status Report</button>
+                    <button class="btn btn-primary" onclick="generateVendorReport()">Vendor Analysis</button>
+                    <button class="btn btn-primary" onclick="generateRiskReport()">Risk Report</button>
+                    <button class="btn btn-primary" onclick="generateScoreReport()">Scoring Report</button>
                 </div>
                 <div id="reportOutput"></div>
             </div>
+
+            <div class="card">
+                <div class="card-header"><h2>Data Management</h2></div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <button class="btn btn-success" onclick="exportData()">Export Data (JSON)</button>
+                    <label class="btn btn-primary" style="cursor: pointer;">
+                        Import Data (JSON)
+                        <input type="file" id="importFile" accept=".json" onchange="importData(event)" style="display: none;">
+                    </label>
+                    <button class="btn btn-danger" onclick="resetToDefaults()">Reset to Defaults</button>
+                </div>
+                <p style="margin-top: 15px; color: var(--gray-700); font-size: 0.9em;">
+                    Export creates a backup of all your data. Import restores from a previously exported file.
+                </p>
+            </div>
         </div>
+
+        </main>
     </div>
 
     <!-- Task Modal -->
@@ -864,6 +1183,210 @@
         </div>
     </div>
 
+    <!-- Vendor Modal -->
+    <div id="vendorModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('vendorModal')">&times;</span>
+            <h2 id="vendorModalTitle">Add New Vendor</h2>
+            <div class="form-group">
+                <label class="form-label" for="vendorName">Vendor Name *</label>
+                <input type="text" class="form-input" id="vendorName" required>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="vendorType">Type</label>
+                    <input type="text" class="form-input" id="vendorType" placeholder="e.g., Global SI">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="vendorTier">Tier</label>
+                    <select class="form-select" id="vendorTier">
+                        <option value="Tier 1">Tier 1</option>
+                        <option value="Tier 2">Tier 2</option>
+                        <option value="Mid">Mid-tier</option>
+                        <option value="Niche">Niche</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="vendorStrengths">Key Strengths</label>
+                <textarea class="form-textarea" id="vendorStrengths"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="vendorRelevance">Hexagon Relevance</label>
+                <textarea class="form-textarea" id="vendorRelevance"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="saveVendor()">Save Vendor</button>
+        </div>
+    </div>
+
+    <!-- Risk Modal -->
+    <div id="riskModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('riskModal')">&times;</span>
+            <h2 id="riskModalTitle">Add New Risk</h2>
+            <div class="form-group">
+                <label class="form-label" for="riskName">Risk Description *</label>
+                <input type="text" class="form-input" id="riskName" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="riskImpact">Impact</label>
+                <textarea class="form-textarea" id="riskImpact"></textarea>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="riskOwner">Owner</label>
+                    <input type="text" class="form-input" id="riskOwner">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="riskDueDate">Due Date</label>
+                    <input type="date" class="form-input" id="riskDueDate">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="riskRag">RAG Status</label>
+                    <select class="form-select" id="riskRag">
+                        <option value="red">Red</option>
+                        <option value="amber" selected>Amber</option>
+                        <option value="green">Green</option>
+                    </select>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="riskProbability">Probability</label>
+                    <select class="form-select" id="riskProbability">
+                        <option value="high">High</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="riskImpactLevel">Impact Level</label>
+                    <select class="form-select" id="riskImpactLevel">
+                        <option value="high">High</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="riskMitigation">Mitigation</label>
+                <textarea class="form-textarea" id="riskMitigation"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="saveRisk()">Save Risk</button>
+        </div>
+    </div>
+
+    <!-- Decision Modal -->
+    <div id="decisionModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('decisionModal')">&times;</span>
+            <h2>Add New Decision</h2>
+            <div class="form-group">
+                <label class="form-label" for="decisionTitle">Decision Title *</label>
+                <input type="text" class="form-input" id="decisionTitle" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="decisionDescription">Description</label>
+                <textarea class="form-textarea" id="decisionDescription"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="decisionRationale">Rationale</label>
+                <textarea class="form-textarea" id="decisionRationale"></textarea>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="decisionOwner">Decision Maker</label>
+                    <input type="text" class="form-input" id="decisionOwner">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="decisionDate">Date</label>
+                    <input type="date" class="form-input" id="decisionDate">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="decisionStatus">Status</label>
+                    <select class="form-select" id="decisionStatus">
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="saveDecision()">Save Decision</button>
+        </div>
+    </div>
+
+    <!-- Milestone Modal -->
+    <div id="milestoneModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('milestoneModal')">&times;</span>
+            <h2>Add New Milestone</h2>
+            <div class="form-group">
+                <label class="form-label" for="milestoneTitle">Milestone Title *</label>
+                <input type="text" class="form-input" id="milestoneTitle" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="milestoneDate">Target Date</label>
+                <input type="date" class="form-input" id="milestoneDate">
+            </div>
+            <button class="btn btn-primary" onclick="saveMilestone()">Save Milestone</button>
+        </div>
+    </div>
+
+    <!-- Stakeholder Modal -->
+    <div id="stakeholderModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('stakeholderModal')">&times;</span>
+            <h2>Add New Stakeholder</h2>
+            <div class="form-group">
+                <label class="form-label" for="stakeholderName">Name/Title *</label>
+                <input type="text" class="form-input" id="stakeholderName" required>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="stakeholderRole">Role</label>
+                    <input type="text" class="form-input" id="stakeholderRole">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="stakeholderDept">Department</label>
+                    <input type="text" class="form-input" id="stakeholderDept">
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="stakeholderInfluence">Influence</label>
+                    <select class="form-select" id="stakeholderInfluence">
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="stakeholderInterest">Interest</label>
+                    <select class="form-select" id="stakeholderInterest">
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="stakeholderNotes">Notes</label>
+                <textarea class="form-textarea" id="stakeholderNotes"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="saveStakeholder()">Save Stakeholder</button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content" style="max-width: 400px;">
+            <h2>Confirm Action</h2>
+            <p id="confirmMessage" style="margin: 20px 0;"></p>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn" onclick="closeModal('confirmModal')" style="background: var(--gray-200);">Cancel</button>
+                <button class="btn btn-danger" id="confirmButton">Confirm</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Initial Data from Hexagon Excel File
         const INITIAL_DATA = {
@@ -900,10 +1423,14 @@
                 {id: 13, name: "Wipro", type: "Global SI", tier: "Tier 2", strengths: "Recognized for significant growth in SAP S/4HANA revenue recently.", relevance: "Strong presence in US markets.", status: "longlist"}
             ],
             risks: [
-                {id: 1, risk: "SAP USA Go-Live Date", impact: "Critical. If moves to Sept, transition period extends.", owner: "CIO / Program Lead", dueDate: "2025-12-15", rag: "red", mitigation: "Need Scenario A (June) and B (Sept) in RFP"},
-                {id: 2, risk: "Access to Ticket Data", impact: "High. Vendors cannot price without ticket volumes.", owner: "IT Ops", dueDate: "2025-12-10", rag: "amber", mitigation: "Extract from ServiceNow/Jira"},
-                {id: 3, risk: "Deloitte Report Access", impact: "Medium. Delays Gap Analysis.", owner: "CIO Office", dueDate: "2025-12-08", rag: "green", mitigation: "Chase Monday AM"}
+                {id: 1, risk: "SAP USA Go-Live Date", impact: "Critical. If moves to Sept, transition period extends.", owner: "CIO / Program Lead", dueDate: "2025-12-15", rag: "red", mitigation: "Need Scenario A (June) and B (Sept) in RFP", probability: "high", impactLevel: "high"},
+                {id: 2, risk: "Access to Ticket Data", impact: "High. Vendors cannot price without ticket volumes.", owner: "IT Ops", dueDate: "2025-12-10", rag: "amber", mitigation: "Extract from ServiceNow/Jira", probability: "medium", impactLevel: "high"},
+                {id: 3, risk: "Deloitte Report Access", impact: "Medium. Delays Gap Analysis.", owner: "CIO Office", dueDate: "2025-12-08", rag: "green", mitigation: "Chase Monday AM", probability: "low", impactLevel: "medium"}
             ],
+            decisions: [
+                {id: 1, title: "RFP Timeline Confirmed", description: "Agreed on 9-month programme timeline", rationale: "Balances speed with thoroughness", owner: "CIO", date: "2025-12-08", status: "approved"}
+            ],
+            vendorScores: {},
             milestones: [
                 {id: 1, title: "Discovery Phase Complete", date: "2025-12-31", status: "notstarted"},
                 {id: 2, title: "Selection Questionnaire Issued", date: "2026-01-05", status: "notstarted"},
@@ -1000,17 +1527,30 @@
             stakeholders: [],
             raciActivities: [],
             documents: [],
+            decisions: [],
+            vendorScores: {},
             currentFilter: 'all',
             currentVendorFilter: 'all',
             editingTaskId: null,
-            calendarMonth: new Date('2025-12-01')
+            editingVendorId: null,
+            editingRiskId: null,
+            calendarMonth: new Date('2025-12-01'),
+            theme: 'light'
         };
+
+        // Chart instance tracking to prevent memory leaks
+        let statusChart = null;
+
+        // Confirmation callback
+        let confirmCallback = null;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadState();
+            applyTheme();
             updateDashboard();
             renderAll();
+            checkOverdue();
         });
 
         function loadState() {
@@ -1039,7 +1579,57 @@
             appState.stakeholders = JSON.parse(JSON.stringify(INITIAL_DATA.stakeholders));
             appState.raciActivities = JSON.parse(JSON.stringify(INITIAL_DATA.raciActivities));
             appState.documents = JSON.parse(JSON.stringify(INITIAL_DATA.documents));
+            appState.decisions = JSON.parse(JSON.stringify(INITIAL_DATA.decisions || []));
+            appState.vendorScores = JSON.parse(JSON.stringify(INITIAL_DATA.vendorScores || {}));
             saveState();
+        }
+
+        // Sanitize HTML to prevent XSS
+        function sanitizeHTML(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            appState.theme = appState.theme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', appState.theme);
+            document.getElementById('themeIcon').textContent = appState.theme === 'dark' ? '☀️' : '🌙';
+            saveState();
+        }
+
+        // Apply saved theme on load
+        function applyTheme() {
+            if (appState.theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('themeIcon').textContent = '☀️';
+            }
+        }
+
+        // Confirmation dialog
+        function showConfirm(message, callback) {
+            document.getElementById('confirmMessage').textContent = message;
+            confirmCallback = callback;
+            document.getElementById('confirmButton').onclick = () => {
+                closeModal('confirmModal');
+                if (confirmCallback) confirmCallback();
+            };
+            document.getElementById('confirmModal').style.display = 'block';
         }
 
         function saveState() {
@@ -1074,14 +1664,20 @@
         function renderStatusChart() {
             const ctx = document.getElementById('statusChart');
             if (!ctx) return;
-            
+
+            // Destroy existing chart to prevent memory leak
+            if (statusChart) {
+                statusChart.destroy();
+                statusChart = null;
+            }
+
             const counts = {
                 'Not Started': appState.tasks.filter(t => t.status === 'notstarted').length,
                 'In Progress': appState.tasks.filter(t => t.status === 'inprogress').length,
                 'Done': appState.tasks.filter(t => t.status === 'done').length
             };
 
-            new Chart(ctx, {
+            statusChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: Object.keys(counts),
@@ -1148,11 +1744,40 @@
             renderEvaluationTable();
             renderVendorGrid();
             renderRiskList();
+            renderRiskMatrix();
+            renderDecisionList();
             renderStakeholders();
             renderRaciMatrix();
             renderCalendar();
             renderGantt();
             renderDocuments();
+            renderScoringTable();
+        }
+
+        // Check for overdue tasks
+        function checkOverdue() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const overdue = appState.tasks.filter(t => {
+                if (t.status === 'done') return false;
+                const due = new Date(t.dueDate);
+                return due < today;
+            });
+
+            const warning = document.getElementById('overdueWarning');
+            const list = document.getElementById('overdueList');
+
+            if (overdue.length > 0 && warning && list) {
+                warning.style.display = 'block';
+                list.innerHTML = overdue.map(t =>
+                    `<div style="padding: 5px 0; border-bottom: 1px solid #ffcccc;">
+                        <strong>${sanitizeHTML(t.name)}</strong> - Due: ${formatDate(t.dueDate)}
+                    </div>`
+                ).join('');
+            } else if (warning) {
+                warning.style.display = 'none';
+            }
         }
 
         function renderTaskList() {
@@ -1289,7 +1914,8 @@
         function renderVendorGrid() {
             let vendors = appState.vendors;
             const f = appState.currentVendorFilter;
-            
+
+            // Apply filter
             if (f === 'tier1') {
                 vendors = vendors.filter(v => v.tier === 'Tier 1');
             } else if (f === 'tier2') {
@@ -1298,6 +1924,19 @@
                 vendors = vendors.filter(v => v.status === 'warm');
             } else if (f === 'shortlist') {
                 vendors = vendors.filter(v => v.status === 'shortlist');
+            }
+
+            // Apply search
+            const searchEl = document.getElementById('vendorSearch');
+            if (searchEl) {
+                const search = searchEl.value.toLowerCase();
+                if (search) {
+                    vendors = vendors.filter(v =>
+                        v.name.toLowerCase().includes(search) ||
+                        (v.strengths && v.strengths.toLowerCase().includes(search)) ||
+                        (v.relevance && v.relevance.toLowerCase().includes(search))
+                    );
+                }
             }
 
             const html = vendors.map(v => `
@@ -1361,30 +2000,47 @@
             return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            
+        function switchTab(tab, e) {
+            document.querySelectorAll('.tab-content').forEach(t => {
+                t.classList.remove('active');
+                t.setAttribute('aria-hidden', 'true');
+            });
+            document.querySelectorAll('.nav-tab').forEach(t => {
+                t.classList.remove('active');
+                t.setAttribute('aria-selected', 'false');
+            });
+
             const tabEl = document.getElementById(tab);
-            if (tabEl) tabEl.classList.add('active');
-            
-            if (event && event.target) event.target.classList.add('active');
-            
+            if (tabEl) {
+                tabEl.classList.add('active');
+                tabEl.setAttribute('aria-hidden', 'false');
+            }
+
+            const tabBtn = document.getElementById('tab-' + tab);
+            if (tabBtn) {
+                tabBtn.classList.add('active');
+                tabBtn.setAttribute('aria-selected', 'true');
+            } else if (e && e.target) {
+                e.target.classList.add('active');
+                e.target.setAttribute('aria-selected', 'true');
+            }
+
             if (tab === 'dashboard') updateDashboard();
+            if (tab === 'scoring') renderScoringTable();
         }
 
-        function filterTasks(f) {
+        function filterTasks(f, e) {
             appState.currentFilter = f;
             renderTaskList();
-            document.querySelectorAll('.filter-bar .filter-btn').forEach(b => b.classList.remove('active'));
-            if (event && event.target) event.target.classList.add('active');
+            document.querySelectorAll('#workplan .filter-bar .filter-btn').forEach(b => b.classList.remove('active'));
+            if (e && e.target) e.target.classList.add('active');
         }
 
-        function filterVendors(f) {
+        function filterVendors(f, e) {
             appState.currentVendorFilter = f;
             renderVendorGrid();
             document.querySelectorAll('#vendors .filter-bar .filter-btn').forEach(b => b.classList.remove('active'));
-            if (event && event.target) event.target.classList.add('active');
+            if (e && e.target) e.target.classList.add('active');
         }
 
         // Task Management
@@ -1546,24 +2202,60 @@
         }
 
         // Vendor Management
-        function addVendor() {
-            const name = prompt('Vendor name:');
-            if (!name) return;
+        function openVendorModal(id = null) {
+            appState.editingVendorId = id;
+            if (id) {
+                const v = appState.vendors.find(x => x.id === id);
+                if (v) {
+                    document.getElementById('vendorModalTitle').textContent = 'Edit Vendor';
+                    document.getElementById('vendorName').value = v.name;
+                    document.getElementById('vendorType').value = v.type || '';
+                    document.getElementById('vendorTier').value = v.tier || 'Tier 2';
+                    document.getElementById('vendorStrengths').value = v.strengths || '';
+                    document.getElementById('vendorRelevance').value = v.relevance || '';
+                }
+            } else {
+                document.getElementById('vendorModalTitle').textContent = 'Add New Vendor';
+                document.getElementById('vendorName').value = '';
+                document.getElementById('vendorType').value = '';
+                document.getElementById('vendorTier').value = 'Tier 2';
+                document.getElementById('vendorStrengths').value = '';
+                document.getElementById('vendorRelevance').value = '';
+            }
+            document.getElementById('vendorModal').style.display = 'block';
+        }
 
-            const newId = Math.max(...appState.vendors.map(v => v.id), 0) + 1;
-            appState.vendors.push({
-                id: newId,
-                name: name,
-                type: 'SI',
-                tier: 'Tier 2',
-                strengths: '',
-                relevance: '',
+        function saveVendor() {
+            const name = document.getElementById('vendorName').value.trim();
+            if (!name) {
+                showToast('Please enter vendor name', 'error');
+                return;
+            }
+
+            const data = {
+                name: sanitizeHTML(name),
+                type: sanitizeHTML(document.getElementById('vendorType').value.trim()) || 'SI',
+                tier: document.getElementById('vendorTier').value,
+                strengths: sanitizeHTML(document.getElementById('vendorStrengths').value.trim()),
+                relevance: sanitizeHTML(document.getElementById('vendorRelevance').value.trim()),
                 status: 'longlist'
-            });
+            };
+
+            if (appState.editingVendorId) {
+                const i = appState.vendors.findIndex(v => v.id === appState.editingVendorId);
+                if (i !== -1) {
+                    appState.vendors[i] = { ...appState.vendors[i], ...data };
+                }
+            } else {
+                const newId = Math.max(...appState.vendors.map(v => v.id), 0) + 1;
+                appState.vendors.push({ id: newId, ...data });
+            }
 
             saveState();
             renderVendorGrid();
             updateDashboard();
+            closeModal('vendorModal');
+            showToast('Vendor saved successfully', 'success');
         }
 
         function updateVendorStatus(id, status) {
@@ -1576,42 +2268,115 @@
         }
 
         function deleteVendor(id) {
-            if (confirm('Delete this vendor?')) {
+            showConfirm('Delete this vendor?', () => {
                 appState.vendors = appState.vendors.filter(v => v.id !== id);
                 saveState();
                 renderVendorGrid();
                 updateDashboard();
-            }
+                showToast('Vendor deleted', 'success');
+            });
         }
 
         // Risk Management
-        function addRisk() {
-            const risk = prompt('Risk description:');
-            if (!risk) return;
+        function openRiskModal(id = null) {
+            appState.editingRiskId = id;
+            if (id) {
+                const r = appState.risks.find(x => x.id === id);
+                if (r) {
+                    document.getElementById('riskModalTitle').textContent = 'Edit Risk';
+                    document.getElementById('riskName').value = r.risk;
+                    document.getElementById('riskImpact').value = r.impact || '';
+                    document.getElementById('riskOwner').value = r.owner || '';
+                    document.getElementById('riskDueDate').value = r.dueDate || '';
+                    document.getElementById('riskRag').value = r.rag || 'amber';
+                    document.getElementById('riskProbability').value = r.probability || 'medium';
+                    document.getElementById('riskImpactLevel').value = r.impactLevel || 'medium';
+                    document.getElementById('riskMitigation').value = r.mitigation || '';
+                }
+            } else {
+                document.getElementById('riskModalTitle').textContent = 'Add New Risk';
+                document.getElementById('riskName').value = '';
+                document.getElementById('riskImpact').value = '';
+                document.getElementById('riskOwner').value = '';
+                document.getElementById('riskDueDate').value = new Date().toISOString().split('T')[0];
+                document.getElementById('riskRag').value = 'amber';
+                document.getElementById('riskProbability').value = 'medium';
+                document.getElementById('riskImpactLevel').value = 'medium';
+                document.getElementById('riskMitigation').value = '';
+            }
+            document.getElementById('riskModal').style.display = 'block';
+        }
 
-            const newId = Math.max(...appState.risks.map(r => r.id), 0) + 1;
-            appState.risks.push({
-                id: newId,
-                risk: risk,
-                impact: '',
-                owner: '',
-                dueDate: new Date().toISOString().split('T')[0],
-                rag: 'amber',
-                mitigation: ''
-            });
+        function saveRisk() {
+            const risk = document.getElementById('riskName').value.trim();
+            if (!risk) {
+                showToast('Please enter risk description', 'error');
+                return;
+            }
+
+            const data = {
+                risk: sanitizeHTML(risk),
+                impact: sanitizeHTML(document.getElementById('riskImpact').value.trim()),
+                owner: sanitizeHTML(document.getElementById('riskOwner').value.trim()),
+                dueDate: document.getElementById('riskDueDate').value,
+                rag: document.getElementById('riskRag').value,
+                probability: document.getElementById('riskProbability').value,
+                impactLevel: document.getElementById('riskImpactLevel').value,
+                mitigation: sanitizeHTML(document.getElementById('riskMitigation').value.trim())
+            };
+
+            if (appState.editingRiskId) {
+                const i = appState.risks.findIndex(r => r.id === appState.editingRiskId);
+                if (i !== -1) {
+                    appState.risks[i] = { ...appState.risks[i], ...data };
+                }
+            } else {
+                const newId = Math.max(...appState.risks.map(r => r.id), 0) + 1;
+                appState.risks.push({ id: newId, ...data });
+            }
 
             saveState();
             renderRiskList();
+            renderRiskMatrix();
             updateDashboard();
+            closeModal('riskModal');
+            showToast('Risk saved successfully', 'success');
         }
 
         function deleteRisk(id) {
-            if (confirm('Delete this risk?')) {
+            showConfirm('Delete this risk?', () => {
                 appState.risks = appState.risks.filter(r => r.id !== id);
                 saveState();
                 renderRiskList();
+                renderRiskMatrix();
                 updateDashboard();
-            }
+                showToast('Risk deleted', 'success');
+            });
+        }
+
+        // Risk Matrix
+        function renderRiskMatrix() {
+            const cells = {
+                'high-high': [], 'high-medium': [], 'high-low': [],
+                'medium-high': [], 'medium-medium': [], 'medium-low': [],
+                'low-high': [], 'low-medium': [], 'low-low': []
+            };
+
+            appState.risks.forEach(r => {
+                const prob = r.probability || 'medium';
+                const imp = r.impactLevel || 'medium';
+                const key = `${prob}-${imp}`;
+                if (cells[key]) cells[key].push(r.risk);
+            });
+
+            Object.entries(cells).forEach(([key, risks]) => {
+                const el = document.getElementById(`matrix-${key.replace('-', '-')}`);
+                if (el) {
+                    el.innerHTML = risks.length > 0
+                        ? risks.map(r => `<div style="font-size:0.8em; margin:2px 0;">${sanitizeHTML(r.substring(0, 20))}${r.length > 20 ? '...' : ''}</div>`).join('')
+                        : '';
+                }
+            });
         }
 
         // Reports
@@ -2188,12 +2953,397 @@
             document.getElementById(id).style.display = 'none';
         }
 
+        // Decision Log Functions
+        function openDecisionModal() {
+            document.getElementById('decisionTitle').value = '';
+            document.getElementById('decisionDescription').value = '';
+            document.getElementById('decisionRationale').value = '';
+            document.getElementById('decisionOwner').value = '';
+            document.getElementById('decisionDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('decisionStatus').value = 'pending';
+            document.getElementById('decisionModal').style.display = 'block';
+        }
+
+        function saveDecision() {
+            const title = document.getElementById('decisionTitle').value.trim();
+            if (!title) {
+                showToast('Please enter decision title', 'error');
+                return;
+            }
+
+            const newId = Math.max(...(appState.decisions || []).map(d => d.id), 0) + 1;
+            if (!appState.decisions) appState.decisions = [];
+
+            appState.decisions.push({
+                id: newId,
+                title: sanitizeHTML(title),
+                description: sanitizeHTML(document.getElementById('decisionDescription').value.trim()),
+                rationale: sanitizeHTML(document.getElementById('decisionRationale').value.trim()),
+                owner: sanitizeHTML(document.getElementById('decisionOwner').value.trim()),
+                date: document.getElementById('decisionDate').value,
+                status: document.getElementById('decisionStatus').value
+            });
+
+            saveState();
+            renderDecisionList();
+            closeModal('decisionModal');
+            showToast('Decision saved', 'success');
+        }
+
+        function renderDecisionList() {
+            const el = document.getElementById('decisionList');
+            if (!el) return;
+
+            const decisions = appState.decisions || [];
+            if (decisions.length === 0) {
+                el.innerHTML = '<p style="color: var(--gray-700);">No decisions logged yet.</p>';
+                return;
+            }
+
+            el.innerHTML = decisions.map(d => `
+                <div class="decision-card ${d.status}">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <strong style="font-size: 1.1em;">${sanitizeHTML(d.title)}</strong>
+                        <span class="vendor-status status-${d.status === 'approved' ? 'warm' : d.status === 'rejected' ? 'longlist' : 'shortlist'}">
+                            ${d.status === 'approved' ? '✓ Approved' : d.status === 'rejected' ? '✗ Rejected' : '⏳ Pending'}
+                        </span>
+                    </div>
+                    <p style="margin: 8px 0;"><strong>Description:</strong> ${sanitizeHTML(d.description) || 'N/A'}</p>
+                    <p style="margin: 8px 0;"><strong>Rationale:</strong> ${sanitizeHTML(d.rationale) || 'N/A'}</p>
+                    <p style="margin: 8px 0; font-size: 0.9em; color: var(--gray-700);">
+                        <strong>Decision Maker:</strong> ${sanitizeHTML(d.owner) || 'N/A'} | <strong>Date:</strong> ${formatDate(d.date)}
+                    </p>
+                    <button class="btn btn-small btn-danger" onclick="deleteDecision(${d.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteDecision(id) {
+            showConfirm('Delete this decision?', () => {
+                appState.decisions = appState.decisions.filter(d => d.id !== id);
+                saveState();
+                renderDecisionList();
+                showToast('Decision deleted', 'success');
+            });
+        }
+
+        // Milestone Modal Functions
+        function openMilestoneModal() {
+            document.getElementById('milestoneTitle').value = '';
+            document.getElementById('milestoneDate').value = '';
+            document.getElementById('milestoneModal').style.display = 'block';
+        }
+
+        function saveMilestone() {
+            const title = document.getElementById('milestoneTitle').value.trim();
+            if (!title) {
+                showToast('Please enter milestone title', 'error');
+                return;
+            }
+
+            const newId = Math.max(...appState.milestones.map(m => m.id), 0) + 1;
+            appState.milestones.push({
+                id: newId,
+                title: sanitizeHTML(title),
+                date: document.getElementById('milestoneDate').value,
+                status: 'notstarted'
+            });
+
+            saveState();
+            renderMilestones();
+            renderCalendar();
+            renderGantt();
+            closeModal('milestoneModal');
+            showToast('Milestone added', 'success');
+        }
+
+        // Stakeholder Modal Functions
+        function openStakeholderModal() {
+            document.getElementById('stakeholderName').value = '';
+            document.getElementById('stakeholderRole').value = '';
+            document.getElementById('stakeholderDept').value = '';
+            document.getElementById('stakeholderInfluence').value = 'high';
+            document.getElementById('stakeholderInterest').value = 'high';
+            document.getElementById('stakeholderNotes').value = '';
+            document.getElementById('stakeholderModal').style.display = 'block';
+        }
+
+        function saveStakeholder() {
+            const name = document.getElementById('stakeholderName').value.trim();
+            if (!name) {
+                showToast('Please enter stakeholder name', 'error');
+                return;
+            }
+
+            const newId = Math.max(...appState.stakeholders.map(s => s.id), 0) + 1;
+            appState.stakeholders.push({
+                id: newId,
+                name: sanitizeHTML(name),
+                role: sanitizeHTML(document.getElementById('stakeholderRole').value.trim()) || 'Stakeholder',
+                department: sanitizeHTML(document.getElementById('stakeholderDept').value.trim()),
+                email: '',
+                influence: document.getElementById('stakeholderInfluence').value,
+                interest: document.getElementById('stakeholderInterest').value,
+                notes: sanitizeHTML(document.getElementById('stakeholderNotes').value.trim())
+            });
+
+            saveState();
+            renderStakeholders();
+            renderRaciMatrix();
+            closeModal('stakeholderModal');
+            showToast('Stakeholder added', 'success');
+        }
+
+        // Vendor Scoring Functions
+        function renderScoringTable() {
+            const header = document.getElementById('scoringHeader');
+            const body = document.getElementById('scoringBody');
+            if (!header || !body) return;
+
+            const shortlistVendors = appState.vendors.filter(v =>
+                ['warm', 'shortlist', 'finalist', 'winner'].includes(v.status)
+            );
+
+            if (shortlistVendors.length === 0) {
+                header.innerHTML = '<tr><th>No vendors in shortlist</th></tr>';
+                body.innerHTML = '<tr><td>Move vendors to Warm Lead, Shortlist, or Finalist status to score them.</td></tr>';
+                return;
+            }
+
+            // Header
+            header.innerHTML = `<tr>
+                <th>Criterion</th>
+                <th>Weight</th>
+                ${shortlistVendors.map(v => `<th style="min-width:100px;">${sanitizeHTML(v.name)}</th>`).join('')}
+            </tr>`;
+
+            // Body
+            body.innerHTML = appState.evaluation.map(c => `
+                <tr>
+                    <td><strong>${sanitizeHTML(c.criterion)}</strong></td>
+                    <td>${c.weight}%</td>
+                    ${shortlistVendors.map(v => {
+                        const key = `${v.id}-${c.id}`;
+                        const score = (appState.vendorScores || {})[key] || '';
+                        return `<td>
+                            <input type="number" min="0" max="10" class="weight-input"
+                                value="${score}" data-vendor="${v.id}" data-criterion="${c.id}"
+                                onchange="updateScore(${v.id}, ${c.id}, this.value)"
+                                style="width:60px;">
+                        </td>`;
+                    }).join('')}
+                </tr>
+            `).join('') + `
+                <tr style="background: var(--gray-100); font-weight: 600;">
+                    <td>Weighted Total</td>
+                    <td>100%</td>
+                    ${shortlistVendors.map(v => `<td id="total-${v.id}">${calculateVendorScore(v.id).toFixed(1)}</td>`).join('')}
+                </tr>
+            `;
+
+            renderScoringSummary(shortlistVendors);
+        }
+
+        function updateScore(vendorId, criterionId, value) {
+            if (!appState.vendorScores) appState.vendorScores = {};
+            const key = `${vendorId}-${criterionId}`;
+            const score = parseInt(value) || 0;
+            appState.vendorScores[key] = Math.min(10, Math.max(0, score));
+            saveState();
+
+            const totalEl = document.getElementById(`total-${vendorId}`);
+            if (totalEl) totalEl.textContent = calculateVendorScore(vendorId).toFixed(1);
+
+            renderScoringSummary(appState.vendors.filter(v =>
+                ['warm', 'shortlist', 'finalist', 'winner'].includes(v.status)
+            ));
+        }
+
+        function calculateVendorScore(vendorId) {
+            let total = 0;
+            const totalWeight = appState.evaluation.reduce((sum, c) => sum + c.weight, 0);
+
+            appState.evaluation.forEach(c => {
+                const key = `${vendorId}-${c.id}`;
+                const score = (appState.vendorScores || {})[key] || 0;
+                total += (score / 10) * c.weight;
+            });
+
+            return totalWeight > 0 ? (total / totalWeight) * 100 : 0;
+        }
+
+        function renderScoringSummary(vendors) {
+            const el = document.getElementById('scoringSummary');
+            if (!el || vendors.length === 0) return;
+
+            const ranked = vendors.map(v => ({
+                ...v,
+                score: calculateVendorScore(v.id)
+            })).sort((a, b) => b.score - a.score);
+
+            el.innerHTML = `
+                <h3 style="margin-bottom: 15px;">Vendor Ranking</h3>
+                <div class="vendor-grid">
+                    ${ranked.map((v, i) => `
+                        <div class="vendor-card" style="border-left: 4px solid ${i === 0 ? 'var(--success)' : i === 1 ? 'var(--warning)' : 'var(--gray-200)'};">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span class="vendor-name">#${i + 1} ${sanitizeHTML(v.name)}</span>
+                                <span class="score-badge ${v.score >= 70 ? 'score-high' : v.score >= 40 ? 'score-medium' : 'score-low'}">
+                                    ${v.score.toFixed(1)}%
+                                </span>
+                            </div>
+                            <div style="margin-top: 10px; font-size: 0.9em; color: var(--gray-700);">
+                                ${v.tier} | ${v.status}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function saveScores() {
+            saveState();
+            showToast('Scores saved successfully', 'success');
+        }
+
+        function generateScoreReport() {
+            const shortlistVendors = appState.vendors.filter(v =>
+                ['warm', 'shortlist', 'finalist', 'winner'].includes(v.status)
+            );
+
+            const ranked = shortlistVendors.map(v => ({
+                ...v,
+                score: calculateVendorScore(v.id)
+            })).sort((a, b) => b.score - a.score);
+
+            const html = `
+                <h2>Vendor Scoring Report</h2>
+                <p><strong>Generated:</strong> ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+
+                <h3 style="margin-top: 20px;">Ranking Summary</h3>
+                <table class="evaluation-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Vendor</th>
+                            <th>Tier</th>
+                            <th>Score</th>
+                            <th>Recommendation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${ranked.map((v, i) => `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td><strong>${sanitizeHTML(v.name)}</strong></td>
+                                <td>${v.tier}</td>
+                                <td>${v.score.toFixed(1)}%</td>
+                                <td>${i === 0 ? '⭐ Recommended' : i < 3 ? 'Shortlist' : 'Consider'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+
+                <h3 style="margin-top: 20px;">Detailed Scores by Criterion</h3>
+                <table class="evaluation-table">
+                    <thead>
+                        <tr>
+                            <th>Criterion</th>
+                            <th>Weight</th>
+                            ${ranked.map(v => `<th>${sanitizeHTML(v.name)}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${appState.evaluation.map(c => `
+                            <tr>
+                                <td>${sanitizeHTML(c.criterion)}</td>
+                                <td>${c.weight}%</td>
+                                ${ranked.map(v => {
+                                    const key = `${v.id}-${c.id}`;
+                                    const score = (appState.vendorScores || {})[key] || 0;
+                                    return `<td>${score}/10</td>`;
+                                }).join('')}
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('reportOutput').innerHTML = html;
+        }
+
+        // Import/Export Functions
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+
+                    // Validate basic structure
+                    if (!data.tasks || !data.vendors) {
+                        throw new Error('Invalid data format');
+                    }
+
+                    // Merge imported data with appState
+                    Object.keys(data).forEach(key => {
+                        if (appState.hasOwnProperty(key)) {
+                            appState[key] = data[key];
+                        }
+                    });
+
+                    // Restore date objects
+                    appState.startDate = new Date(appState.startDate);
+                    appState.goLiveDate = new Date(appState.goLiveDate);
+                    appState.calendarMonth = new Date(appState.calendarMonth || '2025-12-01');
+
+                    saveState();
+                    renderAll();
+                    updateDashboard();
+                    showToast('Data imported successfully', 'success');
+                } catch (err) {
+                    showToast('Error importing data: ' + err.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; // Reset file input
+        }
+
+        function resetToDefaults() {
+            showConfirm('Reset all data to defaults? This cannot be undone.', () => {
+                localStorage.removeItem('hexagonRFP');
+                initializeFromDefault();
+                renderAll();
+                updateDashboard();
+                showToast('Data reset to defaults', 'success');
+            });
+        }
+
+        // Update Milestones button
+        function addMilestone() {
+            openMilestoneModal();
+        }
+
+        // Update Stakeholder button
+        function addStakeholder() {
+            openStakeholderModal();
+        }
+
         // Close modal when clicking outside
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = 'none';
             }
         }
+
+        // Keyboard navigation for tabs
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+            }
+        });
     </script>
 </body>
 </html>
