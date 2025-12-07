@@ -1961,7 +1961,8 @@
                 });
 
                 milestonesOnDay.forEach(m => {
-                    html += `<div class="calendar-event milestone" title="${m.name}">🎯 ${m.name.substring(0, 12)}${m.name.length > 12 ? '...' : ''}</div>`;
+                    const mTitle = m.title || m.name;
+                    html += `<div class="calendar-event milestone" title="${mTitle}">🎯 ${mTitle.substring(0, 12)}${mTitle.length > 12 ? '...' : ''}</div>`;
                 });
 
                 html += '</div>';
@@ -2025,19 +2026,20 @@
             }
             html += '</div>';
 
-            // Task rows
-            const phases = ['discovery', 'documentation', 'evaluation', 'selection'];
-
-            tasks.filter(t => t.dueDate).forEach((task, i) => {
+            // Task rows - use actual task phase for coloring
+            tasks.filter(t => t.dueDate).forEach((task) => {
                 const taskDate = new Date(task.dueDate);
                 const dayOffset = Math.ceil((taskDate - minDate) / (1000 * 60 * 60 * 24));
-                const phase = phases[i % 4];
+                const phase = task.phase || 'discovery';
+                const statusLabel = task.status === 'notstarted' ? 'Not Started' :
+                                   task.status === 'inprogress' ? 'In Progress' :
+                                   task.status === 'complete' ? 'Complete' : task.status;
 
                 html += `<div class="gantt-row" style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
-                    <div style="width: 200px; padding-right: 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${task.name}</div>
+                    <div style="width: 250px; padding-right: 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${task.name}">${task.name}</div>
                     <div style="position: relative; flex: 1; height: 24px;">
-                        <div class="gantt-bar ${phase}" style="position: absolute; left: ${dayOffset * dayWidth}px; width: ${dayWidth * 5}px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: white;">
-                            ${task.status}
+                        <div class="gantt-bar ${phase}" style="position: absolute; left: ${dayOffset * dayWidth}px; width: ${dayWidth * 5}px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white;">
+                            ${statusLabel}
                         </div>
                     </div>
                 </div>`;
@@ -2048,8 +2050,9 @@
                 const mDate = new Date(m.date);
                 const dayOffset = Math.ceil((mDate - minDate) / (1000 * 60 * 60 * 24));
 
+                const mTitle = m.title || m.name;
                 html += `<div class="gantt-row" style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
-                    <div style="width: 200px; padding-right: 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🎯 ${m.name}</div>
+                    <div style="width: 200px; padding-right: 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🎯 ${mTitle}</div>
                     <div style="position: relative; flex: 1; height: 24px;">
                         <div style="position: absolute; left: ${dayOffset * dayWidth}px; width: 24px; height: 24px; background: #764ba2; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                             <span style="color: white; font-size: 12px;">◆</span>
