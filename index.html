@@ -374,6 +374,7 @@
             <button class="nav-tab" onclick="switchTab('evaluation')">✅ Evaluation</button>
             <button class="nav-tab" onclick="switchTab('vendors')">🏢 Vendors</button>
             <button class="nav-tab" onclick="switchTab('risks')">⚠️ Risks</button>
+            <button class="nav-tab" onclick="switchTab('stakeholders')">👥 Stakeholders</button>
             <button class="nav-tab" onclick="switchTab('reports')">📈 Reports</button>
         </div>
 
@@ -504,6 +505,45 @@
             </div>
         </div>
 
+        <!-- Stakeholders -->
+        <div id="stakeholders" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Stakeholder Management</h2>
+                    <button class="btn btn-primary" onclick="addStakeholder()">➕ Add Stakeholder</button>
+                </div>
+                <div class="vendor-grid" id="stakeholderGrid"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>RACI Matrix</h2>
+                    <button class="btn btn-success" onclick="saveRaci()">💾 Save RACI</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="evaluation-table" id="raciTable">
+                        <thead>
+                            <tr id="raciHeader">
+                                <th style="min-width: 200px;">Activity / Deliverable</th>
+                                <!-- Stakeholder columns added dynamically -->
+                            </tr>
+                        </thead>
+                        <tbody id="raciBody"></tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: var(--gray-50); border-radius: 8px;">
+                    <strong>Legend:</strong>
+                    <span style="margin-left: 15px; padding: 4px 8px; background: #e3f2fd; border-radius: 4px;">R = Responsible</span>
+                    <span style="margin-left: 10px; padding: 4px 8px; background: #fff9e5; border-radius: 4px;">A = Accountable</span>
+                    <span style="margin-left: 10px; padding: 4px 8px; background: #e8f5e9; border-radius: 4px;">C = Consulted</span>
+                    <span style="margin-left: 10px; padding: 4px 8px; background: #fce4ec; border-radius: 4px;">I = Informed</span>
+                </div>
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-primary" onclick="addRaciActivity()">➕ Add Activity</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Reports -->
         <div id="reports" class="tab-content">
             <div class="card">
@@ -627,6 +667,25 @@
                 {id: 4, criterion: "Post-Implementation Track Record", weight: 15, goodLooks: "3+ AMS references for similar deployments, renewal rates >80%, specific to support", redFlags: "'We've done many SAP implementations' without AMS examples"},
                 {id: 5, criterion: "Commercial Model", weight: 10, goodLooks: "Transparent pricing, clear support vs. enhancement boundary, reasonable SLAs with teeth", redFlags: "Everything is 'enhancement' (extra cost), vague SLAs, no penalty clauses"},
                 {id: 6, criterion: "Value Beyond Support", weight: 5, goodLooks: "Proactive optimisation examples, continuous improvement methodology, release management", redFlags: "Break-fix mentality only, reactive not proactive"}
+            ],
+            stakeholders: [
+                {id: 1, name: "CIO", role: "Executive Sponsor", department: "IT Leadership", email: "", influence: "high", interest: "high", notes: "Ultimate decision maker for SAP AMS selection"},
+                {id: 2, name: "CFO", role: "Budget Owner", department: "Finance", email: "", influence: "high", interest: "medium", notes: "Controls budget envelope and commercial approval"},
+                {id: 3, name: "Procurement Director", role: "Process Owner", department: "Procurement", email: "", influence: "high", interest: "high", notes: "Leads RFP process and vendor negotiations"},
+                {id: 4, name: "USA Ops Lead", role: "Key User", department: "US Operations", email: "", influence: "medium", interest: "high", notes: "Critical for US Go-Live requirements"},
+                {id: 5, name: "IT Ops Manager", role: "Technical Lead", department: "IT Operations", email: "", influence: "medium", interest: "high", notes: "Manages current SAP support, ticket data owner"},
+                {id: 6, name: "Global Procurement", role: "Stakeholder", department: "Procurement", email: "", influence: "medium", interest: "medium", notes: "Coordinates global vendor management"},
+                {id: 7, name: "Programme Lead", role: "Project Manager", department: "PMO", email: "", influence: "medium", interest: "high", notes: "Day-to-day RFP coordination"}
+            ],
+            raciActivities: [
+                {id: 1, activity: "RFP Strategy & Planning", raci: {1: "A", 2: "C", 3: "R", 4: "I", 5: "C", 6: "C", 7: "R"}},
+                {id: 2, activity: "Vendor Long List Creation", raci: {1: "I", 2: "I", 3: "A", 4: "C", 5: "C", 6: "R", 7: "R"}},
+                {id: 3, activity: "Selection Questionnaire (SQ)", raci: {1: "I", 2: "I", 3: "A", 4: "C", 5: "C", 6: "C", 7: "R"}},
+                {id: 4, activity: "Vendor Evaluation & Scoring", raci: {1: "A", 2: "C", 3: "R", 4: "R", 5: "R", 6: "C", 7: "R"}},
+                {id: 5, activity: "Commercial Negotiation", raci: {1: "A", 2: "R", 3: "R", 4: "I", 5: "I", 6: "C", 7: "C"}},
+                {id: 6, activity: "Contract Award Decision", raci: {1: "A", 2: "A", 3: "R", 4: "C", 5: "C", 6: "I", 7: "I"}},
+                {id: 7, activity: "Transition Planning", raci: {1: "I", 2: "I", 3: "C", 4: "R", 5: "A", 6: "I", 7: "R"}},
+                {id: 8, activity: "US Go-Live Support", raci: {1: "I", 2: "I", 3: "I", 4: "A", 5: "R", 6: "I", 7: "C"}}
             ]
         };
 
@@ -639,6 +698,8 @@
             risks: [],
             milestones: [],
             evaluation: [],
+            stakeholders: [],
+            raciActivities: [],
             currentFilter: 'all',
             currentVendorFilter: 'all',
             editingTaskId: null
@@ -674,6 +735,8 @@
             appState.risks = JSON.parse(JSON.stringify(INITIAL_DATA.risks));
             appState.milestones = JSON.parse(JSON.stringify(INITIAL_DATA.milestones));
             appState.evaluation = JSON.parse(JSON.stringify(INITIAL_DATA.evaluation));
+            appState.stakeholders = JSON.parse(JSON.stringify(INITIAL_DATA.stakeholders));
+            appState.raciActivities = JSON.parse(JSON.stringify(INITIAL_DATA.raciActivities));
             saveState();
         }
 
@@ -783,6 +846,8 @@
             renderEvaluationTable();
             renderVendorGrid();
             renderRiskList();
+            renderStakeholders();
+            renderRaciMatrix();
         }
 
         function renderTaskList() {
@@ -1375,6 +1440,171 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+        }
+
+        // Stakeholder Management
+        function renderStakeholders() {
+            const html = appState.stakeholders.map(s => `
+                <div class="vendor-card">
+                    <div class="vendor-name">${s.name}</div>
+                    <span class="vendor-status" style="background: ${s.influence === 'high' ? '#ffe5e5' : '#e3f2fd'}; color: ${s.influence === 'high' ? '#c62828' : '#1976d2'};">
+                        ${s.influence === 'high' ? '⬆️ High Influence' : '➡️ Medium Influence'}
+                    </span>
+                    <div style="margin: 10px 0; font-size: 0.9em; color: var(--gray-700);">
+                        <strong>${s.role}</strong> | ${s.department}
+                    </div>
+                    <div style="font-size: 0.9em; margin: 10px 0; line-height: 1.5;">${s.notes}</div>
+                    <div style="font-size: 0.85em; color: var(--gray-700); margin: 10px 0; padding-top: 10px; border-top: 1px solid var(--gray-200);">
+                        <strong>Interest Level:</strong>
+                        <span style="padding: 2px 8px; border-radius: 10px; background: ${s.interest === 'high' ? '#e8f5e9' : '#fff9e5'}; color: ${s.interest === 'high' ? '#2e7d32' : '#996600'};">
+                            ${s.interest === 'high' ? 'High' : 'Medium'}
+                        </span>
+                    </div>
+                    <button class="btn btn-small btn-danger" style="width: 100%; margin-top: 10px;" onclick="deleteStakeholder(${s.id})">Delete</button>
+                </div>
+            `).join('');
+
+            const el = document.getElementById('stakeholderGrid');
+            if (el) el.innerHTML = html || '<p>No stakeholders added yet</p>';
+        }
+
+        function addStakeholder() {
+            const name = prompt('Stakeholder name/title:');
+            if (!name) return;
+
+            const role = prompt('Role (e.g., Executive Sponsor, Key User, Technical Lead):') || 'Stakeholder';
+            const department = prompt('Department:') || '';
+            const influence = confirm('Is this a HIGH influence stakeholder? (OK=High, Cancel=Medium)') ? 'high' : 'medium';
+            const interest = confirm('Is this a HIGH interest stakeholder? (OK=High, Cancel=Medium)') ? 'high' : 'medium';
+
+            const newId = Math.max(...appState.stakeholders.map(s => s.id), 0) + 1;
+            appState.stakeholders.push({
+                id: newId,
+                name: name,
+                role: role,
+                department: department,
+                email: '',
+                influence: influence,
+                interest: interest,
+                notes: ''
+            });
+
+            saveState();
+            renderStakeholders();
+            renderRaciMatrix();
+        }
+
+        function deleteStakeholder(id) {
+            if (confirm('Delete this stakeholder? This will also remove them from the RACI matrix.')) {
+                appState.stakeholders = appState.stakeholders.filter(s => s.id !== id);
+                // Remove from RACI activities
+                appState.raciActivities.forEach(a => {
+                    delete a.raci[id];
+                });
+                saveState();
+                renderStakeholders();
+                renderRaciMatrix();
+            }
+        }
+
+        // RACI Matrix
+        function renderRaciMatrix() {
+            // Render header
+            const headerHtml = `
+                <th style="min-width: 200px;">Activity / Deliverable</th>
+                ${appState.stakeholders.map(s => `<th style="min-width: 80px; text-align: center;">${s.name}</th>`).join('')}
+                <th style="min-width: 80px;">Actions</th>
+            `;
+            const headerEl = document.getElementById('raciHeader');
+            if (headerEl) headerEl.innerHTML = headerHtml;
+
+            // Render body
+            const bodyHtml = appState.raciActivities.map(a => `
+                <tr>
+                    <td>
+                        <div class="editable" contenteditable="true" data-activity-id="${a.id}"
+                            onblur="updateActivityName(${a.id}, this.textContent)">${a.activity}</div>
+                    </td>
+                    ${appState.stakeholders.map(s => `
+                        <td style="text-align: center;">
+                            <select class="form-select" style="width: 60px; padding: 4px; text-align: center;
+                                background: ${getRaciColor(a.raci[s.id])};"
+                                onchange="updateRaci(${a.id}, ${s.id}, this.value)">
+                                <option value="" ${!a.raci[s.id] ? 'selected' : ''}>-</option>
+                                <option value="R" ${a.raci[s.id] === 'R' ? 'selected' : ''}>R</option>
+                                <option value="A" ${a.raci[s.id] === 'A' ? 'selected' : ''}>A</option>
+                                <option value="C" ${a.raci[s.id] === 'C' ? 'selected' : ''}>C</option>
+                                <option value="I" ${a.raci[s.id] === 'I' ? 'selected' : ''}>I</option>
+                            </select>
+                        </td>
+                    `).join('')}
+                    <td style="text-align: center;">
+                        <button class="btn btn-small btn-danger" onclick="deleteRaciActivity(${a.id})">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            const bodyEl = document.getElementById('raciBody');
+            if (bodyEl) bodyEl.innerHTML = bodyHtml || '<tr><td colspan="100%">No activities defined</td></tr>';
+        }
+
+        function getRaciColor(value) {
+            switch(value) {
+                case 'R': return '#e3f2fd';
+                case 'A': return '#fff9e5';
+                case 'C': return '#e8f5e9';
+                case 'I': return '#fce4ec';
+                default: return 'white';
+            }
+        }
+
+        function updateRaci(activityId, stakeholderId, value) {
+            const activity = appState.raciActivities.find(a => a.id === activityId);
+            if (activity) {
+                if (value) {
+                    activity.raci[stakeholderId] = value;
+                } else {
+                    delete activity.raci[stakeholderId];
+                }
+                saveState();
+                renderRaciMatrix();
+            }
+        }
+
+        function updateActivityName(activityId, name) {
+            const activity = appState.raciActivities.find(a => a.id === activityId);
+            if (activity && name.trim()) {
+                activity.activity = name.trim();
+                saveState();
+            }
+        }
+
+        function addRaciActivity() {
+            const activity = prompt('Activity/Deliverable name:');
+            if (!activity) return;
+
+            const newId = Math.max(...appState.raciActivities.map(a => a.id), 0) + 1;
+            appState.raciActivities.push({
+                id: newId,
+                activity: activity,
+                raci: {}
+            });
+
+            saveState();
+            renderRaciMatrix();
+        }
+
+        function deleteRaciActivity(id) {
+            if (confirm('Delete this activity from the RACI matrix?')) {
+                appState.raciActivities = appState.raciActivities.filter(a => a.id !== id);
+                saveState();
+                renderRaciMatrix();
+            }
+        }
+
+        function saveRaci() {
+            saveState();
+            alert('✓ RACI matrix saved successfully!');
         }
 
         function closeModal(id) {
