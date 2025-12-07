@@ -9,8 +9,9 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --primary: #0066cc;
-            --primary-dark: #004d99;
+            --primary: #079fdb;
+            --primary-dark: #0447bb;
+            --primary-light: #a1b7e2;
             --success: #28a745;
             --warning: #ffc107;
             --danger: #dc3545;
@@ -20,15 +21,19 @@
             --gray-700: #495057;
             --gray-900: #212529;
             --bg-primary: #ffffff;
-            --bg-secondary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-secondary: linear-gradient(135deg, #079fdb 0%, #0447bb 100%);
             --text-primary: #212529;
             --text-secondary: #495057;
+            --hexagon-cyan: #079fdb;
+            --hexagon-deep-blue: #0447bb;
+            --hexagon-navy: #242c3c;
+            --hexagon-grayish-blue: #5c74a7;
         }
 
         /* Dark Mode */
         [data-theme="dark"] {
-            --primary: #4da3ff;
-            --primary-dark: #2b8aff;
+            --primary: #079fdb;
+            --primary-dark: #0447bb;
             --success: #48c774;
             --warning: #ffdd57;
             --danger: #f14668;
@@ -706,11 +711,11 @@
             cursor: pointer;
         }
 
-        .gantt-bar.discovery { background: #667eea; }
-        .gantt-bar.documentation { background: #28a745; }
-        .gantt-bar.evaluation { background: #ffc107; color: #333; }
-        .gantt-bar.selection { background: #dc3545; }
-        .gantt-bar.milestone { background: #764ba2; }
+        .gantt-bar.discovery { background: #079fdb; }
+        .gantt-bar.documentation { background: #0447bb; }
+        .gantt-bar.evaluation { background: #5c74a7; }
+        .gantt-bar.selection { background: #242c3c; }
+        .gantt-bar.milestone { background: #a1b7e2; color: #242c3c; }
 
         /* Document Repository Styles */
         .folder-tree {
@@ -801,6 +806,7 @@
             <button class="nav-tab" onclick="switchTab('scoring', event)" role="tab" aria-selected="false" aria-controls="scoring" id="tab-scoring">Scoring</button>
             <button class="nav-tab" onclick="switchTab('vendors', event)" role="tab" aria-selected="false" aria-controls="vendors" id="tab-vendors">Vendors</button>
             <button class="nav-tab" onclick="switchTab('documents', event)" role="tab" aria-selected="false" aria-controls="documents" id="tab-documents">Documents</button>
+            <button class="nav-tab" onclick="switchTab('meetings', event)" role="tab" aria-selected="false" aria-controls="meetings" id="tab-meetings">Meetings</button>
             <button class="nav-tab" onclick="switchTab('risks', event)" role="tab" aria-selected="false" aria-controls="risks" id="tab-risks">Risks</button>
             <button class="nav-tab" onclick="switchTab('decisions', event)" role="tab" aria-selected="false" aria-controls="decisions" id="tab-decisions">Decisions</button>
             <button class="nav-tab" onclick="switchTab('stakeholders', event)" role="tab" aria-selected="false" aria-controls="stakeholders" id="tab-stakeholders">Stakeholders</button>
@@ -907,11 +913,11 @@
                 </div>
                 <div style="margin-bottom: 15px; padding: 10px; background: var(--gray-50); border-radius: 8px;">
                     <strong>Phase Legend:</strong>
-                    <span style="margin-left: 15px; padding: 4px 12px; background: #667eea; color: white; border-radius: 4px;">Discovery</span>
-                    <span style="margin-left: 10px; padding: 4px 12px; background: #28a745; color: white; border-radius: 4px;">Documentation</span>
-                    <span style="margin-left: 10px; padding: 4px 12px; background: #ffc107; color: #333; border-radius: 4px;">Evaluation</span>
-                    <span style="margin-left: 10px; padding: 4px 12px; background: #dc3545; color: white; border-radius: 4px;">Selection</span>
-                    <span style="margin-left: 10px; padding: 4px 12px; background: #764ba2; color: white; border-radius: 4px;">Milestone</span>
+                    <span style="margin-left: 15px; padding: 4px 12px; background: #079fdb; color: white; border-radius: 4px;">Discovery</span>
+                    <span style="margin-left: 10px; padding: 4px 12px; background: #0447bb; color: white; border-radius: 4px;">Documentation</span>
+                    <span style="margin-left: 10px; padding: 4px 12px; background: #5c74a7; color: white; border-radius: 4px;">Evaluation</span>
+                    <span style="margin-left: 10px; padding: 4px 12px; background: #242c3c; color: white; border-radius: 4px;">Selection</span>
+                    <span style="margin-left: 10px; padding: 4px 12px; background: #a1b7e2; color: #242c3c; border-radius: 4px;">Milestone</span>
                 </div>
                 <div class="gantt-container" id="ganttChart"></div>
             </div>
@@ -1004,9 +1010,55 @@
             <div class="card">
                 <div class="card-header">
                     <h2>Document Repository</h2>
-                    <button class="btn btn-primary" onclick="addDocument()">➕ Add Document</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="openUploadModal()">📤 Upload Document</button>
+                        <button class="btn btn-primary" onclick="addDocument()">➕ Add Document</button>
+                    </div>
                 </div>
                 <div class="folder-tree" id="documentTree"></div>
+            </div>
+        </div>
+
+        <!-- Meetings -->
+        <div id="meetings" class="tab-content" role="tabpanel" aria-labelledby="tab-meetings">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Meeting Calendar</h2>
+                    <button class="btn btn-primary" onclick="openMeetingModal()">➕ Add Meeting</button>
+                </div>
+                <div class="calendar-nav">
+                    <button class="btn btn-primary" onclick="changeMeetingMonth(-1)">◀ Previous</button>
+                    <h3 id="meetingCalendarTitle">December 2025</h3>
+                    <button class="btn btn-primary" onclick="changeMeetingMonth(1)">Next ▶</button>
+                </div>
+                <div class="calendar-grid" id="meetingCalendarGrid">
+                    <div class="calendar-header">Sun</div>
+                    <div class="calendar-header">Mon</div>
+                    <div class="calendar-header">Tue</div>
+                    <div class="calendar-header">Wed</div>
+                    <div class="calendar-header">Thu</div>
+                    <div class="calendar-header">Fri</div>
+                    <div class="calendar-header">Sat</div>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: var(--gray-50); border-radius: 8px;">
+                    <strong>Legend:</strong>
+                    <span style="margin-left: 15px; padding: 4px 8px; background: #e8d5ff; color: #764ba2; border-radius: 4px;">Meetings</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Upcoming Meetings</h2>
+                </div>
+                <div id="meetingsList"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Meeting Notes</h2>
+                    <button class="btn btn-primary" onclick="openMeetingNotesModal()">📤 Upload Notes</button>
+                </div>
+                <div id="meetingNotesList"></div>
             </div>
         </div>
 
@@ -1111,6 +1163,14 @@
                     <button class="btn btn-primary" onclick="generateScoreReport()">Scoring Report</button>
                 </div>
                 <div id="reportOutput"></div>
+                <div style="margin-top: 20px; padding: 15px; background: var(--gray-50); border-radius: 8px;">
+                    <strong>Export Report:</strong>
+                    <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-success" onclick="exportToWord()">📄 Export to Word (.docx)</button>
+                        <button class="btn btn-success" onclick="exportToPowerPoint()">📽️ Export to PowerPoint (.pptx)</button>
+                        <button class="btn btn-success" onclick="printReport()">🖨️ Print Report</button>
+                    </div>
+                </div>
             </div>
 
             <div class="card">
@@ -1387,6 +1447,124 @@
         </div>
     </div>
 
+    <!-- Meeting Modal -->
+    <div id="meetingModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('meetingModal')">&times;</span>
+            <h2 id="meetingModalTitle">Add New Meeting</h2>
+            <div class="form-group">
+                <label class="form-label" for="meetingTitle">Meeting Title *</label>
+                <input type="text" class="form-input" id="meetingTitle" required>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="meetingDate">Date *</label>
+                    <input type="date" class="form-input" id="meetingDate" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="meetingTime">Time</label>
+                    <input type="time" class="form-input" id="meetingTime">
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="meetingDuration">Duration (hours)</label>
+                    <input type="number" class="form-input" id="meetingDuration" min="0.5" step="0.5" value="1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="meetingLocation">Location</label>
+                    <input type="text" class="form-input" id="meetingLocation" placeholder="Room / Teams / Zoom">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="meetingAttendees">Attendees</label>
+                <input type="text" class="form-input" id="meetingAttendees" placeholder="e.g., CIO, Procurement Director, Finance">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="meetingAgenda">Agenda</label>
+                <textarea class="form-textarea" id="meetingAgenda" placeholder="Meeting topics and objectives..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="meetingType">Meeting Type</label>
+                <select class="form-select" id="meetingType">
+                    <option value="internal">Internal</option>
+                    <option value="vendor">Vendor Meeting</option>
+                    <option value="steering">Steering Committee</option>
+                    <option value="workshop">Workshop</option>
+                    <option value="review">Review Meeting</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="saveMeeting()">Save Meeting</button>
+        </div>
+    </div>
+
+    <!-- Document Upload Modal -->
+    <div id="uploadModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('uploadModal')">&times;</span>
+            <h2>Upload Document</h2>
+            <div class="form-group">
+                <label class="form-label" for="uploadFolder">Select Folder *</label>
+                <select class="form-select" id="uploadFolder">
+                    <option value="discovery">1. Discovery & Strategy</option>
+                    <option value="documentation">2. RFP Documentation</option>
+                    <option value="evaluation">3. Evaluation & Selection</option>
+                    <option value="selection">4. Final Selection & Award</option>
+                    <option value="governance">5. Programme Governance</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="uploadFile">Select File *</label>
+                <input type="file" class="form-input" id="uploadFile" accept=".doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.txt,.csv" style="padding: 10px;">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="uploadStatus">Document Status</label>
+                <select class="form-select" id="uploadStatus">
+                    <option value="draft">Draft</option>
+                    <option value="template">Template</option>
+                    <option value="final">Final</option>
+                </select>
+            </div>
+            <div style="background: var(--gray-50); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <p style="font-size: 0.9em; color: var(--gray-700);">
+                    <strong>Note:</strong> Files are stored locally in your browser. Supported formats: Word, Excel, PowerPoint, PDF, Text, CSV.
+                </p>
+            </div>
+            <button class="btn btn-primary" onclick="uploadDocument()">📤 Upload Document</button>
+        </div>
+    </div>
+
+    <!-- Meeting Notes Upload Modal -->
+    <div id="meetingNotesModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('meetingNotesModal')">&times;</span>
+            <h2>Upload Meeting Notes</h2>
+            <div class="form-group">
+                <label class="form-label" for="notesTitle">Title *</label>
+                <input type="text" class="form-input" id="notesTitle" placeholder="e.g., Kickoff Meeting Notes - 8 Dec 2025">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="notesMeeting">Related Meeting</label>
+                <select class="form-select" id="notesMeeting">
+                    <option value="">-- Select Meeting (Optional) --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="notesFile">Upload File</label>
+                <input type="file" class="form-input" id="notesFile" accept=".doc,.docx,.pdf,.txt,.md" style="padding: 10px;">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="notesContent">Or Enter Notes Directly</label>
+                <textarea class="form-textarea" id="notesContent" rows="8" placeholder="Type meeting notes here..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="notesDate">Date</label>
+                <input type="date" class="form-input" id="notesDate">
+            </div>
+            <button class="btn btn-primary" onclick="saveMeetingNotes()">💾 Save Notes</button>
+        </div>
+    </div>
+
     <script>
         // Initial Data from Hexagon Excel File
         const INITIAL_DATA = {
@@ -1512,7 +1690,15 @@
                     {id: 32, name: "Decision Log.xlsx", status: "template", folder: "governance"},
                     {id: 33, name: "Issues Log.xlsx", status: "template", folder: "governance"}
                 ]}
-            ]
+            ],
+            meetings: [
+                {id: 1, title: "RFP Kick-off Meeting", date: "2025-12-08", time: "09:00", duration: 2, location: "Main Conference Room", attendees: "CIO, Procurement Director, Programme Lead", agenda: "Project objectives, timeline review, team introductions", type: "internal"},
+                {id: 2, title: "Stakeholder Workshop - USA Requirements", date: "2025-12-10", time: "14:00", duration: 3, location: "Teams", attendees: "USA Ops Lead, IT Ops Manager, CIO", agenda: "Deep dive into US operations requirements and June vs Sept scenarios", type: "workshop"},
+                {id: 3, title: "Deloitte Report Review", date: "2025-12-09", time: "10:00", duration: 1.5, location: "Teams", attendees: "Deloitte Rep, CIO, Programme Lead", agenda: "Review due diligence findings, identify gaps", type: "review"},
+                {id: 4, title: "CFO Budget Discussion", date: "2025-12-11", time: "11:00", duration: 1, location: "CFO Office", attendees: "CFO, CIO, Global Procurement", agenda: "Budget envelope discussion, commercial constraints", type: "internal"},
+                {id: 5, title: "Steering Committee Meeting", date: "2025-12-22", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "CIO, CFO, Procurement Director, Programme Lead", agenda: "Strategy review, milestone approval, risk escalation", type: "steering"}
+            ],
+            meetingNotes: []
         };
 
         // State Management
@@ -1528,6 +1714,10 @@
             raciActivities: [],
             documents: [],
             decisions: [],
+            meetings: [],
+            meetingNotes: [],
+            meetingCalendarMonth: new Date('2025-12-01'),
+            uploadedFiles: {},
             vendorScores: {},
             currentFilter: 'all',
             currentVendorFilter: 'all',
@@ -1561,6 +1751,7 @@
                     appState = { ...appState, ...loaded };
                     appState.startDate = new Date(appState.startDate);
                     appState.goLiveDate = new Date(appState.goLiveDate);
+                    appState.meetingCalendarMonth = new Date(appState.meetingCalendarMonth || '2025-12-01');
                 } catch(e) {
                     console.error('Error loading state:', e);
                     initializeFromDefault();
@@ -1580,6 +1771,8 @@
             appState.raciActivities = JSON.parse(JSON.stringify(INITIAL_DATA.raciActivities));
             appState.documents = JSON.parse(JSON.stringify(INITIAL_DATA.documents));
             appState.decisions = JSON.parse(JSON.stringify(INITIAL_DATA.decisions || []));
+            appState.meetings = JSON.parse(JSON.stringify(INITIAL_DATA.meetings || []));
+            appState.meetingNotes = JSON.parse(JSON.stringify(INITIAL_DATA.meetingNotes || []));
             appState.vendorScores = JSON.parse(JSON.stringify(INITIAL_DATA.vendorScores || {}));
             saveState();
         }
@@ -1752,6 +1945,9 @@
             renderGantt();
             renderDocuments();
             renderScoringTable();
+            renderMeetingCalendar();
+            renderMeetingsList();
+            renderMeetingNotesList();
         }
 
         // Check for overdue tasks
@@ -3344,6 +3540,556 @@
                 document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
             }
         });
+
+        // ==========================================
+        // MEETINGS FUNCTIONS
+        // ==========================================
+
+        function openMeetingModal() {
+            document.getElementById('meetingTitle').value = '';
+            document.getElementById('meetingDate').value = '';
+            document.getElementById('meetingTime').value = '';
+            document.getElementById('meetingDuration').value = '1';
+            document.getElementById('meetingLocation').value = '';
+            document.getElementById('meetingAttendees').value = '';
+            document.getElementById('meetingAgenda').value = '';
+            document.getElementById('meetingType').value = 'internal';
+            document.getElementById('meetingModalTitle').textContent = 'Add New Meeting';
+            document.getElementById('meetingModal').style.display = 'block';
+        }
+
+        function saveMeeting() {
+            const title = document.getElementById('meetingTitle').value.trim();
+            const date = document.getElementById('meetingDate').value;
+
+            if (!title || !date) {
+                showToast('Please enter meeting title and date', 'error');
+                return;
+            }
+
+            const newId = Math.max(...(appState.meetings || []).map(m => m.id), 0) + 1;
+            if (!appState.meetings) appState.meetings = [];
+
+            appState.meetings.push({
+                id: newId,
+                title: sanitizeHTML(title),
+                date: date,
+                time: document.getElementById('meetingTime').value || '09:00',
+                duration: parseFloat(document.getElementById('meetingDuration').value) || 1,
+                location: sanitizeHTML(document.getElementById('meetingLocation').value.trim()),
+                attendees: sanitizeHTML(document.getElementById('meetingAttendees').value.trim()),
+                agenda: sanitizeHTML(document.getElementById('meetingAgenda').value.trim()),
+                type: document.getElementById('meetingType').value
+            });
+
+            saveState();
+            renderMeetingCalendar();
+            renderMeetingsList();
+            closeModal('meetingModal');
+            showToast('Meeting added successfully', 'success');
+        }
+
+        function deleteMeeting(id) {
+            showConfirm('Delete this meeting?', () => {
+                appState.meetings = appState.meetings.filter(m => m.id !== id);
+                saveState();
+                renderMeetingCalendar();
+                renderMeetingsList();
+                showToast('Meeting deleted', 'success');
+            });
+        }
+
+        function changeMeetingMonth(delta) {
+            if (!appState.meetingCalendarMonth) {
+                appState.meetingCalendarMonth = new Date('2025-12-01');
+            }
+            const current = new Date(appState.meetingCalendarMonth);
+            current.setMonth(current.getMonth() + delta);
+            appState.meetingCalendarMonth = current;
+            renderMeetingCalendar();
+        }
+
+        function renderMeetingCalendar() {
+            const container = document.getElementById('meetingCalendarGrid');
+            const titleEl = document.getElementById('meetingCalendarTitle');
+            if (!container || !titleEl) return;
+
+            if (!appState.meetingCalendarMonth) {
+                appState.meetingCalendarMonth = new Date('2025-12-01');
+            }
+
+            const currentMonth = new Date(appState.meetingCalendarMonth);
+            const year = currentMonth.getFullYear();
+            const month = currentMonth.getMonth();
+
+            titleEl.textContent = currentMonth.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+
+            // Clear existing days (keep headers)
+            const headers = container.querySelectorAll('.calendar-header');
+            container.innerHTML = '';
+            headers.forEach(h => container.appendChild(h.cloneNode(true)));
+
+            // Add days with headers
+            const headerHTML = `
+                <div class="calendar-header">Sun</div>
+                <div class="calendar-header">Mon</div>
+                <div class="calendar-header">Tue</div>
+                <div class="calendar-header">Wed</div>
+                <div class="calendar-header">Thu</div>
+                <div class="calendar-header">Fri</div>
+                <div class="calendar-header">Sat</div>
+            `;
+            container.innerHTML = headerHTML;
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startDayOfWeek = firstDay.getDay();
+
+            // Empty cells for days before month starts
+            for (let i = 0; i < startDayOfWeek; i++) {
+                container.innerHTML += `<div class="calendar-day empty"></div>`;
+            }
+
+            // Days of the month
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayMeetings = (appState.meetings || []).filter(m => m.date === dateStr);
+
+                let eventsHtml = '';
+                dayMeetings.forEach(m => {
+                    const typeColor = m.type === 'steering' ? '#dc3545' :
+                                     m.type === 'vendor' ? '#28a745' :
+                                     m.type === 'workshop' ? '#ffc107' :
+                                     m.type === 'review' ? '#17a2b8' : '#764ba2';
+                    eventsHtml += `<div class="calendar-event" style="background: ${typeColor}20; color: ${typeColor}; font-size: 10px; padding: 2px 4px; margin: 1px 0; border-radius: 3px; cursor: pointer;" title="${m.title} - ${m.time}">${m.title.substring(0, 15)}${m.title.length > 15 ? '...' : ''}</div>`;
+                });
+
+                container.innerHTML += `
+                    <div class="calendar-day">
+                        <div class="calendar-date">${day}</div>
+                        ${eventsHtml}
+                    </div>
+                `;
+            }
+        }
+
+        function renderMeetingsList() {
+            const el = document.getElementById('meetingsList');
+            if (!el) return;
+
+            const meetings = (appState.meetings || []).sort((a, b) => new Date(a.date) - new Date(b.date));
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const upcoming = meetings.filter(m => new Date(m.date) >= today);
+            const past = meetings.filter(m => new Date(m.date) < today);
+
+            if (meetings.length === 0) {
+                el.innerHTML = '<p style="padding: 20px; color: var(--gray-700);">No meetings scheduled. Click "Add Meeting" to create one.</p>';
+                return;
+            }
+
+            let html = '';
+            if (upcoming.length > 0) {
+                html += '<h4 style="margin-bottom: 15px; color: var(--primary);">Upcoming Meetings</h4>';
+                html += upcoming.map(m => renderMeetingCard(m, false)).join('');
+            }
+            if (past.length > 0) {
+                html += '<h4 style="margin: 20px 0 15px; color: var(--gray-700);">Past Meetings</h4>';
+                html += past.slice(0, 5).map(m => renderMeetingCard(m, true)).join('');
+            }
+
+            el.innerHTML = html;
+        }
+
+        function renderMeetingCard(m, isPast) {
+            const typeLabels = {
+                'internal': 'Internal',
+                'vendor': 'Vendor',
+                'steering': 'Steering Committee',
+                'workshop': 'Workshop',
+                'review': 'Review'
+            };
+            const typeColors = {
+                'internal': '#764ba2',
+                'vendor': '#28a745',
+                'steering': '#dc3545',
+                'workshop': '#ffc107',
+                'review': '#17a2b8'
+            };
+
+            return `
+                <div class="meeting-card" style="background: ${isPast ? 'var(--gray-50)' : 'white'}; border: 1px solid var(--gray-200); border-left: 4px solid ${typeColors[m.type] || '#764ba2'}; border-radius: 8px; padding: 15px; margin-bottom: 10px; ${isPast ? 'opacity: 0.7;' : ''}">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <strong style="font-size: 1.1em;">${sanitizeHTML(m.title)}</strong>
+                            <span style="margin-left: 10px; padding: 2px 8px; border-radius: 10px; font-size: 0.8em; background: ${typeColors[m.type]}20; color: ${typeColors[m.type]};">${typeLabels[m.type] || 'Meeting'}</span>
+                        </div>
+                        <button class="btn btn-small btn-danger" onclick="deleteMeeting(${m.id})">Delete</button>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.9em; color: var(--gray-700);">
+                        <p><strong>Date:</strong> ${formatDate(m.date)} at ${m.time || 'TBD'} (${m.duration || 1}h)</p>
+                        <p><strong>Location:</strong> ${m.location || 'TBD'}</p>
+                        <p><strong>Attendees:</strong> ${m.attendees || 'TBD'}</p>
+                        ${m.agenda ? `<p style="margin-top: 8px;"><strong>Agenda:</strong> ${m.agenda}</p>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // MEETING NOTES FUNCTIONS
+        // ==========================================
+
+        function openMeetingNotesModal() {
+            document.getElementById('notesTitle').value = '';
+            document.getElementById('notesContent').value = '';
+            document.getElementById('notesDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('notesFile').value = '';
+
+            // Populate meetings dropdown
+            const select = document.getElementById('notesMeeting');
+            select.innerHTML = '<option value="">-- Select Meeting (Optional) --</option>';
+            (appState.meetings || []).forEach(m => {
+                select.innerHTML += `<option value="${m.id}">${m.title} (${formatDate(m.date)})</option>`;
+            });
+
+            document.getElementById('meetingNotesModal').style.display = 'block';
+        }
+
+        function saveMeetingNotes() {
+            const title = document.getElementById('notesTitle').value.trim();
+            if (!title) {
+                showToast('Please enter a title for the notes', 'error');
+                return;
+            }
+
+            const fileInput = document.getElementById('notesFile');
+            const content = document.getElementById('notesContent').value.trim();
+
+            if (!content && (!fileInput.files || fileInput.files.length === 0)) {
+                showToast('Please enter notes or upload a file', 'error');
+                return;
+            }
+
+            const newId = Math.max(...(appState.meetingNotes || []).map(n => n.id), 0) + 1;
+            if (!appState.meetingNotes) appState.meetingNotes = [];
+
+            const note = {
+                id: newId,
+                title: sanitizeHTML(title),
+                meetingId: document.getElementById('notesMeeting').value || null,
+                date: document.getElementById('notesDate').value,
+                content: sanitizeHTML(content),
+                hasFile: false,
+                fileName: ''
+            };
+
+            // Handle file upload
+            if (fileInput.files && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    note.hasFile = true;
+                    note.fileName = file.name;
+                    note.fileData = e.target.result;
+                    appState.meetingNotes.push(note);
+                    saveState();
+                    renderMeetingNotesList();
+                    closeModal('meetingNotesModal');
+                    showToast('Meeting notes saved', 'success');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                appState.meetingNotes.push(note);
+                saveState();
+                renderMeetingNotesList();
+                closeModal('meetingNotesModal');
+                showToast('Meeting notes saved', 'success');
+            }
+        }
+
+        function deleteMeetingNotes(id) {
+            showConfirm('Delete these meeting notes?', () => {
+                appState.meetingNotes = appState.meetingNotes.filter(n => n.id !== id);
+                saveState();
+                renderMeetingNotesList();
+                showToast('Notes deleted', 'success');
+            });
+        }
+
+        function renderMeetingNotesList() {
+            const el = document.getElementById('meetingNotesList');
+            if (!el) return;
+
+            const notes = (appState.meetingNotes || []).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            if (notes.length === 0) {
+                el.innerHTML = '<p style="padding: 20px; color: var(--gray-700);">No meeting notes uploaded yet. Click "Upload Notes" to add notes.</p>';
+                return;
+            }
+
+            el.innerHTML = notes.map(n => {
+                const meeting = n.meetingId ? (appState.meetings || []).find(m => m.id == n.meetingId) : null;
+                return `
+                    <div class="notes-card" style="background: white; border: 1px solid var(--gray-200); border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <strong style="font-size: 1.1em;">${sanitizeHTML(n.title)}</strong>
+                                ${n.hasFile ? '<span style="margin-left: 10px; padding: 2px 8px; border-radius: 10px; font-size: 0.8em; background: #e3f2fd; color: #1976d2;">📎 File Attached</span>' : ''}
+                            </div>
+                            <button class="btn btn-small btn-danger" onclick="deleteMeetingNotes(${n.id})">Delete</button>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 0.9em; color: var(--gray-700);">
+                            <p><strong>Date:</strong> ${formatDate(n.date)}</p>
+                            ${meeting ? `<p><strong>Related Meeting:</strong> ${meeting.title}</p>` : ''}
+                            ${n.content ? `<div style="margin-top: 10px; padding: 10px; background: var(--gray-50); border-radius: 4px; white-space: pre-wrap;">${sanitizeHTML(n.content)}</div>` : ''}
+                            ${n.hasFile ? `<p style="margin-top: 10px;"><button class="btn btn-small btn-primary" onclick="downloadNoteFile(${n.id})">📥 Download ${n.fileName}</button></p>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function downloadNoteFile(noteId) {
+            const note = appState.meetingNotes.find(n => n.id === noteId);
+            if (!note || !note.fileData) {
+                showToast('File not found', 'error');
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.href = note.fileData;
+            link.download = note.fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // ==========================================
+        // DOCUMENT UPLOAD FUNCTIONS
+        // ==========================================
+
+        function openUploadModal() {
+            document.getElementById('uploadFile').value = '';
+            document.getElementById('uploadFolder').value = 'discovery';
+            document.getElementById('uploadStatus').value = 'draft';
+            document.getElementById('uploadModal').style.display = 'block';
+        }
+
+        function uploadDocument() {
+            const fileInput = document.getElementById('uploadFile');
+            const folderId = document.getElementById('uploadFolder').value;
+            const status = document.getElementById('uploadStatus').value;
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showToast('Please select a file to upload', 'error');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB limit
+
+            if (file.size > maxSize) {
+                showToast('File size must be less than 5MB', 'error');
+                return;
+            }
+
+            const folder = appState.documents.find(f => f.id === folderId);
+            if (!folder) {
+                showToast('Invalid folder selected', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const newId = Math.max(...folder.documents.map(d => d.id), 100) + 1;
+
+                folder.documents.push({
+                    id: newId,
+                    name: file.name,
+                    status: status,
+                    folder: folderId,
+                    fileData: e.target.result,
+                    uploadDate: new Date().toISOString()
+                });
+
+                // Store file data separately to avoid localStorage limits
+                if (!appState.uploadedFiles) appState.uploadedFiles = {};
+                appState.uploadedFiles[newId] = e.target.result;
+
+                folder.expanded = true;
+                saveState();
+                renderDocuments();
+                closeModal('uploadModal');
+                showToast(`Document "${file.name}" uploaded successfully`, 'success');
+            };
+            reader.onerror = function() {
+                showToast('Error reading file', 'error');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ==========================================
+        // REPORT EXPORT FUNCTIONS
+        // ==========================================
+
+        function exportToWord() {
+            const reportContent = document.getElementById('reportOutput').innerHTML;
+            if (!reportContent || reportContent.trim() === '') {
+                showToast('Please generate a report first', 'error');
+                return;
+            }
+
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <title>Hexagon SAP AMS RFP Report</title>
+                    <style>
+                        body { font-family: Calibri, Arial, sans-serif; margin: 40px; line-height: 1.6; }
+                        h1, h2, h3 { color: #0447bb; }
+                        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+                        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+                        th { background-color: #079fdb; color: white; }
+                        .header { text-align: center; margin-bottom: 30px; }
+                        .logo { color: #079fdb; font-size: 24px; font-weight: bold; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div class="logo">HEXAGON</div>
+                        <p>SAP AMS RFP Programme</p>
+                    </div>
+                    ${reportContent}
+                    <hr style="margin-top: 40px;">
+                    <p style="font-size: 0.9em; color: #666;">Generated on ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob([htmlContent], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `Hexagon-RFP-Report-${new Date().toISOString().split('T')[0]}.doc`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('Report exported to Word format', 'success');
+        }
+
+        function exportToPowerPoint() {
+            const reportContent = document.getElementById('reportOutput').innerHTML;
+            if (!reportContent || reportContent.trim() === '') {
+                showToast('Please generate a report first', 'error');
+                return;
+            }
+
+            // Create a simple HTML-based presentation
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <title>Hexagon SAP AMS RFP Presentation</title>
+                    <style>
+                        body { font-family: Calibri, Arial, sans-serif; margin: 0; padding: 0; }
+                        .slide {
+                            width: 960px;
+                            height: 720px;
+                            padding: 60px;
+                            box-sizing: border-box;
+                            page-break-after: always;
+                            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                            position: relative;
+                        }
+                        .title-slide {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            text-align: center;
+                            background: linear-gradient(135deg, #079fdb 0%, #0447bb 100%);
+                            color: white;
+                        }
+                        .title-slide h1 { font-size: 48px; margin-bottom: 20px; }
+                        .title-slide p { font-size: 24px; }
+                        h1, h2, h3 { color: #0447bb; }
+                        .content-slide h2 { font-size: 32px; margin-bottom: 30px; border-bottom: 3px solid #079fdb; padding-bottom: 10px; }
+                        table { border-collapse: collapse; width: 100%; margin: 20px 0; font-size: 14px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; }
+                        th { background-color: #079fdb; color: white; }
+                        .footer { position: absolute; bottom: 20px; right: 40px; font-size: 12px; color: #666; }
+                        .logo { font-size: 18px; font-weight: bold; color: #079fdb; position: absolute; bottom: 20px; left: 40px; }
+                        @media print { .slide { page-break-after: always; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="slide title-slide">
+                        <h1>HEXAGON</h1>
+                        <p>SAP AMS RFP Programme Report</p>
+                        <p style="margin-top: 40px; font-size: 18px;">${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                    </div>
+                    <div class="slide content-slide">
+                        ${reportContent}
+                        <div class="logo">HEXAGON</div>
+                        <div class="footer">SAP AMS RFP Programme</div>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob([htmlContent], { type: 'application/vnd.ms-powerpoint' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `Hexagon-RFP-Presentation-${new Date().toISOString().split('T')[0]}.ppt`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('Report exported to PowerPoint format', 'success');
+        }
+
+        function printReport() {
+            const reportContent = document.getElementById('reportOutput').innerHTML;
+            if (!reportContent || reportContent.trim() === '') {
+                showToast('Please generate a report first', 'error');
+                return;
+            }
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Hexagon SAP AMS RFP Report</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+                        h1, h2, h3 { color: #0447bb; }
+                        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+                        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+                        th { background-color: #079fdb; color: white; }
+                        @media print { body { margin: 20px; } }
+                    </style>
+                </head>
+                <body>
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h1 style="color: #079fdb;">HEXAGON</h1>
+                        <p>SAP AMS RFP Programme Report</p>
+                    </div>
+                    ${reportContent}
+                    <hr style="margin-top: 40px;">
+                    <p style="font-size: 0.9em; color: #666;">Printed on ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
     </script>
 </body>
 </html>
