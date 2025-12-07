@@ -352,6 +352,200 @@
             .task-item { grid-template-columns: 1fr; }
             .vendor-grid { grid-template-columns: 1fr; }
         }
+
+        /* Calendar Styles */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            background: var(--gray-200);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .calendar-header {
+            background: var(--primary);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .calendar-day {
+            background: white;
+            min-height: 100px;
+            padding: 8px;
+            position: relative;
+        }
+
+        .calendar-day.other-month { background: var(--gray-50); opacity: 0.5; }
+        .calendar-day.today { background: #e3f2fd; }
+
+        .calendar-date {
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .calendar-event {
+            font-size: 0.75em;
+            padding: 2px 4px;
+            margin: 2px 0;
+            border-radius: 3px;
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .calendar-event.task { background: #e3f2fd; color: #1976d2; }
+        .calendar-event.milestone { background: #fff9e5; color: #996600; }
+
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-nav h3 { font-size: 1.3em; color: var(--primary); }
+
+        /* Gantt Chart Styles */
+        .gantt-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .gantt-header {
+            display: flex;
+            border-bottom: 2px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        .gantt-task-col {
+            min-width: 250px;
+            max-width: 250px;
+            padding: 10px;
+            font-weight: 600;
+            background: var(--gray-100);
+            border-right: 1px solid var(--gray-200);
+        }
+
+        .gantt-timeline {
+            display: flex;
+            flex: 1;
+        }
+
+        .gantt-month {
+            min-width: 120px;
+            padding: 10px;
+            text-align: center;
+            border-right: 1px solid var(--gray-200);
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        .gantt-row {
+            display: flex;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .gantt-task-name {
+            min-width: 250px;
+            max-width: 250px;
+            padding: 12px 10px;
+            border-right: 1px solid var(--gray-200);
+            font-size: 0.9em;
+        }
+
+        .gantt-bars {
+            display: flex;
+            flex: 1;
+            position: relative;
+            align-items: center;
+        }
+
+        .gantt-bar {
+            position: absolute;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            font-size: 0.75em;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .gantt-bar.discovery { background: #667eea; }
+        .gantt-bar.documentation { background: #28a745; }
+        .gantt-bar.evaluation { background: #ffc107; color: #333; }
+        .gantt-bar.selection { background: #dc3545; }
+        .gantt-bar.milestone { background: #764ba2; }
+
+        /* Document Repository Styles */
+        .folder-tree {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .folder-item {
+            margin: 5px 0;
+        }
+
+        .folder-header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .folder-header:hover { background: var(--gray-100); }
+
+        .folder-icon { margin-right: 10px; font-size: 1.2em; }
+        .folder-name { font-weight: 600; flex: 1; }
+        .folder-count { font-size: 0.85em; color: var(--gray-700); }
+
+        .folder-content {
+            margin-left: 30px;
+            display: none;
+        }
+
+        .folder-content.open { display: block; }
+
+        .document-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            margin: 4px 0;
+            background: white;
+            border-radius: 4px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .document-item:hover { background: var(--gray-100); }
+
+        .doc-icon { margin-right: 10px; }
+        .doc-name { flex: 1; font-size: 0.9em; }
+        .doc-status {
+            font-size: 0.75em;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .doc-status.draft { background: #fff9e5; color: #996600; }
+        .doc-status.review { background: #e3f2fd; color: #1976d2; }
+        .doc-status.final { background: #e8f5e9; color: #2e7d32; }
+        .doc-status.template { background: #fce4ec; color: #c51162; }
     </style>
 </head>
 <body>
@@ -370,9 +564,12 @@
         <div class="nav-tabs">
             <button class="nav-tab active" onclick="switchTab('dashboard')">📊 Dashboard</button>
             <button class="nav-tab" onclick="switchTab('workplan')">📋 Work Plan</button>
+            <button class="nav-tab" onclick="switchTab('calendar')">📅 Calendar</button>
+            <button class="nav-tab" onclick="switchTab('gantt')">📊 Gantt</button>
             <button class="nav-tab" onclick="switchTab('milestones')">🎯 Milestones</button>
             <button class="nav-tab" onclick="switchTab('evaluation')">✅ Evaluation</button>
             <button class="nav-tab" onclick="switchTab('vendors')">🏢 Vendors</button>
+            <button class="nav-tab" onclick="switchTab('documents')">📁 Documents</button>
             <button class="nav-tab" onclick="switchTab('risks')">⚠️ Risks</button>
             <button class="nav-tab" onclick="switchTab('stakeholders')">👥 Stakeholders</button>
             <button class="nav-tab" onclick="switchTab('reports')">📈 Reports</button>
@@ -434,6 +631,52 @@
             </div>
         </div>
 
+        <!-- Calendar -->
+        <div id="calendar" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Programme Calendar</h2>
+                </div>
+                <div class="calendar-nav">
+                    <button class="btn btn-primary" onclick="changeMonth(-1)">◀ Previous</button>
+                    <h3 id="calendarTitle">December 2025</h3>
+                    <button class="btn btn-primary" onclick="changeMonth(1)">Next ▶</button>
+                </div>
+                <div class="calendar-grid" id="calendarGrid">
+                    <div class="calendar-header">Sun</div>
+                    <div class="calendar-header">Mon</div>
+                    <div class="calendar-header">Tue</div>
+                    <div class="calendar-header">Wed</div>
+                    <div class="calendar-header">Thu</div>
+                    <div class="calendar-header">Fri</div>
+                    <div class="calendar-header">Sat</div>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: var(--gray-50); border-radius: 8px;">
+                    <strong>Legend:</strong>
+                    <span style="margin-left: 15px; padding: 4px 8px; background: #e3f2fd; color: #1976d2; border-radius: 4px;">Tasks</span>
+                    <span style="margin-left: 10px; padding: 4px 8px; background: #fff9e5; color: #996600; border-radius: 4px;">Milestones</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gantt Chart -->
+        <div id="gantt" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Gantt Chart - Programme Timeline</h2>
+                </div>
+                <div style="margin-bottom: 15px; padding: 10px; background: var(--gray-50); border-radius: 8px;">
+                    <strong>Phase Legend:</strong>
+                    <span style="margin-left: 15px; padding: 4px 12px; background: #667eea; color: white; border-radius: 4px;">Discovery</span>
+                    <span style="margin-left: 10px; padding: 4px 12px; background: #28a745; color: white; border-radius: 4px;">Documentation</span>
+                    <span style="margin-left: 10px; padding: 4px 12px; background: #ffc107; color: #333; border-radius: 4px;">Evaluation</span>
+                    <span style="margin-left: 10px; padding: 4px 12px; background: #dc3545; color: white; border-radius: 4px;">Selection</span>
+                    <span style="margin-left: 10px; padding: 4px 12px; background: #764ba2; color: white; border-radius: 4px;">Milestone</span>
+                </div>
+                <div class="gantt-container" id="ganttChart"></div>
+            </div>
+        </div>
+
         <!-- Milestones -->
         <div id="milestones" class="tab-content">
             <div class="card">
@@ -491,6 +734,17 @@
                     <button class="filter-btn" onclick="filterVendors('shortlist')">Shortlist</button>
                 </div>
                 <div class="vendor-grid" id="vendorGrid"></div>
+            </div>
+        </div>
+
+        <!-- Documents -->
+        <div id="documents" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Document Repository</h2>
+                    <button class="btn btn-primary" onclick="addDocument()">➕ Add Document</button>
+                </div>
+                <div class="folder-tree" id="documentTree"></div>
             </div>
         </div>
 
@@ -686,6 +940,51 @@
                 {id: 6, activity: "Contract Award Decision", raci: {1: "A", 2: "A", 3: "R", 4: "C", 5: "C", 6: "I", 7: "I"}},
                 {id: 7, activity: "Transition Planning", raci: {1: "I", 2: "I", 3: "C", 4: "R", 5: "A", 6: "I", 7: "R"}},
                 {id: 8, activity: "US Go-Live Support", raci: {1: "I", 2: "I", 3: "I", 4: "A", 5: "R", 6: "I", 7: "C"}}
+            ],
+            documents: [
+                {id: "discovery", name: "1. Discovery & Strategy", icon: "📂", documents: [
+                    {id: 1, name: "Project Charter.docx", status: "template", folder: "discovery"},
+                    {id: 2, name: "Stakeholder Register.xlsx", status: "draft", folder: "discovery"},
+                    {id: 3, name: "Deloitte Due Diligence Report.pdf", status: "final", folder: "discovery"},
+                    {id: 4, name: "Gap Analysis Summary.docx", status: "draft", folder: "discovery"},
+                    {id: 5, name: "USA Requirements List.xlsx", status: "template", folder: "discovery"},
+                    {id: 6, name: "Market Sounding Notes.docx", status: "template", folder: "discovery"},
+                    {id: 7, name: "Incumbent Strategy Notes.docx", status: "template", folder: "discovery"}
+                ]},
+                {id: "documentation", name: "2. RFP Documentation", icon: "📂", documents: [
+                    {id: 8, name: "Selection Questionnaire (SQ).docx", status: "draft", folder: "documentation"},
+                    {id: 9, name: "Vendor Long List.xlsx", status: "draft", folder: "documentation"},
+                    {id: 10, name: "Sourcing Strategy.docx", status: "template", folder: "documentation"},
+                    {id: 11, name: "Commercial Model Template.xlsx", status: "template", folder: "documentation"},
+                    {id: 12, name: "Pricing Template.xlsx", status: "template", folder: "documentation"},
+                    {id: 13, name: "RFP Document.docx", status: "template", folder: "documentation"},
+                    {id: 14, name: "Terms & Conditions.docx", status: "template", folder: "documentation"},
+                    {id: 15, name: "NDA Template.docx", status: "final", folder: "documentation"}
+                ]},
+                {id: "evaluation", name: "3. Evaluation & Selection", icon: "📂", documents: [
+                    {id: 16, name: "Evaluation Criteria Matrix.xlsx", status: "template", folder: "evaluation"},
+                    {id: 17, name: "Vendor Scorecard Template.xlsx", status: "template", folder: "evaluation"},
+                    {id: 18, name: "Presentation Agenda Template.docx", status: "template", folder: "evaluation"},
+                    {id: 19, name: "Reference Check Questions.docx", status: "template", folder: "evaluation"},
+                    {id: 20, name: "Technical Assessment Checklist.xlsx", status: "template", folder: "evaluation"},
+                    {id: 21, name: "Commercial Comparison Matrix.xlsx", status: "template", folder: "evaluation"}
+                ]},
+                {id: "selection", name: "4. Final Selection & Award", icon: "📂", documents: [
+                    {id: 22, name: "Recommendation Report.docx", status: "template", folder: "selection"},
+                    {id: 23, name: "Contract Draft.docx", status: "template", folder: "selection"},
+                    {id: 24, name: "SLA Document.docx", status: "template", folder: "selection"},
+                    {id: 25, name: "Transition Plan Template.docx", status: "template", folder: "selection"},
+                    {id: 26, name: "Executive Approval Form.docx", status: "template", folder: "selection"},
+                    {id: 27, name: "Vendor Notification Letters.docx", status: "template", folder: "selection"}
+                ]},
+                {id: "governance", name: "5. Programme Governance", icon: "📂", documents: [
+                    {id: 28, name: "RACI Matrix.xlsx", status: "draft", folder: "governance"},
+                    {id: 29, name: "Risk Register.xlsx", status: "draft", folder: "governance"},
+                    {id: 30, name: "Weekly Status Report Template.pptx", status: "template", folder: "governance"},
+                    {id: 31, name: "Steering Committee Pack.pptx", status: "template", folder: "governance"},
+                    {id: 32, name: "Decision Log.xlsx", status: "template", folder: "governance"},
+                    {id: 33, name: "Issues Log.xlsx", status: "template", folder: "governance"}
+                ]}
             ]
         };
 
@@ -700,9 +999,11 @@
             evaluation: [],
             stakeholders: [],
             raciActivities: [],
+            documents: [],
             currentFilter: 'all',
             currentVendorFilter: 'all',
-            editingTaskId: null
+            editingTaskId: null,
+            calendarMonth: new Date('2025-12-01')
         };
 
         // Initialize
@@ -737,6 +1038,7 @@
             appState.evaluation = JSON.parse(JSON.stringify(INITIAL_DATA.evaluation));
             appState.stakeholders = JSON.parse(JSON.stringify(INITIAL_DATA.stakeholders));
             appState.raciActivities = JSON.parse(JSON.stringify(INITIAL_DATA.raciActivities));
+            appState.documents = JSON.parse(JSON.stringify(INITIAL_DATA.documents));
             saveState();
         }
 
@@ -848,6 +1150,9 @@
             renderRiskList();
             renderStakeholders();
             renderRaciMatrix();
+            renderCalendar();
+            renderGantt();
+            renderDocuments();
         }
 
         function renderTaskList() {
@@ -1605,6 +1910,275 @@
         function saveRaci() {
             saveState();
             alert('✓ RACI matrix saved successfully!');
+        }
+
+        // Calendar Functions
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const title = document.getElementById('calendarTitle');
+            if (!grid || !title) return;
+
+            const month = appState.calendarMonth;
+            const year = month.getFullYear();
+            const monthNum = month.getMonth();
+
+            title.textContent = month.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            const firstDay = new Date(year, monthNum, 1);
+            const lastDay = new Date(year, monthNum + 1, 0);
+            const startDay = firstDay.getDay();
+            const daysInMonth = lastDay.getDate();
+
+            let html = `
+                <div class="calendar-header">Sun</div>
+                <div class="calendar-header">Mon</div>
+                <div class="calendar-header">Tue</div>
+                <div class="calendar-header">Wed</div>
+                <div class="calendar-header">Thu</div>
+                <div class="calendar-header">Fri</div>
+                <div class="calendar-header">Sat</div>
+            `;
+
+            // Empty cells before first day
+            for (let i = 0; i < startDay; i++) {
+                html += '<div class="calendar-day empty"></div>';
+            }
+
+            // Days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(monthNum + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const tasksOnDay = appState.tasks.filter(t => t.dueDate === dateStr);
+                const milestonesOnDay = appState.milestones.filter(m => m.date === dateStr);
+
+                const today = new Date();
+                const isToday = day === today.getDate() && monthNum === today.getMonth() && year === today.getFullYear();
+
+                html += `<div class="calendar-day${isToday ? ' today' : ''}">
+                    <div class="calendar-date">${day}</div>`;
+
+                tasksOnDay.forEach(t => {
+                    html += `<div class="calendar-event task" title="${t.name}">${t.name.substring(0, 15)}${t.name.length > 15 ? '...' : ''}</div>`;
+                });
+
+                milestonesOnDay.forEach(m => {
+                    html += `<div class="calendar-event milestone" title="${m.name}">🎯 ${m.name.substring(0, 12)}${m.name.length > 12 ? '...' : ''}</div>`;
+                });
+
+                html += '</div>';
+            }
+
+            grid.innerHTML = html;
+        }
+
+        function changeMonth(delta) {
+            const current = appState.calendarMonth;
+            appState.calendarMonth = new Date(current.getFullYear(), current.getMonth() + delta, 1);
+            renderCalendar();
+        }
+
+        // Gantt Chart Functions
+        function renderGantt() {
+            const container = document.getElementById('ganttChart');
+            if (!container) return;
+
+            const tasks = appState.tasks;
+            const milestones = appState.milestones;
+
+            if (tasks.length === 0 && milestones.length === 0) {
+                container.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">No tasks or milestones to display. Add tasks and milestones with dates to see the Gantt chart.</div>';
+                return;
+            }
+
+            // Find date range
+            const allDates = [
+                ...tasks.filter(t => t.dueDate).map(t => new Date(t.dueDate)),
+                ...milestones.filter(m => m.date).map(m => new Date(m.date))
+            ];
+
+            if (allDates.length === 0) {
+                container.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">Add due dates to tasks and milestones to see the Gantt chart.</div>';
+                return;
+            }
+
+            const minDate = new Date(Math.min(...allDates));
+            const maxDate = new Date(Math.max(...allDates));
+
+            // Add padding
+            minDate.setDate(minDate.getDate() - 7);
+            maxDate.setDate(maxDate.getDate() + 14);
+
+            const totalDays = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
+            const dayWidth = 30;
+
+            let html = '<div class="gantt-timeline" style="position: relative; min-width: ' + (totalDays * dayWidth) + 'px;">';
+
+            // Header with months
+            html += '<div class="gantt-header" style="display: flex; border-bottom: 2px solid #ddd; padding: 10px 0;">';
+            let currentMonth = new Date(minDate);
+            while (currentMonth <= maxDate) {
+                const monthDays = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
+                const remainingDays = Math.min(monthDays - currentMonth.getDate() + 1, Math.ceil((maxDate - currentMonth) / (1000 * 60 * 60 * 24)));
+                html += `<div style="width: ${remainingDays * dayWidth}px; text-align: center; font-weight: 600; color: #333;">
+                    ${currentMonth.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                </div>`;
+                currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+            }
+            html += '</div>';
+
+            // Task rows
+            const phases = ['discovery', 'documentation', 'evaluation', 'selection'];
+
+            tasks.filter(t => t.dueDate).forEach((task, i) => {
+                const taskDate = new Date(task.dueDate);
+                const dayOffset = Math.ceil((taskDate - minDate) / (1000 * 60 * 60 * 24));
+                const phase = phases[i % 4];
+
+                html += `<div class="gantt-row" style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
+                    <div style="width: 200px; padding-right: 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${task.name}</div>
+                    <div style="position: relative; flex: 1; height: 24px;">
+                        <div class="gantt-bar ${phase}" style="position: absolute; left: ${dayOffset * dayWidth}px; width: ${dayWidth * 5}px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: white;">
+                            ${task.status}
+                        </div>
+                    </div>
+                </div>`;
+            });
+
+            // Milestone rows
+            milestones.filter(m => m.date).forEach(m => {
+                const mDate = new Date(m.date);
+                const dayOffset = Math.ceil((mDate - minDate) / (1000 * 60 * 60 * 24));
+
+                html += `<div class="gantt-row" style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
+                    <div style="width: 200px; padding-right: 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🎯 ${m.name}</div>
+                    <div style="position: relative; flex: 1; height: 24px;">
+                        <div style="position: absolute; left: ${dayOffset * dayWidth}px; width: 24px; height: 24px; background: #764ba2; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <span style="color: white; font-size: 12px;">◆</span>
+                        </div>
+                    </div>
+                </div>`;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Document Repository Functions
+        function renderDocuments() {
+            const tree = document.getElementById('documentTree');
+            if (!tree) return;
+
+            if (!appState.documents || appState.documents.length === 0) {
+                tree.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No documents loaded.</div>';
+                return;
+            }
+
+            let html = '';
+            appState.documents.forEach(folder => {
+                const isExpanded = folder.expanded !== false;
+                html += `
+                    <div class="folder-item">
+                        <div class="folder-header" onclick="toggleFolder('${folder.id}')">
+                            <span class="folder-icon">${isExpanded ? '📂' : '📁'}</span>
+                            <span class="folder-name">${folder.name}</span>
+                            <span class="folder-count">${folder.documents.length} files</span>
+                            <span class="folder-toggle">${isExpanded ? '▼' : '▶'}</span>
+                        </div>
+                        <div class="folder-contents" style="display: ${isExpanded ? 'block' : 'none'};">`;
+
+                folder.documents.forEach(doc => {
+                    const statusClass = doc.status === 'final' ? 'final' :
+                                       doc.status === 'draft' ? 'draft' : 'template';
+                    const icon = doc.name.endsWith('.docx') ? '📄' :
+                                doc.name.endsWith('.xlsx') ? '📊' :
+                                doc.name.endsWith('.pptx') ? '📽️' :
+                                doc.name.endsWith('.pdf') ? '📕' : '📄';
+
+                    html += `
+                        <div class="document-item">
+                            <span class="doc-icon">${icon}</span>
+                            <span class="doc-name">${doc.name}</span>
+                            <span class="doc-status ${statusClass}">${doc.status}</span>
+                            <div class="doc-actions">
+                                <button class="btn btn-small" onclick="editDocument('${folder.id}', ${doc.id})" title="Edit">✏️</button>
+                                <button class="btn btn-small btn-danger" onclick="deleteDocument('${folder.id}', ${doc.id})" title="Delete">🗑️</button>
+                            </div>
+                        </div>`;
+                });
+
+                html += `</div></div>`;
+            });
+
+            tree.innerHTML = html;
+        }
+
+        function toggleFolder(folderId) {
+            const folder = appState.documents.find(f => f.id === folderId);
+            if (folder) {
+                folder.expanded = !folder.expanded;
+                renderDocuments();
+            }
+        }
+
+        function addDocument() {
+            const folderOptions = appState.documents.map(f => f.name).join('\n');
+            const folderName = prompt('Select folder (enter number 1-5):\n1. Discovery & Strategy\n2. RFP Documentation\n3. Evaluation & Selection\n4. Final Selection & Award\n5. Programme Governance');
+
+            if (!folderName) return;
+
+            const folderIndex = parseInt(folderName) - 1;
+            if (isNaN(folderIndex) || folderIndex < 0 || folderIndex >= appState.documents.length) {
+                alert('Invalid folder selection');
+                return;
+            }
+
+            const docName = prompt('Document name (include extension, e.g., "Report.docx"):');
+            if (!docName) return;
+
+            const status = prompt('Status (template, draft, or final):') || 'draft';
+
+            const folder = appState.documents[folderIndex];
+            const newId = Math.max(...folder.documents.map(d => d.id), 0) + 1;
+
+            folder.documents.push({
+                id: newId,
+                name: docName,
+                status: status,
+                folder: folder.id
+            });
+
+            folder.expanded = true;
+            saveState();
+            renderDocuments();
+        }
+
+        function editDocument(folderId, docId) {
+            const folder = appState.documents.find(f => f.id === folderId);
+            if (!folder) return;
+
+            const doc = folder.documents.find(d => d.id === docId);
+            if (!doc) return;
+
+            const newName = prompt('Document name:', doc.name);
+            if (newName) doc.name = newName;
+
+            const newStatus = prompt('Status (template, draft, final):', doc.status);
+            if (newStatus && ['template', 'draft', 'final'].includes(newStatus)) {
+                doc.status = newStatus;
+            }
+
+            saveState();
+            renderDocuments();
+        }
+
+        function deleteDocument(folderId, docId) {
+            if (!confirm('Delete this document?')) return;
+
+            const folder = appState.documents.find(f => f.id === folderId);
+            if (folder) {
+                folder.documents = folder.documents.filter(d => d.id !== docId);
+                saveState();
+                renderDocuments();
+            }
         }
 
         function closeModal(id) {
