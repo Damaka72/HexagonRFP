@@ -1527,7 +1527,7 @@
             </div>
             <div style="background: var(--gray-50); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                 <p style="font-size: 0.9em; color: var(--gray-700);">
-                    <strong>Note:</strong> Files are stored locally in your browser. Supported formats: Word, Excel, PowerPoint, PDF, Text, CSV.
+                    <strong>Note:</strong> Files are stored securely in the cloud (up to 50MB). Supported formats: Word, Excel, PowerPoint, PDF, Text, CSV.
                 </p>
             </div>
             <button class="btn btn-primary" onclick="uploadDocument()">📤 Upload Document</button>
@@ -1783,6 +1783,111 @@
             const div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
+        }
+
+        // ==========================================
+        // VERCEL BLOB STORAGE FUNCTIONS
+        // ==========================================
+
+        // Check if we're running on Vercel (has API routes) or locally
+        function isVercelEnvironment() {
+            return window.location.hostname !== 'localhost' &&
+                   window.location.hostname !== '127.0.0.1' &&
+                   !window.location.hostname.includes('file://');
+        }
+
+        // Upload file to Vercel Blob storage
+        async function uploadToVercelBlob(file, folder, documentType = 'document') {
+            // For local development, fall back to base64 storage
+            if (!isVercelEnvironment()) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve({
+                        url: e.target.result,
+                        isBase64: true,
+                        filename: file.name
+                    });
+                    reader.onerror = () => reject(new Error('Failed to read file'));
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    headers: {
+                        'X-Filename': file.name,
+                        'X-Folder': folder,
+                        'X-Document-Type': documentType,
+                    },
+                    body: file,
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Upload failed');
+                }
+
+                const result = await response.json();
+                return {
+                    url: result.url,
+                    pathname: result.pathname,
+                    filename: result.filename,
+                    size: result.size,
+                    uploadedAt: result.uploadedAt,
+                    isBase64: false
+                };
+            } catch (error) {
+                console.error('Vercel Blob upload error:', error);
+                throw error;
+            }
+        }
+
+        // Delete file from Vercel Blob storage
+        async function deleteFromVercelBlob(url) {
+            // Skip deletion for base64 data URLs
+            if (!url || url.startsWith('data:')) {
+                return true;
+            }
+
+            if (!isVercelEnvironment()) {
+                return true;
+            }
+
+            try {
+                const response = await fetch('/api/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url }),
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    console.error('Delete error:', error);
+                    return false;
+                }
+
+                return true;
+            } catch (error) {
+                console.error('Vercel Blob delete error:', error);
+                return false;
+            }
+        }
+
+        // Download file from URL or base64
+        function downloadFile(url, filename) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            // For Vercel Blob URLs, we need to handle cross-origin
+            if (!url.startsWith('data:')) {
+                link.target = '_blank';
+            }
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         // Toast notification
@@ -3057,12 +3162,16 @@
                                 doc.name.endsWith('.pptx') ? '📽️' :
                                 doc.name.endsWith('.pdf') ? '📕' : '📄';
 
+                    // Check if document has a downloadable file
+                    const hasFile = doc.fileUrl || doc.fileData || (appState.uploadedFiles && appState.uploadedFiles[doc.id]);
+
                     html += `
                         <div class="document-item">
                             <span class="doc-icon">${icon}</span>
                             <span class="doc-name">${doc.name}</span>
                             <span class="doc-status ${statusClass}">${doc.status}</span>
                             <div class="doc-actions">
+                                ${hasFile ? `<button class="btn btn-small btn-primary" onclick="downloadDocument('${folder.id}', ${doc.id})" title="Download">📥</button>` : ''}
                                 <button class="btn btn-small" onclick="editDocument('${folder.id}', ${doc.id})" title="Edit">✏️</button>
                                 <button class="btn btn-small btn-danger" onclick="deleteDocument('${folder.id}', ${doc.id})" title="Delete">🗑️</button>
                             </div>
@@ -3134,14 +3243,56 @@
             renderDocuments();
         }
 
-        function deleteDocument(folderId, docId) {
+        function downloadDocument(folderId, docId) {
+            const folder = appState.documents.find(f => f.id === folderId);
+            if (!folder) {
+                showToast('Folder not found', 'error');
+                return;
+            }
+
+            const doc = folder.documents.find(d => d.id === docId);
+            if (!doc) {
+                showToast('Document not found', 'error');
+                return;
+            }
+
+            // Get file URL from various possible sources (new format or legacy)
+            const fileUrl = doc.fileUrl || doc.fileData || (appState.uploadedFiles && appState.uploadedFiles[docId]);
+
+            if (!fileUrl) {
+                showToast('No file available for download', 'error');
+                return;
+            }
+
+            // Use the helper function for downloading
+            downloadFile(fileUrl, doc.name);
+        }
+
+        async function deleteDocument(folderId, docId) {
             if (!confirm('Delete this document?')) return;
 
             const folder = appState.documents.find(f => f.id === folderId);
             if (folder) {
+                const doc = folder.documents.find(d => d.id === docId);
+
+                // Delete file from Vercel Blob if it's cloud-stored
+                if (doc?.fileUrl && doc?.isCloudStored) {
+                    await deleteFromVercelBlob(doc.fileUrl);
+                }
+
+                // Also clean up from uploadedFiles
+                if (appState.uploadedFiles && appState.uploadedFiles[docId]) {
+                    const fileUrl = appState.uploadedFiles[docId];
+                    if (doc?.isCloudStored && !fileUrl.startsWith('data:')) {
+                        await deleteFromVercelBlob(fileUrl);
+                    }
+                    delete appState.uploadedFiles[docId];
+                }
+
                 folder.documents = folder.documents.filter(d => d.id !== docId);
                 saveState();
                 renderDocuments();
+                showToast('Document deleted', 'success');
             }
         }
 
@@ -3757,7 +3908,7 @@
             document.getElementById('meetingNotesModal').style.display = 'block';
         }
 
-        function saveMeetingNotes() {
+        async function saveMeetingNotes() {
             const title = document.getElementById('notesTitle').value.trim();
             if (!title) {
                 showToast('Please enter a title for the notes', 'error');
@@ -3788,18 +3939,27 @@
             // Handle file upload
             if (fileInput.files && fileInput.files.length > 0) {
                 const file = fileInput.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
+                showToast('Uploading file...', 'info');
+
+                try {
+                    // Upload to Vercel Blob (or base64 fallback for local dev)
+                    const uploadResult = await uploadToVercelBlob(file, 'meeting-notes', 'meeting-note');
+
                     note.hasFile = true;
                     note.fileName = file.name;
-                    note.fileData = e.target.result;
+                    note.fileUrl = uploadResult.url;  // Store URL instead of base64
+                    note.fileData = uploadResult.isBase64 ? uploadResult.url : null; // Keep base64 for backwards compatibility
+                    note.isCloudStored = !uploadResult.isBase64;
+
                     appState.meetingNotes.push(note);
                     saveState();
                     renderMeetingNotesList();
                     closeModal('meetingNotesModal');
                     showToast('Meeting notes saved', 'success');
-                };
-                reader.readAsDataURL(file);
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    showToast(`Error uploading file: ${error.message}`, 'error');
+                }
             } else {
                 appState.meetingNotes.push(note);
                 saveState();
@@ -3810,7 +3970,14 @@
         }
 
         function deleteMeetingNotes(id) {
-            showConfirm('Delete these meeting notes?', () => {
+            showConfirm('Delete these meeting notes?', async () => {
+                const note = appState.meetingNotes.find(n => n.id === id);
+
+                // Delete file from Vercel Blob if it's cloud-stored
+                if (note?.fileUrl && note?.isCloudStored) {
+                    await deleteFromVercelBlob(note.fileUrl);
+                }
+
                 appState.meetingNotes = appState.meetingNotes.filter(n => n.id !== id);
                 saveState();
                 renderMeetingNotesList();
@@ -3853,17 +4020,15 @@
 
         function downloadNoteFile(noteId) {
             const note = appState.meetingNotes.find(n => n.id === noteId);
-            if (!note || !note.fileData) {
+            // Support both new fileUrl and legacy fileData
+            const fileUrl = note?.fileUrl || note?.fileData;
+            if (!note || !fileUrl) {
                 showToast('File not found', 'error');
                 return;
             }
 
-            const link = document.createElement('a');
-            link.href = note.fileData;
-            link.download = note.fileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // Use the helper function for downloading
+            downloadFile(fileUrl, note.fileName);
         }
 
         // ==========================================
@@ -3877,7 +4042,7 @@
             document.getElementById('uploadModal').style.display = 'block';
         }
 
-        function uploadDocument() {
+        async function uploadDocument() {
             const fileInput = document.getElementById('uploadFile');
             const folderId = document.getElementById('uploadFolder').value;
             const status = document.getElementById('uploadStatus').value;
@@ -3888,10 +4053,10 @@
             }
 
             const file = fileInput.files[0];
-            const maxSize = 5 * 1024 * 1024; // 5MB limit
+            const maxSize = 50 * 1024 * 1024; // 50MB limit with Vercel Blob
 
             if (file.size > maxSize) {
-                showToast('File size must be less than 5MB', 'error');
+                showToast('File size must be less than 50MB', 'error');
                 return;
             }
 
@@ -3901,8 +4066,13 @@
                 return;
             }
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
+            // Show uploading indicator
+            showToast('Uploading document...', 'info');
+
+            try {
+                // Upload to Vercel Blob (or base64 fallback for local dev)
+                const uploadResult = await uploadToVercelBlob(file, folderId, 'document');
+
                 const newId = Math.max(...folder.documents.map(d => d.id), 100) + 1;
 
                 folder.documents.push({
@@ -3910,24 +4080,25 @@
                     name: file.name,
                     status: status,
                     folder: folderId,
-                    fileData: e.target.result,
-                    uploadDate: new Date().toISOString()
+                    fileUrl: uploadResult.url,  // Store URL instead of base64
+                    fileData: uploadResult.isBase64 ? uploadResult.url : null, // Keep base64 for backwards compatibility
+                    uploadDate: new Date().toISOString(),
+                    isCloudStored: !uploadResult.isBase64
                 });
 
-                // Store file data separately to avoid localStorage limits
+                // Store file reference (URL or base64) separately
                 if (!appState.uploadedFiles) appState.uploadedFiles = {};
-                appState.uploadedFiles[newId] = e.target.result;
+                appState.uploadedFiles[newId] = uploadResult.url;
 
                 folder.expanded = true;
                 saveState();
                 renderDocuments();
                 closeModal('uploadModal');
                 showToast(`Document "${file.name}" uploaded successfully`, 'success');
-            };
-            reader.onerror = function() {
-                showToast('Error reading file', 'error');
-            };
-            reader.readAsDataURL(file);
+            } catch (error) {
+                console.error('Upload error:', error);
+                showToast(`Error uploading file: ${error.message}`, 'error');
+            }
         }
 
         // ==========================================
