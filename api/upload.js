@@ -32,7 +32,10 @@ export default async function handler(req, res) {
     // Create a unique path for the file
     const timestamp = Date.now();
     const sanitizedFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const blobPath = `hexagon-rfp/${documentType}/${folder}/${timestamp}-${sanitizedFilename}`;
+    // Sanitize folder and documentType to prevent pattern validation errors
+    const sanitizedFolder = folder.replace(/[^a-zA-Z0-9-]/g, '_');
+    const sanitizedDocumentType = documentType.replace(/[^a-zA-Z0-9-]/g, '_');
+    const blobPath = `hexagon-rfp/${sanitizedDocumentType}/${sanitizedFolder}/${timestamp}-${sanitizedFilename}`;
 
     // Read the request body as a buffer
     const chunks = [];
