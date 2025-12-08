@@ -61,10 +61,28 @@ export default async function handler(req, res) {
     }
     const buffer = Buffer.concat(chunks);
 
+    // Detect content type from filename extension
+    const ext = sanitizedFilename.split('.').pop()?.toLowerCase();
+    const contentTypes = {
+      'pdf': 'application/pdf',
+      'doc': 'application/msword',
+      'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'xls': 'application/vnd.ms-excel',
+      'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'ppt': 'application/vnd.ms-powerpoint',
+      'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'txt': 'text/plain',
+      'csv': 'text/csv',
+      'md': 'text/markdown',
+    };
+    const contentType = contentTypes[ext] || 'application/octet-stream';
+
+    console.log('Upload attempt:', { blobPath, contentType, bufferSize: buffer.length });
+
     // Upload to Vercel Blob
     const blob = await put(blobPath, buffer, {
       access: 'public',
-      addRandomSuffix: false,
+      contentType,
     });
 
     return res.status(200).json({
