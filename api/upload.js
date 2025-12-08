@@ -7,20 +7,34 @@ export const config = {
 };
 
 export default async function handler(req, res) {
+  // Log immediately when request arrives - this should always appear
+  console.log('=== Upload API request received ===');
+  console.log('Request method:', req.method);
+  console.log('Request headers:', JSON.stringify({
+    'x-filename': req.headers['x-filename'],
+    'x-folder': req.headers['x-folder'],
+    'x-document-type': req.headers['x-document-type'],
+    'content-type': req.headers['content-type'],
+    'content-length': req.headers['content-length']
+  }));
+
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Filename, X-Folder, X-Document-Type');
 
   if (req.method === 'OPTIONS') {
+    console.log('Handling OPTIONS preflight request');
     return res.status(200).end();
   }
 
   if (req.method !== 'POST') {
+    console.log('Method not allowed:', req.method);
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
+    console.log('Processing POST request...');
     // Get and decode URI-encoded headers
     let filename = req.headers['x-filename'];
     let folder = req.headers['x-folder'] || 'documents';
@@ -75,17 +89,26 @@ export default async function handler(req, res) {
     });
 
     // Read the request body as a buffer
+    console.log('Reading request body...');
     const chunks = [];
     for await (const chunk of req) {
       chunks.push(chunk);
     }
     const buffer = Buffer.concat(chunks);
+    console.log('Request body read, size:', buffer.length, 'bytes');
+
+    if (buffer.length === 0) {
+      console.error('Empty request body received');
+      return res.status(400).json({ error: 'No file data received', message: 'The request body was empty' });
+    }
 
     // Upload to Vercel Blob
+    console.log('Uploading to Vercel Blob:', blobPath);
     const blob = await put(blobPath, buffer, {
       access: 'public',
       addRandomSuffix: false,
     });
+    console.log('Upload successful, blob URL:', blob.url);
 
     return res.status(200).json({
       success: true,
