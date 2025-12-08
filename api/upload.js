@@ -21,18 +21,28 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Decode URI-encoded filename if necessary
+    // Get and decode URI-encoded headers
     let filename = req.headers['x-filename'];
-    const folder = req.headers['x-folder'] || 'documents';
-    const documentType = req.headers['x-document-type'] || 'document';
+    let folder = req.headers['x-folder'] || 'documents';
+    let documentType = req.headers['x-document-type'] || 'document';
 
     if (!filename) {
       return res.status(400).json({ error: 'Filename is required' });
     }
 
-    // Try to decode URI-encoded filename
+    // Try to decode URI-encoded values
     try {
       filename = decodeURIComponent(filename);
+    } catch (e) {
+      // If decoding fails, use as-is
+    }
+    try {
+      folder = decodeURIComponent(folder);
+    } catch (e) {
+      // If decoding fails, use as-is
+    }
+    try {
+      documentType = decodeURIComponent(documentType);
     } catch (e) {
       // If decoding fails, use as-is
     }
@@ -53,6 +63,16 @@ export default async function handler(req, res) {
     const sanitizedFolder = sanitizePath(folder) || 'documents';
     const sanitizedDocumentType = sanitizePath(documentType) || 'document';
     const blobPath = `hexagon-rfp/${sanitizedDocumentType}/${sanitizedFolder}/${timestamp}-${sanitizedFilename}`;
+
+    console.log('Upload path details:', {
+      originalFilename: filename,
+      sanitizedFilename,
+      folder,
+      sanitizedFolder,
+      documentType,
+      sanitizedDocumentType,
+      blobPath
+    });
 
     // Read the request body as a buffer
     const chunks = [];
@@ -77,9 +97,15 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Upload error:', error);
+    console.error('Upload error details:', {
+      errorName: error.name,
+      errorMessage: error.message,
+      errorStack: error.stack
+    });
     return res.status(500).json({
       error: 'Upload failed',
-      message: error.message
+      message: error.message,
+      details: error.name || 'Unknown error'
     });
   }
 }

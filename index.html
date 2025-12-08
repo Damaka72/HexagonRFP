@@ -1816,9 +1816,9 @@
                 const response = await fetch('/api/upload', {
                     method: 'POST',
                     headers: {
-                        'X-Filename': file.name,
-                        'X-Folder': folder,
-                        'X-Document-Type': documentType,
+                        'X-Filename': encodeURIComponent(file.name),
+                        'X-Folder': encodeURIComponent(folder),
+                        'X-Document-Type': encodeURIComponent(documentType),
                     },
                     body: file,
                 });
