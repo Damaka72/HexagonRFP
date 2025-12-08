@@ -21,20 +21,37 @@ export default async function handler(req, res) {
   }
 
   try {
-    const filename = req.headers['x-filename'];
+    // Decode URI-encoded filename if necessary
+    let filename = req.headers['x-filename'];
     const folder = req.headers['x-folder'] || 'documents';
-    const documentType = req.headers['x-document-type'] || 'document'; // 'document' or 'meeting-note'
+    const documentType = req.headers['x-document-type'] || 'document';
 
     if (!filename) {
       return res.status(400).json({ error: 'Filename is required' });
     }
 
+    // Try to decode URI-encoded filename
+    try {
+      filename = decodeURIComponent(filename);
+    } catch (e) {
+      // If decoding fails, use as-is
+    }
+
+    // Helper function to sanitize path segments
+    const sanitizePath = (str, allowDot = false) => {
+      const pattern = allowDot ? /[^a-zA-Z0-9._-]/g : /[^a-zA-Z0-9_-]/g;
+      return str
+        .replace(pattern, '_')      // Replace invalid chars with underscore
+        .replace(/_{2,}/g, '_')     // Collapse multiple underscores
+        .replace(/^[^a-zA-Z0-9]+/, '') // Remove leading non-alphanumeric
+        .replace(/[^a-zA-Z0-9]+$/, ''); // Remove trailing non-alphanumeric
+    };
+
     // Create a unique path for the file
     const timestamp = Date.now();
-    const sanitizedFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_');
-    // Sanitize folder and documentType to prevent pattern validation errors
-    const sanitizedFolder = folder.replace(/[^a-zA-Z0-9-]/g, '_');
-    const sanitizedDocumentType = documentType.replace(/[^a-zA-Z0-9-]/g, '_');
+    const sanitizedFilename = sanitizePath(filename, true) || 'file';
+    const sanitizedFolder = sanitizePath(folder) || 'documents';
+    const sanitizedDocumentType = sanitizePath(documentType) || 'document';
     const blobPath = `hexagon-rfp/${sanitizedDocumentType}/${sanitizedFolder}/${timestamp}-${sanitizedFilename}`;
 
     // Read the request body as a buffer
