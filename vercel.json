@@ -12,29 +12,12 @@
   ],
   "routes": [
     {
-      "src": "/api/upload",
-      "dest": "/api/upload.js"
-    },
-    {
-      "src": "/api/list",
-      "dest": "/api/list.js"
-    },
-    {
-      "src": "/api/delete",
-      "dest": "/api/delete.js"
-    },
-    {
-      "src": "/api/client-upload",
-      "dest": "/api/client-upload.js"
+      "src": "/api/(.*)",
+      "dest": "/api/$1.js"
     },
     {
       "src": "/((?!api/).*)",
       "dest": "/index.html"
     }
-  ],
-  "functions": {
-    "api/upload.js": {
-      "maxDuration": 30
-    }
-  }
+  ]
 }
