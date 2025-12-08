@@ -1813,6 +1813,14 @@
             }
 
             try {
+                console.log('Starting upload to /api/upload', {
+                    filename: file.name,
+                    folder: folder,
+                    documentType: documentType,
+                    fileSize: file.size,
+                    fileType: file.type
+                });
+
                 const response = await fetch('/api/upload', {
                     method: 'POST',
                     headers: {
@@ -1823,12 +1831,32 @@
                     body: file,
                 });
 
+                console.log('Upload response received:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    ok: response.ok
+                });
+
                 if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.message || 'Upload failed');
+                    let errorMessage = 'Upload failed';
+                    let errorDetails = '';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorData.error || 'Upload failed';
+                        errorDetails = JSON.stringify(errorData);
+                    } catch (parseError) {
+                        // Response wasn't JSON - might be HTML error page
+                        const text = await response.text();
+                        errorMessage = `Server returned ${response.status}: ${response.statusText}`;
+                        errorDetails = text.substring(0, 200);
+                        console.error('Non-JSON error response:', text);
+                    }
+                    console.error('Upload failed:', { status: response.status, errorMessage, errorDetails });
+                    throw new Error(errorMessage);
                 }
 
                 const result = await response.json();
+                console.log('Upload successful:', result);
                 return {
                     url: result.url,
                     pathname: result.pathname,
@@ -1839,6 +1867,11 @@
                 };
             } catch (error) {
                 console.error('Vercel Blob upload error:', error);
+                console.error('Error details:', {
+                    name: error.name,
+                    message: error.message,
+                    stack: error.stack
+                });
                 throw error;
             }
         }
@@ -3957,8 +3990,16 @@
                     closeModal('meetingNotesModal');
                     showToast('Meeting notes saved', 'success');
                 } catch (error) {
-                    console.error('Upload error:', error);
-                    showToast(`Error uploading file: ${error.message}`, 'error');
+                    console.error('Meeting notes upload error:', error);
+                    console.error('Full error object:', error);
+                    // Provide more specific error messages
+                    let userMessage = error.message || 'Unknown error';
+                    if (error.message && error.message.includes('Failed to fetch')) {
+                        userMessage = 'Network error - could not reach server. Please check your connection.';
+                    } else if (error.message && error.message.includes('413')) {
+                        userMessage = 'File is too large. Please try a smaller file.';
+                    }
+                    showToast(`Error uploading file: ${userMessage}`, 'error');
                 }
             } else {
                 appState.meetingNotes.push(note);
