@@ -785,7 +785,10 @@
                 <h1>Hexagon SAP AMS RFP</h1>
                 <p>Complete Programme Management Platform | Start: 8 December 2025 | <span id="appVersion" style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; font-size: 0.85em;">v1.0.0</span></p>
             </div>
-            <div style="display: flex; align-items: center; gap: 20px;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="theme-toggle" onclick="resetAppData()" aria-label="Reset data" title="Reset to default data (loads latest features)" style="font-size: 14px;">
+                    🔄
+                </button>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
                     <span id="themeIcon">🌙</span>
                 </button>
@@ -2007,6 +2010,16 @@
             localStorage.setItem('hexagonRFP', JSON.stringify(appState));
             if (showNotification) {
                 showToast('Changes saved', 'success');
+            }
+        }
+
+        function resetAppData() {
+            if (confirm('Reset all data to defaults? This will load the latest tasks, meetings, and features. Your current changes will be lost.')) {
+                localStorage.removeItem('hexagonRFP');
+                showToast('Reloading with fresh data...', 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
             }
         }
 
