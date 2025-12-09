@@ -1043,6 +1043,7 @@
             <button class="nav-tab" onclick="switchTab('vendors', event)" role="tab" aria-selected="false" aria-controls="vendors" id="tab-vendors">Vendors</button>
             <button class="nav-tab" onclick="switchTab('documents', event)" role="tab" aria-selected="false" aria-controls="documents" id="tab-documents">Documents</button>
             <button class="nav-tab" onclick="switchTab('meetings', event)" role="tab" aria-selected="false" aria-controls="meetings" id="tab-meetings">Meetings</button>
+            <button class="nav-tab" onclick="switchTab('email', event)" role="tab" aria-selected="false" aria-controls="email" id="tab-email">Email</button>
             <button class="nav-tab" onclick="switchTab('risks', event)" role="tab" aria-selected="false" aria-controls="risks" id="tab-risks">Risks</button>
             <button class="nav-tab" onclick="switchTab('decisions', event)" role="tab" aria-selected="false" aria-controls="decisions" id="tab-decisions">Decisions</button>
             <button class="nav-tab" onclick="switchTab('stakeholders', event)" role="tab" aria-selected="false" aria-controls="stakeholders" id="tab-stakeholders">Stakeholders</button>
@@ -1295,6 +1296,40 @@
                     <button class="btn btn-primary" onclick="openMeetingNotesModal()">📤 Upload Notes</button>
                 </div>
                 <div id="meetingNotesList"></div>
+            </div>
+        </div>
+
+        <!-- Email -->
+        <div id="email" class="tab-content" role="tabpanel" aria-labelledby="tab-email">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Email Access</h2>
+                </div>
+                <div style="text-align: center; padding: 40px 20px;">
+                    <div style="font-size: 4em; margin-bottom: 20px;">📧</div>
+                    <h3 style="color: var(--primary); margin-bottom: 15px;">Access Your Microsoft 365 Email</h3>
+                    <p style="color: var(--gray-700); margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        Open Outlook Web to view and manage your emails alongside your RFP work.
+                        Your emails will open in a new tab.
+                    </p>
+                    <button class="btn btn-primary" onclick="openOutlookWeb()" style="font-size: 1.1em; padding: 15px 40px;">
+                        📬 Open Outlook Web
+                    </button>
+                    <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--gray-200);">
+                        <h4 style="color: var(--gray-700); margin-bottom: 15px;">Quick Links</h4>
+                        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                            <button class="btn" onclick="openOutlookCalendar()" style="background: var(--gray-100);">
+                                📅 Outlook Calendar
+                            </button>
+                            <button class="btn" onclick="openTeams()" style="background: var(--gray-100);">
+                                💬 Microsoft Teams
+                            </button>
+                            <button class="btn" onclick="openOneDrive()" style="background: var(--gray-100);">
+                                ☁️ OneDrive
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -2268,6 +2303,27 @@
                     location.reload();
                 }, 500);
             }
+        }
+
+        // Microsoft 365 Quick Access Functions
+        function openOutlookWeb() {
+            window.open('https://outlook.office.com/mail/', '_blank');
+            showToast('Opening Outlook Web...', 'success');
+        }
+
+        function openOutlookCalendar() {
+            window.open('https://outlook.office.com/calendar/', '_blank');
+            showToast('Opening Outlook Calendar...', 'success');
+        }
+
+        function openTeams() {
+            window.open('https://teams.microsoft.com/', '_blank');
+            showToast('Opening Microsoft Teams...', 'success');
+        }
+
+        function openOneDrive() {
+            window.open('https://onedrive.live.com/', '_blank');
+            showToast('Opening OneDrive...', 'success');
         }
 
         function updateDashboard() {
