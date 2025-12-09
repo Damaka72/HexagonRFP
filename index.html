@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#079fdb">
     <title>Hexagon SAP AMS RFP | Complete Programme Management</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -573,13 +577,242 @@
             .evaluation-table th, .evaluation-table td { padding: 8px; }
         }
 
+        /* Mobile Responsive Styles */
+        @media (max-width: 1024px) {
+            body { padding: 10px; }
+            .container { max-width: 100%; }
+            .header { padding: 20px; }
+            .header h1 { font-size: 1.8em; }
+            .card { padding: 15px; }
+            .nav-tabs { gap: 5px; padding: 8px; }
+            .nav-tab { padding: 10px 16px; font-size: 0.9em; }
+        }
+
         @media (max-width: 768px) {
-            .header { flex-direction: column; text-align: center; }
-            .grid-4 { grid-template-columns: 1fr; }
-            .task-item { grid-template-columns: 1fr; }
+            body { padding: 8px; }
+
+            /* Header */
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+                gap: 15px;
+            }
+            .header h1 { font-size: 1.5em; margin-bottom: 5px; }
+            .header p { font-size: 0.85em; line-height: 1.4; }
+            .days-counter { font-size: 1.5em; }
+
+            /* Navigation Tabs - Horizontal Scroll */
+            .nav-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                gap: 6px;
+                padding: 8px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                margin-bottom: 15px;
+            }
+            .nav-tabs::-webkit-scrollbar { display: none; }
+            .nav-tab {
+                white-space: nowrap;
+                flex-shrink: 0;
+                padding: 10px 14px;
+                font-size: 0.85em;
+                min-height: 44px; /* Touch-friendly */
+            }
+
+            /* Cards */
+            .card {
+                padding: 12px;
+                margin-bottom: 12px;
+                border-radius: 8px;
+            }
+            .card-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            .card-header h2 { font-size: 1.2em; }
+
+            /* Dashboard Grid */
+            .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stat-card { padding: 15px; }
+            .stat-value { font-size: 1.8em; }
+            .stat-label { font-size: 0.85em; }
+
+            /* Tasks */
+            .task-item {
+                grid-template-columns: auto 1fr;
+                gap: 10px;
+                padding: 12px;
+            }
+            .task-item > div:last-child {
+                grid-column: 1 / -1;
+                display: flex;
+                gap: 8px;
+                justify-content: flex-end;
+                margin-top: 8px;
+            }
+            .task-checkbox { width: 28px; height: 28px; }
+            .task-title { font-size: 0.95em; }
+            .task-meta { font-size: 0.8em; }
+
+            /* Buttons */
+            .btn {
+                padding: 12px 16px;
+                min-height: 44px;
+                font-size: 0.9em;
+            }
+            .btn-small {
+                padding: 10px 14px;
+                min-height: 40px;
+            }
+
+            /* Vendor Grid */
             .vendor-grid { grid-template-columns: 1fr; }
-            .nav-tabs { overflow-x: auto; flex-wrap: nowrap; }
-            .nav-tab { white-space: nowrap; flex-shrink: 0; }
+            .vendor-card { padding: 15px; }
+
+            /* Calendar */
+            .calendar-grid { gap: 1px; }
+            .calendar-day {
+                min-height: 60px;
+                padding: 4px;
+            }
+            .calendar-date { font-size: 0.8em; }
+            .calendar-event {
+                font-size: 0.65em;
+                padding: 2px 3px;
+            }
+            .calendar-header {
+                padding: 6px;
+                font-size: 0.75em;
+            }
+            .calendar-nav h3 { font-size: 1.1em; }
+
+            /* Tables */
+            .evaluation-table { font-size: 0.8em; }
+            .evaluation-table th,
+            .evaluation-table td { padding: 8px 6px; }
+
+            /* Forms */
+            .form-input, .form-textarea, .form-select {
+                font-size: 16px; /* Prevents iOS zoom */
+                padding: 12px;
+                min-height: 44px;
+            }
+
+            /* Modals */
+            .modal-content {
+                width: 95%;
+                max-width: 95%;
+                margin: 10px auto;
+                padding: 15px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            /* Phase Header */
+            .phase-header {
+                flex-direction: column;
+                gap: 5px;
+                align-items: flex-start;
+                font-size: 0.9em;
+            }
+
+            /* Filter Buttons */
+            .filter-btn {
+                padding: 8px 12px;
+                font-size: 0.8em;
+                min-height: 40px;
+            }
+
+            /* Document Tree */
+            .folder-header { padding: 12px; }
+            .folder-name { font-size: 0.9em; }
+            .document-item {
+                padding: 10px;
+                flex-wrap: wrap;
+            }
+            .doc-name {
+                font-size: 0.85em;
+                flex: 1 1 100%;
+                margin-bottom: 8px;
+            }
+            .doc-actions {
+                flex: 1 1 100%;
+                justify-content: flex-end;
+            }
+
+            /* Meetings */
+            .meeting-card { padding: 12px; }
+
+            /* Risk Cards */
+            .risk-card { padding: 12px; }
+
+            /* GANTT - Show simplified message on mobile */
+            #ganttChart > div:first-child {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+
+            .header h1 { font-size: 1.3em; }
+            .header p { font-size: 0.8em; }
+
+            .grid-4 { grid-template-columns: 1fr; }
+            .stat-card { padding: 12px; }
+            .stat-value { font-size: 1.5em; }
+
+            .nav-tab {
+                padding: 8px 12px;
+                font-size: 0.8em;
+            }
+
+            .card { padding: 10px; }
+            .card-header h2 { font-size: 1.1em; }
+
+            .task-item { padding: 10px; }
+
+            .calendar-day { min-height: 50px; }
+            .calendar-event { font-size: 0.6em; }
+
+            /* Hide some text on very small screens */
+            .hide-mobile { display: none; }
+        }
+
+        /* Touch-friendly improvements */
+        @media (pointer: coarse) {
+            .btn, .nav-tab, .filter-btn, .task-checkbox {
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            .theme-toggle {
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            /* Larger touch targets */
+            .task-item { padding: 15px; }
+            .document-item { padding: 12px; }
+            .folder-header { padding: 14px; }
+        }
+
+        /* Landscape phone */
+        @media (max-width: 896px) and (orientation: landscape) {
+            .header { padding: 10px 20px; }
+            .header h1 { font-size: 1.3em; }
+            .days-counter { font-size: 1.3em; }
+            .modal-content { max-height: 85vh; }
+        }
+
+        /* iPad specific */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+            .vendor-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav-tabs { flex-wrap: wrap; }
         }
 
         /* Calendar Styles */
@@ -785,7 +1018,10 @@
                 <h1>Hexagon SAP AMS RFP</h1>
                 <p>Complete Programme Management Platform | Start: 8 December 2025 | <span id="appVersion" style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; font-size: 0.85em;">v1.0.0</span></p>
             </div>
-            <div style="display: flex; align-items: center; gap: 20px;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="theme-toggle" onclick="resetAppData()" aria-label="Reset data" title="Reset to default data (loads latest features)" style="font-size: 14px;">
+                    🔄
+                </button>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
                     <span id="themeIcon">🌙</span>
                 </button>
@@ -2003,8 +2239,21 @@
             document.getElementById('confirmModal').style.display = 'block';
         }
 
-        function saveState() {
+        function saveState(showNotification = false) {
             localStorage.setItem('hexagonRFP', JSON.stringify(appState));
+            if (showNotification) {
+                showToast('Changes saved', 'success');
+            }
+        }
+
+        function resetAppData() {
+            if (confirm('Reset all data to defaults? This will load the latest tasks, meetings, and features. Your current changes will be lost.')) {
+                localStorage.removeItem('hexagonRFP');
+                showToast('Reloading with fresh data...', 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            }
         }
 
         function updateDashboard() {
@@ -2479,10 +2728,12 @@
         function toggleTask(id) {
             const task = appState.tasks.find(t => t.id === id);
             if (task) {
-                task.status = task.status === 'done' ? 'notstarted' : 'done';
+                const wasCompleted = task.status === 'done';
+                task.status = wasCompleted ? 'notstarted' : 'done';
                 saveState();
                 renderAll();
                 updateDashboard();
+                showToast(wasCompleted ? 'Task reopened' : 'Task completed & saved!', 'success');
             }
         }
 
@@ -3153,59 +3404,85 @@
             maxDate.setDate(maxDate.getDate() + 14);
 
             const totalDays = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
-            const dayWidth = 30;
+            const dayWidth = 3; // Compact for long timelines
+            const timelineWidth = totalDays * dayWidth;
+            const rowHeight = 32;
 
-            let html = '<div class="gantt-timeline" style="position: relative; min-width: ' + (totalDays * dayWidth) + 'px;">';
+            // Build the split-pane Gantt layout
+            let html = '<div style="display: flex; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white;">';
 
-            // Header with months
-            html += '<div class="gantt-header" style="display: flex; border-bottom: 2px solid #ddd; padding: 10px 0;">';
+            // Left panel - Fixed task names
+            html += '<div style="flex-shrink: 0; width: 200px; border-right: 2px solid #ddd; background: #fafafa;">';
+            html += `<div style="height: ${rowHeight}px; padding: 8px; font-weight: 600; background: #f0f0f0; border-bottom: 2px solid #ddd; font-size: 12px;">Task / Milestone</div>`;
+
+            tasks.filter(t => t.dueDate).forEach((task) => {
+                const phase = task.phase || 'discovery';
+                const phaseColors = { discovery: '#079fdb', documentation: '#0447bb', evaluation: '#5c74a7', selection: '#242c3c' };
+                html += `<div style="height: ${rowHeight}px; padding: 6px 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 1px solid #eee; border-left: 3px solid ${phaseColors[phase] || '#079fdb'};" title="${task.name}">${task.name}</div>`;
+            });
+
+            milestones.filter(m => m.date).forEach(m => {
+                const mTitle = m.title || m.name;
+                html += `<div style="height: ${rowHeight}px; padding: 6px 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 1px solid #eee; border-left: 3px solid #764ba2; color: #764ba2; font-weight: 500;" title="${mTitle}">🎯 ${mTitle}</div>`;
+            });
+            html += '</div>';
+
+            // Right panel - Scrollable timeline
+            html += `<div style="flex: 1; overflow-x: auto;" id="ganttTimelineScroll">`;
+            html += `<div style="min-width: ${timelineWidth}px;">`;
+
+            // Month header
+            html += `<div style="display: flex; height: ${rowHeight}px; background: #f0f0f0; border-bottom: 2px solid #ddd;">`;
             let currentMonth = new Date(minDate);
             while (currentMonth <= maxDate) {
-                const monthDays = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
-                const remainingDays = Math.min(monthDays - currentMonth.getDate() + 1, Math.ceil((maxDate - currentMonth) / (1000 * 60 * 60 * 24)));
-                html += `<div style="width: ${remainingDays * dayWidth}px; text-align: center; font-weight: 600; color: #333;">
-                    ${currentMonth.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                const nextMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+                const monthEnd = new Date(Math.min(nextMonth.getTime() - 1, maxDate.getTime()));
+                const daysInView = Math.ceil((monthEnd - currentMonth) / (1000 * 60 * 60 * 24)) + 1;
+                const monthWidth = daysInView * dayWidth;
+
+                html += `<div style="width: ${monthWidth}px; text-align: center; font-weight: 600; color: #333; padding: 8px 2px; border-right: 1px solid #ddd; font-size: 10px; white-space: nowrap; overflow: hidden;">
+                    ${currentMonth.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
                 </div>`;
-                currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+                currentMonth = nextMonth;
             }
             html += '</div>';
 
-            // Task rows - use actual task phase for coloring
+            // Task bars
             tasks.filter(t => t.dueDate).forEach((task) => {
                 const taskDate = new Date(task.dueDate);
                 const dayOffset = Math.ceil((taskDate - minDate) / (1000 * 60 * 60 * 24));
                 const phase = task.phase || 'discovery';
-                const statusLabel = task.status === 'notstarted' ? 'Not Started' :
-                                   task.status === 'inprogress' ? 'In Progress' :
-                                   task.status === 'complete' ? 'Complete' : task.status;
+                const isDone = task.status === 'done';
+                const barWidth = Math.max(dayWidth * 14, 50); // 2 weeks or minimum 50px
 
-                html += `<div class="gantt-row" style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
-                    <div style="width: 250px; padding-right: 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${task.name}">${task.name}</div>
-                    <div style="position: relative; flex: 1; height: 24px;">
-                        <div class="gantt-bar ${phase}" style="position: absolute; left: ${dayOffset * dayWidth}px; width: ${dayWidth * 5}px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white;">
-                            ${statusLabel}
-                        </div>
+                html += `<div style="height: ${rowHeight}px; position: relative; border-bottom: 1px solid #eee; background: ${isDone ? '#f0fff0' : 'white'};">
+                    <div class="gantt-bar ${phase}" style="position: absolute; top: 4px; left: ${dayOffset * dayWidth}px; width: ${barWidth}px; height: 24px; border-radius: 4px; opacity: ${isDone ? '0.6' : '1'}; ${isDone ? 'text-decoration: line-through;' : ''}">
                     </div>
                 </div>`;
             });
 
-            // Milestone rows
+            // Milestone markers
             milestones.filter(m => m.date).forEach(m => {
                 const mDate = new Date(m.date);
                 const dayOffset = Math.ceil((mDate - minDate) / (1000 * 60 * 60 * 24));
 
-                const mTitle = m.title || m.name;
-                html += `<div class="gantt-row" style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
-                    <div style="width: 200px; padding-right: 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🎯 ${mTitle}</div>
-                    <div style="position: relative; flex: 1; height: 24px;">
-                        <div style="position: absolute; left: ${dayOffset * dayWidth}px; width: 24px; height: 24px; background: #764ba2; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                            <span style="color: white; font-size: 12px;">◆</span>
-                        </div>
-                    </div>
+                html += `<div style="height: ${rowHeight}px; position: relative; border-bottom: 1px solid #eee;">
+                    <div style="position: absolute; top: 6px; left: ${dayOffset * dayWidth - 10}px; width: 20px; height: 20px; background: #764ba2; transform: rotate(45deg);"></div>
                 </div>`;
             });
 
+            html += '</div></div></div>';
+
+            // Add legend
+            html += '<div style="margin-top: 15px; padding: 10px; background: #f5f5f5; border-radius: 6px; display: flex; gap: 20px; flex-wrap: wrap; font-size: 11px;">';
+            html += '<strong>Phases:</strong>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #079fdb; border-radius: 2px; margin-right: 4px;"></span>Discovery</span>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #0447bb; border-radius: 2px; margin-right: 4px;"></span>Documentation</span>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #5c74a7; border-radius: 2px; margin-right: 4px;"></span>Evaluation</span>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #242c3c; border-radius: 2px; margin-right: 4px;"></span>Selection</span>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #764ba2; transform: rotate(45deg); margin-right: 4px;"></span>Milestone</span>';
             html += '</div>';
+
             container.innerHTML = html;
         }
 
