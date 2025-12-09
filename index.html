@@ -2027,7 +2027,14 @@
                     appState = { ...appState, ...loaded };
                     appState.startDate = new Date(appState.startDate);
                     appState.goLiveDate = new Date(appState.goLiveDate);
+                    appState.calendarMonth = new Date(appState.calendarMonth || '2025-12-01');
                     appState.meetingCalendarMonth = new Date(appState.meetingCalendarMonth || '2025-12-01');
+
+                    // If tasks array is empty or very small, reload defaults (user has old data)
+                    if (!appState.tasks || appState.tasks.length < 15) {
+                        console.log('Outdated data detected, reloading defaults...');
+                        initializeFromDefault();
+                    }
                 } catch(e) {
                     console.error('Error loading state:', e);
                     initializeFromDefault();
