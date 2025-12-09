@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#079fdb">
     <title>Hexagon SAP AMS RFP | Complete Programme Management</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -573,13 +577,242 @@
             .evaluation-table th, .evaluation-table td { padding: 8px; }
         }
 
+        /* Mobile Responsive Styles */
+        @media (max-width: 1024px) {
+            body { padding: 10px; }
+            .container { max-width: 100%; }
+            .header { padding: 20px; }
+            .header h1 { font-size: 1.8em; }
+            .card { padding: 15px; }
+            .nav-tabs { gap: 5px; padding: 8px; }
+            .nav-tab { padding: 10px 16px; font-size: 0.9em; }
+        }
+
         @media (max-width: 768px) {
-            .header { flex-direction: column; text-align: center; }
-            .grid-4 { grid-template-columns: 1fr; }
-            .task-item { grid-template-columns: 1fr; }
+            body { padding: 8px; }
+
+            /* Header */
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+                gap: 15px;
+            }
+            .header h1 { font-size: 1.5em; margin-bottom: 5px; }
+            .header p { font-size: 0.85em; line-height: 1.4; }
+            .days-counter { font-size: 1.5em; }
+
+            /* Navigation Tabs - Horizontal Scroll */
+            .nav-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                gap: 6px;
+                padding: 8px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                margin-bottom: 15px;
+            }
+            .nav-tabs::-webkit-scrollbar { display: none; }
+            .nav-tab {
+                white-space: nowrap;
+                flex-shrink: 0;
+                padding: 10px 14px;
+                font-size: 0.85em;
+                min-height: 44px; /* Touch-friendly */
+            }
+
+            /* Cards */
+            .card {
+                padding: 12px;
+                margin-bottom: 12px;
+                border-radius: 8px;
+            }
+            .card-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            .card-header h2 { font-size: 1.2em; }
+
+            /* Dashboard Grid */
+            .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stat-card { padding: 15px; }
+            .stat-value { font-size: 1.8em; }
+            .stat-label { font-size: 0.85em; }
+
+            /* Tasks */
+            .task-item {
+                grid-template-columns: auto 1fr;
+                gap: 10px;
+                padding: 12px;
+            }
+            .task-item > div:last-child {
+                grid-column: 1 / -1;
+                display: flex;
+                gap: 8px;
+                justify-content: flex-end;
+                margin-top: 8px;
+            }
+            .task-checkbox { width: 28px; height: 28px; }
+            .task-title { font-size: 0.95em; }
+            .task-meta { font-size: 0.8em; }
+
+            /* Buttons */
+            .btn {
+                padding: 12px 16px;
+                min-height: 44px;
+                font-size: 0.9em;
+            }
+            .btn-small {
+                padding: 10px 14px;
+                min-height: 40px;
+            }
+
+            /* Vendor Grid */
             .vendor-grid { grid-template-columns: 1fr; }
-            .nav-tabs { overflow-x: auto; flex-wrap: nowrap; }
-            .nav-tab { white-space: nowrap; flex-shrink: 0; }
+            .vendor-card { padding: 15px; }
+
+            /* Calendar */
+            .calendar-grid { gap: 1px; }
+            .calendar-day {
+                min-height: 60px;
+                padding: 4px;
+            }
+            .calendar-date { font-size: 0.8em; }
+            .calendar-event {
+                font-size: 0.65em;
+                padding: 2px 3px;
+            }
+            .calendar-header {
+                padding: 6px;
+                font-size: 0.75em;
+            }
+            .calendar-nav h3 { font-size: 1.1em; }
+
+            /* Tables */
+            .evaluation-table { font-size: 0.8em; }
+            .evaluation-table th,
+            .evaluation-table td { padding: 8px 6px; }
+
+            /* Forms */
+            .form-input, .form-textarea, .form-select {
+                font-size: 16px; /* Prevents iOS zoom */
+                padding: 12px;
+                min-height: 44px;
+            }
+
+            /* Modals */
+            .modal-content {
+                width: 95%;
+                max-width: 95%;
+                margin: 10px auto;
+                padding: 15px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            /* Phase Header */
+            .phase-header {
+                flex-direction: column;
+                gap: 5px;
+                align-items: flex-start;
+                font-size: 0.9em;
+            }
+
+            /* Filter Buttons */
+            .filter-btn {
+                padding: 8px 12px;
+                font-size: 0.8em;
+                min-height: 40px;
+            }
+
+            /* Document Tree */
+            .folder-header { padding: 12px; }
+            .folder-name { font-size: 0.9em; }
+            .document-item {
+                padding: 10px;
+                flex-wrap: wrap;
+            }
+            .doc-name {
+                font-size: 0.85em;
+                flex: 1 1 100%;
+                margin-bottom: 8px;
+            }
+            .doc-actions {
+                flex: 1 1 100%;
+                justify-content: flex-end;
+            }
+
+            /* Meetings */
+            .meeting-card { padding: 12px; }
+
+            /* Risk Cards */
+            .risk-card { padding: 12px; }
+
+            /* GANTT - Show simplified message on mobile */
+            #ganttChart > div:first-child {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+
+            .header h1 { font-size: 1.3em; }
+            .header p { font-size: 0.8em; }
+
+            .grid-4 { grid-template-columns: 1fr; }
+            .stat-card { padding: 12px; }
+            .stat-value { font-size: 1.5em; }
+
+            .nav-tab {
+                padding: 8px 12px;
+                font-size: 0.8em;
+            }
+
+            .card { padding: 10px; }
+            .card-header h2 { font-size: 1.1em; }
+
+            .task-item { padding: 10px; }
+
+            .calendar-day { min-height: 50px; }
+            .calendar-event { font-size: 0.6em; }
+
+            /* Hide some text on very small screens */
+            .hide-mobile { display: none; }
+        }
+
+        /* Touch-friendly improvements */
+        @media (pointer: coarse) {
+            .btn, .nav-tab, .filter-btn, .task-checkbox {
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            .theme-toggle {
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            /* Larger touch targets */
+            .task-item { padding: 15px; }
+            .document-item { padding: 12px; }
+            .folder-header { padding: 14px; }
+        }
+
+        /* Landscape phone */
+        @media (max-width: 896px) and (orientation: landscape) {
+            .header { padding: 10px 20px; }
+            .header h1 { font-size: 1.3em; }
+            .days-counter { font-size: 1.3em; }
+            .modal-content { max-height: 85vh; }
+        }
+
+        /* iPad specific */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+            .vendor-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav-tabs { flex-wrap: wrap; }
         }
 
         /* Calendar Styles */
