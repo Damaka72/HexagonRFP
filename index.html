@@ -2003,8 +2003,11 @@
             document.getElementById('confirmModal').style.display = 'block';
         }
 
-        function saveState() {
+        function saveState(showNotification = false) {
             localStorage.setItem('hexagonRFP', JSON.stringify(appState));
+            if (showNotification) {
+                showToast('Changes saved', 'success');
+            }
         }
 
         function updateDashboard() {
@@ -2479,10 +2482,12 @@
         function toggleTask(id) {
             const task = appState.tasks.find(t => t.id === id);
             if (task) {
-                task.status = task.status === 'done' ? 'notstarted' : 'done';
+                const wasCompleted = task.status === 'done';
+                task.status = wasCompleted ? 'notstarted' : 'done';
                 saveState();
                 renderAll();
                 updateDashboard();
+                showToast(wasCompleted ? 'Task reopened' : 'Task completed & saved!', 'success');
             }
         }
 
@@ -3153,59 +3158,85 @@
             maxDate.setDate(maxDate.getDate() + 14);
 
             const totalDays = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
-            const dayWidth = 30;
+            const dayWidth = 3; // Compact for long timelines
+            const timelineWidth = totalDays * dayWidth;
+            const rowHeight = 32;
 
-            let html = '<div class="gantt-timeline" style="position: relative; min-width: ' + (totalDays * dayWidth) + 'px;">';
+            // Build the split-pane Gantt layout
+            let html = '<div style="display: flex; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white;">';
 
-            // Header with months
-            html += '<div class="gantt-header" style="display: flex; border-bottom: 2px solid #ddd; padding: 10px 0;">';
+            // Left panel - Fixed task names
+            html += '<div style="flex-shrink: 0; width: 200px; border-right: 2px solid #ddd; background: #fafafa;">';
+            html += `<div style="height: ${rowHeight}px; padding: 8px; font-weight: 600; background: #f0f0f0; border-bottom: 2px solid #ddd; font-size: 12px;">Task / Milestone</div>`;
+
+            tasks.filter(t => t.dueDate).forEach((task) => {
+                const phase = task.phase || 'discovery';
+                const phaseColors = { discovery: '#079fdb', documentation: '#0447bb', evaluation: '#5c74a7', selection: '#242c3c' };
+                html += `<div style="height: ${rowHeight}px; padding: 6px 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 1px solid #eee; border-left: 3px solid ${phaseColors[phase] || '#079fdb'};" title="${task.name}">${task.name}</div>`;
+            });
+
+            milestones.filter(m => m.date).forEach(m => {
+                const mTitle = m.title || m.name;
+                html += `<div style="height: ${rowHeight}px; padding: 6px 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 1px solid #eee; border-left: 3px solid #764ba2; color: #764ba2; font-weight: 500;" title="${mTitle}">🎯 ${mTitle}</div>`;
+            });
+            html += '</div>';
+
+            // Right panel - Scrollable timeline
+            html += `<div style="flex: 1; overflow-x: auto;" id="ganttTimelineScroll">`;
+            html += `<div style="min-width: ${timelineWidth}px;">`;
+
+            // Month header
+            html += `<div style="display: flex; height: ${rowHeight}px; background: #f0f0f0; border-bottom: 2px solid #ddd;">`;
             let currentMonth = new Date(minDate);
             while (currentMonth <= maxDate) {
-                const monthDays = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
-                const remainingDays = Math.min(monthDays - currentMonth.getDate() + 1, Math.ceil((maxDate - currentMonth) / (1000 * 60 * 60 * 24)));
-                html += `<div style="width: ${remainingDays * dayWidth}px; text-align: center; font-weight: 600; color: #333;">
-                    ${currentMonth.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                const nextMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+                const monthEnd = new Date(Math.min(nextMonth.getTime() - 1, maxDate.getTime()));
+                const daysInView = Math.ceil((monthEnd - currentMonth) / (1000 * 60 * 60 * 24)) + 1;
+                const monthWidth = daysInView * dayWidth;
+
+                html += `<div style="width: ${monthWidth}px; text-align: center; font-weight: 600; color: #333; padding: 8px 2px; border-right: 1px solid #ddd; font-size: 10px; white-space: nowrap; overflow: hidden;">
+                    ${currentMonth.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
                 </div>`;
-                currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+                currentMonth = nextMonth;
             }
             html += '</div>';
 
-            // Task rows - use actual task phase for coloring
+            // Task bars
             tasks.filter(t => t.dueDate).forEach((task) => {
                 const taskDate = new Date(task.dueDate);
                 const dayOffset = Math.ceil((taskDate - minDate) / (1000 * 60 * 60 * 24));
                 const phase = task.phase || 'discovery';
-                const statusLabel = task.status === 'notstarted' ? 'Not Started' :
-                                   task.status === 'inprogress' ? 'In Progress' :
-                                   task.status === 'complete' ? 'Complete' : task.status;
+                const isDone = task.status === 'done';
+                const barWidth = Math.max(dayWidth * 14, 50); // 2 weeks or minimum 50px
 
-                html += `<div class="gantt-row" style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
-                    <div style="width: 250px; padding-right: 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${task.name}">${task.name}</div>
-                    <div style="position: relative; flex: 1; height: 24px;">
-                        <div class="gantt-bar ${phase}" style="position: absolute; left: ${dayOffset * dayWidth}px; width: ${dayWidth * 5}px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white;">
-                            ${statusLabel}
-                        </div>
+                html += `<div style="height: ${rowHeight}px; position: relative; border-bottom: 1px solid #eee; background: ${isDone ? '#f0fff0' : 'white'};">
+                    <div class="gantt-bar ${phase}" style="position: absolute; top: 4px; left: ${dayOffset * dayWidth}px; width: ${barWidth}px; height: 24px; border-radius: 4px; opacity: ${isDone ? '0.6' : '1'}; ${isDone ? 'text-decoration: line-through;' : ''}">
                     </div>
                 </div>`;
             });
 
-            // Milestone rows
+            // Milestone markers
             milestones.filter(m => m.date).forEach(m => {
                 const mDate = new Date(m.date);
                 const dayOffset = Math.ceil((mDate - minDate) / (1000 * 60 * 60 * 24));
 
-                const mTitle = m.title || m.name;
-                html += `<div class="gantt-row" style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
-                    <div style="width: 200px; padding-right: 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🎯 ${mTitle}</div>
-                    <div style="position: relative; flex: 1; height: 24px;">
-                        <div style="position: absolute; left: ${dayOffset * dayWidth}px; width: 24px; height: 24px; background: #764ba2; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                            <span style="color: white; font-size: 12px;">◆</span>
-                        </div>
-                    </div>
+                html += `<div style="height: ${rowHeight}px; position: relative; border-bottom: 1px solid #eee;">
+                    <div style="position: absolute; top: 6px; left: ${dayOffset * dayWidth - 10}px; width: 20px; height: 20px; background: #764ba2; transform: rotate(45deg);"></div>
                 </div>`;
             });
 
+            html += '</div></div></div>';
+
+            // Add legend
+            html += '<div style="margin-top: 15px; padding: 10px; background: #f5f5f5; border-radius: 6px; display: flex; gap: 20px; flex-wrap: wrap; font-size: 11px;">';
+            html += '<strong>Phases:</strong>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #079fdb; border-radius: 2px; margin-right: 4px;"></span>Discovery</span>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #0447bb; border-radius: 2px; margin-right: 4px;"></span>Documentation</span>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #5c74a7; border-radius: 2px; margin-right: 4px;"></span>Evaluation</span>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #242c3c; border-radius: 2px; margin-right: 4px;"></span>Selection</span>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #764ba2; transform: rotate(45deg); margin-right: 4px;"></span>Milestone</span>';
             html += '</div>';
+
             container.innerHTML = html;
         }
 
