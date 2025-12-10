@@ -1310,7 +1310,7 @@
                     <h3 style="color: var(--primary); margin-bottom: 15px;">Access Your Microsoft 365 Email</h3>
                     <p style="color: var(--gray-700); margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
                         Open Outlook Web to view and manage your emails alongside your RFP work.
-                        Your emails will open in a new tab.
+                        Links will open in Microsoft Edge.
                     </p>
                     <button class="btn btn-primary" onclick="openOutlookWeb()" style="font-size: 1.1em; padding: 15px 40px;">
                         📬 Open Outlook Web
@@ -2307,23 +2307,23 @@
 
         // Microsoft 365 Quick Access Functions
         function openOutlookWeb() {
-            window.open('https://outlook.office.com/mail/', '_blank');
-            showToast('Opening Outlook Web...', 'success');
+            window.open('microsoft-edge:https://outlook.office.com/mail/', '_blank');
+            showToast('Opening Outlook Web in Microsoft Edge...', 'success');
         }
 
         function openOutlookCalendar() {
-            window.open('https://outlook.office.com/calendar/', '_blank');
-            showToast('Opening Outlook Calendar...', 'success');
+            window.open('microsoft-edge:https://outlook.office.com/calendar/', '_blank');
+            showToast('Opening Outlook Calendar in Microsoft Edge...', 'success');
         }
 
         function openTeams() {
-            window.open('https://teams.microsoft.com/', '_blank');
-            showToast('Opening Microsoft Teams...', 'success');
+            window.open('microsoft-edge:https://teams.microsoft.com/', '_blank');
+            showToast('Opening Microsoft Teams in Microsoft Edge...', 'success');
         }
 
         function openOneDrive() {
-            window.open('https://onedrive.live.com/', '_blank');
-            showToast('Opening OneDrive...', 'success');
+            window.open('microsoft-edge:https://onedrive.live.com/', '_blank');
+            showToast('Opening OneDrive in Microsoft Edge...', 'success');
         }
 
         function updateDashboard() {
