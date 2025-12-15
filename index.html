@@ -1389,7 +1389,10 @@
             <div class="card">
                 <div class="card-header">
                     <h2>Stakeholder Management</h2>
-                    <button class="btn btn-primary" onclick="addStakeholder()">➕ Add Stakeholder</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="addStakeholder()">➕ Add Stakeholder</button>
+                        <button class="btn btn-success" onclick="exportStakeholdersToExcel()">📊 Export to Excel</button>
+                    </div>
                 </div>
                 <div class="vendor-grid" id="stakeholderGrid"></div>
             </div>
@@ -1397,7 +1400,10 @@
             <div class="card">
                 <div class="card-header">
                     <h2>RACI Matrix</h2>
-                    <button class="btn btn-success" onclick="saveRaci()">💾 Save RACI</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-success" onclick="saveRaci()">💾 Save RACI</button>
+                        <button class="btn btn-success" onclick="exportRaciToExcel()">📊 Export to Excel</button>
+                    </div>
                 </div>
                 <div style="overflow-x: auto;">
                     <table class="evaluation-table" id="raciTable">
@@ -1667,7 +1673,7 @@
     <div id="stakeholderModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('stakeholderModal')">&times;</span>
-            <h2>Add New Stakeholder</h2>
+            <h2 id="stakeholderModalTitle">Add New Stakeholder</h2>
             <div class="form-group">
                 <label class="form-label" for="stakeholderName">Name/Title *</label>
                 <input type="text" class="form-input" id="stakeholderName" required>
@@ -3208,6 +3214,8 @@
         }
 
         // Stakeholder Management
+        let editingStakeholderId = null;
+
         function renderStakeholders() {
             const html = appState.stakeholders.map(s => `
                 <div class="vendor-card">
@@ -3225,7 +3233,10 @@
                             ${s.interest === 'high' ? 'High' : 'Medium'}
                         </span>
                     </div>
-                    <button class="btn btn-small btn-danger" style="width: 100%; margin-top: 10px;" onclick="deleteStakeholder(${s.id})">Delete</button>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn btn-small btn-primary" style="flex: 1;" onclick="editStakeholder(${s.id})">✏️ Edit</button>
+                        <button class="btn btn-small btn-danger" style="flex: 1;" onclick="deleteStakeholder(${s.id})">🗑️ Delete</button>
+                    </div>
                 </div>
             `).join('');
 
@@ -3370,6 +3381,169 @@
         function saveRaci() {
             saveState();
             alert('✓ RACI matrix saved successfully!');
+        }
+
+        // Excel Export Functions
+        function exportStakeholdersToExcel() {
+            if (appState.stakeholders.length === 0) {
+                showToast('No stakeholders to export', 'error');
+                return;
+            }
+
+            // Create Excel-compatible HTML table
+            let html = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="UTF-8">
+                    <!--[if gte mso 9]>
+                    <xml>
+                        <x:ExcelWorkbook>
+                            <x:ExcelWorksheets>
+                                <x:ExcelWorksheet>
+                                    <x:Name>Stakeholders</x:Name>
+                                    <x:WorksheetOptions>
+                                        <x:DisplayGridlines/>
+                                    </x:WorksheetOptions>
+                                </x:ExcelWorksheet>
+                            </x:ExcelWorksheets>
+                        </x:ExcelWorkbook>
+                    </xml>
+                    <![endif]-->
+                    <style>
+                        table { border-collapse: collapse; }
+                        th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+                        th { background-color: #0A4D68; color: white; font-weight: bold; }
+                        .high-influence { background-color: #ffe5e5; }
+                        .medium-influence { background-color: #e3f2fd; }
+                        .high-interest { background-color: #e8f5e9; }
+                        .medium-interest { background-color: #fff9e5; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Hexagon RFP - Stakeholder Register</h2>
+                    <p>Generated: ${new Date().toLocaleDateString()}</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Department</th>
+                                <th>Influence</th>
+                                <th>Interest</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            appState.stakeholders.forEach(s => {
+                html += `
+                    <tr>
+                        <td>${s.name}</td>
+                        <td>${s.role || ''}</td>
+                        <td>${s.department || ''}</td>
+                        <td class="${s.influence === 'high' ? 'high-influence' : 'medium-influence'}">${s.influence === 'high' ? 'High' : 'Medium'}</td>
+                        <td class="${s.interest === 'high' ? 'high-interest' : 'medium-interest'}">${s.interest === 'high' ? 'High' : 'Medium'}</td>
+                        <td>${s.notes || ''}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `;
+
+            downloadExcel(html, `Hexagon-Stakeholders-${new Date().toISOString().split('T')[0]}.xls`);
+            showToast('Stakeholders exported to Excel', 'success');
+        }
+
+        function exportRaciToExcel() {
+            if (appState.raciActivities.length === 0) {
+                showToast('No RACI activities to export', 'error');
+                return;
+            }
+
+            // Create Excel-compatible HTML table
+            let html = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="UTF-8">
+                    <!--[if gte mso 9]>
+                    <xml>
+                        <x:ExcelWorkbook>
+                            <x:ExcelWorksheets>
+                                <x:ExcelWorksheet>
+                                    <x:Name>RACI Matrix</x:Name>
+                                    <x:WorksheetOptions>
+                                        <x:DisplayGridlines/>
+                                    </x:WorksheetOptions>
+                                </x:ExcelWorksheet>
+                            </x:ExcelWorksheets>
+                        </x:ExcelWorkbook>
+                    </xml>
+                    <![endif]-->
+                    <style>
+                        table { border-collapse: collapse; }
+                        th, td { border: 1px solid #000; padding: 8px; text-align: center; }
+                        th { background-color: #0A4D68; color: white; font-weight: bold; }
+                        td:first-child { text-align: left; }
+                        .raci-R { background-color: #e3f2fd; font-weight: bold; }
+                        .raci-A { background-color: #fff9e5; font-weight: bold; }
+                        .raci-C { background-color: #e8f5e9; font-weight: bold; }
+                        .raci-I { background-color: #fce4ec; font-weight: bold; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Hexagon RFP - RACI Matrix</h2>
+                    <p>Generated: ${new Date().toLocaleDateString()}</p>
+                    <p><strong>Legend:</strong> R = Responsible, A = Accountable, C = Consulted, I = Informed</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Activity / Deliverable</th>
+                                ${appState.stakeholders.map(s => `<th>${s.name}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            appState.raciActivities.forEach(a => {
+                html += `
+                    <tr>
+                        <td>${a.activity}</td>
+                        ${appState.stakeholders.map(s => {
+                            const value = a.raci[s.id] || '';
+                            const cssClass = value ? `raci-${value}` : '';
+                            return `<td class="${cssClass}">${value}</td>`;
+                        }).join('')}
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `;
+
+            downloadExcel(html, `Hexagon-RACI-Matrix-${new Date().toISOString().split('T')[0]}.xls`);
+            showToast('RACI Matrix exported to Excel', 'success');
+        }
+
+        function downloadExcel(html, filename) {
+            const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         // Calendar Functions
@@ -3886,12 +4060,29 @@
 
         // Stakeholder Modal Functions
         function openStakeholderModal() {
+            editingStakeholderId = null;
+            document.getElementById('stakeholderModalTitle').textContent = 'Add New Stakeholder';
             document.getElementById('stakeholderName').value = '';
             document.getElementById('stakeholderRole').value = '';
             document.getElementById('stakeholderDept').value = '';
             document.getElementById('stakeholderInfluence').value = 'high';
             document.getElementById('stakeholderInterest').value = 'high';
             document.getElementById('stakeholderNotes').value = '';
+            document.getElementById('stakeholderModal').style.display = 'block';
+        }
+
+        function editStakeholder(id) {
+            const stakeholder = appState.stakeholders.find(s => s.id === id);
+            if (!stakeholder) return;
+
+            editingStakeholderId = id;
+            document.getElementById('stakeholderModalTitle').textContent = 'Edit Stakeholder';
+            document.getElementById('stakeholderName').value = stakeholder.name;
+            document.getElementById('stakeholderRole').value = stakeholder.role || '';
+            document.getElementById('stakeholderDept').value = stakeholder.department || '';
+            document.getElementById('stakeholderInfluence').value = stakeholder.influence || 'medium';
+            document.getElementById('stakeholderInterest').value = stakeholder.interest || 'medium';
+            document.getElementById('stakeholderNotes').value = stakeholder.notes || '';
             document.getElementById('stakeholderModal').style.display = 'block';
         }
 
@@ -3902,23 +4093,39 @@
                 return;
             }
 
-            const newId = Math.max(...appState.stakeholders.map(s => s.id), 0) + 1;
-            appState.stakeholders.push({
-                id: newId,
-                name: sanitizeHTML(name),
-                role: sanitizeHTML(document.getElementById('stakeholderRole').value.trim()) || 'Stakeholder',
-                department: sanitizeHTML(document.getElementById('stakeholderDept').value.trim()),
-                email: '',
-                influence: document.getElementById('stakeholderInfluence').value,
-                interest: document.getElementById('stakeholderInterest').value,
-                notes: sanitizeHTML(document.getElementById('stakeholderNotes').value.trim())
-            });
+            if (editingStakeholderId) {
+                // Update existing stakeholder
+                const stakeholder = appState.stakeholders.find(s => s.id === editingStakeholderId);
+                if (stakeholder) {
+                    stakeholder.name = sanitizeHTML(name);
+                    stakeholder.role = sanitizeHTML(document.getElementById('stakeholderRole').value.trim()) || 'Stakeholder';
+                    stakeholder.department = sanitizeHTML(document.getElementById('stakeholderDept').value.trim());
+                    stakeholder.influence = document.getElementById('stakeholderInfluence').value;
+                    stakeholder.interest = document.getElementById('stakeholderInterest').value;
+                    stakeholder.notes = sanitizeHTML(document.getElementById('stakeholderNotes').value.trim());
+                }
+                editingStakeholderId = null;
+                showToast('Stakeholder updated', 'success');
+            } else {
+                // Add new stakeholder
+                const newId = Math.max(...appState.stakeholders.map(s => s.id), 0) + 1;
+                appState.stakeholders.push({
+                    id: newId,
+                    name: sanitizeHTML(name),
+                    role: sanitizeHTML(document.getElementById('stakeholderRole').value.trim()) || 'Stakeholder',
+                    department: sanitizeHTML(document.getElementById('stakeholderDept').value.trim()),
+                    email: '',
+                    influence: document.getElementById('stakeholderInfluence').value,
+                    interest: document.getElementById('stakeholderInterest').value,
+                    notes: sanitizeHTML(document.getElementById('stakeholderNotes').value.trim())
+                });
+                showToast('Stakeholder added', 'success');
+            }
 
             saveState();
             renderStakeholders();
             renderRaciMatrix();
             closeModal('stakeholderModal');
-            showToast('Stakeholder added', 'success');
         }
 
         // Vendor Scoring Functions
