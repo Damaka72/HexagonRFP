@@ -328,6 +328,56 @@
         .status-finalist { background: #ffe5f0; color: #c51162; }
         .status-winner { background: #c8e6c9; color: #1b5e20; }
 
+        .vendor-contact-card {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .vendor-contact-card .contact-remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+
+        .vendor-contact-card .contact-remove-btn:hover {
+            background: #c82333;
+        }
+
+        .vendor-contacts-display {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .vendor-contacts-display .contact-item {
+            background: var(--gray-50);
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .vendor-contacts-display .contact-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .vendor-contacts-display .contact-detail {
+            color: var(--gray-700);
+            margin-left: 5px;
+        }
+
         .risk-card {
             border-left: 4px solid;
             padding: 15px;
@@ -1552,6 +1602,16 @@
                 <label class="form-label" for="vendorRelevance">Hexagon Relevance</label>
                 <textarea class="form-textarea" id="vendorRelevance"></textarea>
             </div>
+
+            <!-- Vendor Contacts Section -->
+            <div class="form-group" style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--gray-200);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <label class="form-label" style="margin: 0;">Vendor Contacts</label>
+                    <button type="button" class="btn btn-small" onclick="addVendorContact()" style="padding: 6px 12px;">+ Add Contact</button>
+                </div>
+                <div id="vendorContactsContainer"></div>
+            </div>
+
             <button class="btn btn-primary" onclick="saveVendor()">Save Vendor</button>
         </div>
     </div>
@@ -1888,19 +1948,19 @@
                 {id: 40, name: "US Go-Live Support", owner: "New AMS Vendor", dueDate: "2026-09-01", status: "notstarted", phase: "selection", description: "Hypercare support for US Go-Live"}
             ],
             vendors: [
-                {id: 1, name: "Accenture", type: "Global SI", tier: "Tier 1", strengths: "Market leader in S/4HANA. Massive scale. 'Soar with Accenture' methodology.", relevance: "Deep expertise in High Tech & Manufacturing industries.", status: "longlist"},
-                {id: 2, name: "Deloitte", type: "Global SI", tier: "Tier 1", strengths: "Strong on Business Transformation. Often already in the C-suite.", relevance: "Author of your Due Diligence Report (High Context).", status: "warm"},
-                {id: 3, name: "Capgemini", type: "Global SI", tier: "Tier 1", strengths: "Very strong in Europe/Manufacturing. Focus on 'Intelligent Enterprise'.", relevance: "Excellent track record in discrete manufacturing.", status: "longlist"},
-                {id: 4, name: "NTT DATA", type: "Global SI", tier: "Tier 2", strengths: "Strategic Note: Known partner for Hexagon's own products (HxGN EAM).", relevance: "High Synergy. They may already know Hexagon's ecosystem.", status: "warm"},
-                {id: 5, name: "Infosys", type: "Global SI", tier: "Tier 1", strengths: "Strong on cost-optimization and AI automation (Infosys Cobalt).", relevance: "Good for 'keeping the lights on' at lower cost.", status: "longlist"},
-                {id: 6, name: "TCS", type: "Global SI", tier: "Tier 1", strengths: "Massive scale, very process-driven. 'Perpetual Beta' model.", relevance: "Strong in Engineering & Industrial services.", status: "longlist"},
-                {id: 7, name: "HCLTech", type: "Global SI", tier: "Tier 2", strengths: "'Engineering DNA'. Very strong in technical SAP landscape management.", relevance: "Culturally fits Hexagon's engineering background.", status: "longlist"},
-                {id: 8, name: "IBM Consulting", type: "Tech Giant", tier: "Tier 1", strengths: "'Rise with SAP' premium partner. Deep AI/Watson integration capabilities.", relevance: "Heritage in complex legacy-to-cloud migrations.", status: "longlist"},
-                {id: 9, name: "SAP (DBS)", type: "OEM", tier: "Tier 1", strengths: "SAP's own 'Digital Business Services' (MaxAttention).", relevance: "Highest cost, but 100% proximity to product dev.", status: "longlist"},
-                {id: 10, name: "Lemongrass", type: "Boutique", tier: "Niche", strengths: "'SAP on Cloud' specialists (esp. AWS). Very technical, less functional.", relevance: "If Hexagon is moving SAP to AWS/Azure, they are top tier.", status: "longlist"},
-                {id: 11, name: "BirlaSoft", type: "Boutique", tier: "Mid", strengths: "Strong in Manufacturing and Energy. 'Challenger' status.", relevance: "Good agile alternative to the Big 4.", status: "longlist"},
-                {id: 12, name: "LTIMindtree", type: "Global SI", tier: "Mid", strengths: "'Challenger' to the big players. Agile and hungry for deals.", relevance: "Good balance of size vs. attention.", status: "longlist"},
-                {id: 13, name: "Wipro", type: "Global SI", tier: "Tier 2", strengths: "Recognized for significant growth in SAP S/4HANA revenue recently.", relevance: "Strong presence in US markets.", status: "longlist"}
+                {id: 1, name: "Accenture", type: "Global SI", tier: "Tier 1", strengths: "Market leader in S/4HANA. Massive scale. 'Soar with Accenture' methodology.", relevance: "Deep expertise in High Tech & Manufacturing industries.", status: "longlist", contacts: []},
+                {id: 2, name: "Deloitte", type: "Global SI", tier: "Tier 1", strengths: "Strong on Business Transformation. Often already in the C-suite.", relevance: "Author of your Due Diligence Report (High Context).", status: "warm", contacts: []},
+                {id: 3, name: "Capgemini", type: "Global SI", tier: "Tier 1", strengths: "Very strong in Europe/Manufacturing. Focus on 'Intelligent Enterprise'.", relevance: "Excellent track record in discrete manufacturing.", status: "longlist", contacts: []},
+                {id: 4, name: "NTT DATA", type: "Global SI", tier: "Tier 2", strengths: "Strategic Note: Known partner for Hexagon's own products (HxGN EAM).", relevance: "High Synergy. They may already know Hexagon's ecosystem.", status: "warm", contacts: []},
+                {id: 5, name: "Infosys", type: "Global SI", tier: "Tier 1", strengths: "Strong on cost-optimization and AI automation (Infosys Cobalt).", relevance: "Good for 'keeping the lights on' at lower cost.", status: "longlist", contacts: []},
+                {id: 6, name: "TCS", type: "Global SI", tier: "Tier 1", strengths: "Massive scale, very process-driven. 'Perpetual Beta' model.", relevance: "Strong in Engineering & Industrial services.", status: "longlist", contacts: []},
+                {id: 7, name: "HCLTech", type: "Global SI", tier: "Tier 2", strengths: "'Engineering DNA'. Very strong in technical SAP landscape management.", relevance: "Culturally fits Hexagon's engineering background.", status: "longlist", contacts: []},
+                {id: 8, name: "IBM Consulting", type: "Tech Giant", tier: "Tier 1", strengths: "'Rise with SAP' premium partner. Deep AI/Watson integration capabilities.", relevance: "Heritage in complex legacy-to-cloud migrations.", status: "longlist", contacts: []},
+                {id: 9, name: "SAP (DBS)", type: "OEM", tier: "Tier 1", strengths: "SAP's own 'Digital Business Services' (MaxAttention).", relevance: "Highest cost, but 100% proximity to product dev.", status: "longlist", contacts: []},
+                {id: 10, name: "Lemongrass", type: "Boutique", tier: "Niche", strengths: "'SAP on Cloud' specialists (esp. AWS). Very technical, less functional.", relevance: "If Hexagon is moving SAP to AWS/Azure, they are top tier.", status: "longlist", contacts: []},
+                {id: 11, name: "BirlaSoft", type: "Boutique", tier: "Mid", strengths: "Strong in Manufacturing and Energy. 'Challenger' status.", relevance: "Good agile alternative to the Big 4.", status: "longlist", contacts: []},
+                {id: 12, name: "LTIMindtree", type: "Global SI", tier: "Mid", strengths: "'Challenger' to the big players. Agile and hungry for deals.", relevance: "Good balance of size vs. attention.", status: "longlist", contacts: []},
+                {id: 13, name: "Wipro", type: "Global SI", tier: "Tier 2", strengths: "Recognized for significant growth in SAP S/4HANA revenue recently.", relevance: "Strong presence in US markets.", status: "longlist", contacts: []}
             ],
             risks: [
                 {id: 1, risk: "SAP USA Go-Live Date", impact: "Critical. If moves to Sept, transition period extends.", owner: "CIO / Program Lead", dueDate: "2025-12-15", rag: "red", mitigation: "Need Scenario A (June) and B (Sept) in RFP", probability: "high", impactLevel: "high"},
@@ -2638,12 +2698,39 @@
                 }
             }
 
-            const html = vendors.map(v => `
-                <div class="vendor-card">
+            const html = vendors.map(v => {
+                // Build contacts display HTML
+                let contactsHTML = '';
+                if (v.contacts && v.contacts.length > 0) {
+                    contactsHTML = `
+                        <div class="vendor-contacts-display">
+                            <strong style="font-size: 0.9em; display: block; margin-bottom: 8px;">Contacts:</strong>
+                            ${v.contacts.map(c => {
+                                let contactParts = [];
+                                if (c.name) contactParts.push(`<span class="contact-name">${c.name}</span>`);
+                                if (c.title) contactParts.push(`<span class="contact-detail">${c.title}</span>`);
+                                if (c.company) contactParts.push(`<span class="contact-detail">@ ${c.company}</span>`);
+
+                                let contactLine = contactParts.join(' ');
+
+                                let detailsLine = [];
+                                if (c.email) detailsLine.push(`📧 ${c.email}`);
+                                if (c.phone) detailsLine.push(`📞 ${c.phone}`);
+
+                                let details = detailsLine.length > 0 ? `<div style="margin-top: 4px; font-size: 0.85em;">${detailsLine.join(' | ')}</div>` : '';
+
+                                return `<div class="contact-item">${contactLine}${details}</div>`;
+                            }).join('')}
+                        </div>
+                    `;
+                }
+
+                return `
+                <div class="vendor-card" onclick="openVendorModal(${v.id})" style="cursor: pointer;">
                     <div class="vendor-name">${v.name}</div>
                     <span class="vendor-status status-${v.status}">
-                        ${v.status === 'warm' ? '🟢 Warm' : 
-                          v.status === 'shortlist' ? '⭐ Shortlist' : 
+                        ${v.status === 'warm' ? '🟢 Warm' :
+                          v.status === 'shortlist' ? '⭐ Shortlist' :
                           v.status === 'finalist' ? '🎯 Finalist' :
                           v.status === 'winner' ? '🏆 Winner' : '⚪ Long List'}
                     </span>
@@ -2654,7 +2741,8 @@
                     <div style="font-size: 0.9em; color: var(--gray-700); margin: 10px 0; padding-top: 10px; border-top: 1px solid var(--gray-200);">
                         <strong>Hexagon Fit:</strong> ${v.relevance}
                     </div>
-                    <select class="form-select" style="margin-top: 10px;" onchange="updateVendorStatus(${v.id}, this.value)">
+                    ${contactsHTML}
+                    <select class="form-select" style="margin-top: 10px;" onchange="event.stopPropagation(); updateVendorStatus(${v.id}, this.value)">
                         <option value="longlist" ${v.status === 'longlist' ? 'selected' : ''}>Long List</option>
                         <option value="warm" ${v.status === 'warm' ? 'selected' : ''}>Warm Lead</option>
                         <option value="shortlist" ${v.status === 'shortlist' ? 'selected' : ''}>Shortlist</option>
@@ -2662,9 +2750,10 @@
                         <option value="winner" ${v.status === 'winner' ? 'selected' : ''}>Winner</option>
                         <option value="rejected" ${v.status === 'rejected' ? 'selected' : ''}>Rejected</option>
                     </select>
-                    <button class="btn btn-small btn-danger" style="width: 100%; margin-top: 10px;" onclick="deleteVendor(${v.id})">Delete</button>
+                    <button class="btn btn-small btn-danger" style="width: 100%; margin-top: 10px;" onclick="event.stopPropagation(); deleteVendor(${v.id})">Delete</button>
                 </div>
-            `).join('');
+                `;
+            }).join('');
 
             const el = document.getElementById('vendorGrid');
             if (el) el.innerHTML = html;
@@ -2903,6 +2992,69 @@
         }
 
         // Vendor Management
+        let vendorContactsTemp = [];
+
+        function addVendorContact() {
+            const contactIndex = vendorContactsTemp.length;
+            vendorContactsTemp.push({
+                name: '',
+                title: '',
+                company: '',
+                email: '',
+                phone: ''
+            });
+            renderVendorContactsForm();
+        }
+
+        function removeVendorContact(index) {
+            vendorContactsTemp.splice(index, 1);
+            renderVendorContactsForm();
+        }
+
+        function renderVendorContactsForm() {
+            const container = document.getElementById('vendorContactsContainer');
+            if (!container) return;
+
+            if (vendorContactsTemp.length === 0) {
+                container.innerHTML = '<p style="color: var(--gray-600); font-size: 0.9em; text-align: center; padding: 20px;">No contacts added yet. Click "+ Add Contact" to add one.</p>';
+                return;
+            }
+
+            const html = vendorContactsTemp.map((contact, index) => `
+                <div class="vendor-contact-card">
+                    <button type="button" class="contact-remove-btn" onclick="removeVendorContact(${index})">✕ Remove</button>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label class="form-label" style="font-size: 0.9em;">Contact Name</label>
+                            <input type="text" class="form-input" id="contactName${index}" value="${contact.name}" placeholder="John Doe">
+                        </div>
+                        <div>
+                            <label class="form-label" style="font-size: 0.9em;">Title</label>
+                            <input type="text" class="form-input" id="contactTitle${index}" value="${contact.title}" placeholder="Account Manager">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label class="form-label" style="font-size: 0.9em;">Company</label>
+                            <input type="text" class="form-input" id="contactCompany${index}" value="${contact.company}" placeholder="Accenture">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label class="form-label" style="font-size: 0.9em;">Email</label>
+                            <input type="email" class="form-input" id="contactEmail${index}" value="${contact.email}" placeholder="john.doe@company.com">
+                        </div>
+                        <div>
+                            <label class="form-label" style="font-size: 0.9em;">Phone</label>
+                            <input type="tel" class="form-input" id="contactPhone${index}" value="${contact.phone}" placeholder="+1 234 567 8900">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
         function openVendorModal(id = null) {
             appState.editingVendorId = id;
             if (id) {
@@ -2914,6 +3066,10 @@
                     document.getElementById('vendorTier').value = v.tier || 'Tier 2';
                     document.getElementById('vendorStrengths').value = v.strengths || '';
                     document.getElementById('vendorRelevance').value = v.relevance || '';
+
+                    // Load existing contacts
+                    vendorContactsTemp = v.contacts ? JSON.parse(JSON.stringify(v.contacts)) : [];
+                    renderVendorContactsForm();
                 }
             } else {
                 document.getElementById('vendorModalTitle').textContent = 'Add New Vendor';
@@ -2922,6 +3078,10 @@
                 document.getElementById('vendorTier').value = 'Tier 2';
                 document.getElementById('vendorStrengths').value = '';
                 document.getElementById('vendorRelevance').value = '';
+
+                // Reset contacts
+                vendorContactsTemp = [];
+                renderVendorContactsForm();
             }
             document.getElementById('vendorModal').style.display = 'block';
         }
@@ -2933,13 +3093,31 @@
                 return;
             }
 
+            // Collect contact information from form fields
+            const contacts = vendorContactsTemp.map((contact, index) => {
+                const nameEl = document.getElementById(`contactName${index}`);
+                const titleEl = document.getElementById(`contactTitle${index}`);
+                const companyEl = document.getElementById(`contactCompany${index}`);
+                const emailEl = document.getElementById(`contactEmail${index}`);
+                const phoneEl = document.getElementById(`contactPhone${index}`);
+
+                return {
+                    name: nameEl ? sanitizeHTML(nameEl.value.trim()) : '',
+                    title: titleEl ? sanitizeHTML(titleEl.value.trim()) : '',
+                    company: companyEl ? sanitizeHTML(companyEl.value.trim()) : '',
+                    email: emailEl ? sanitizeHTML(emailEl.value.trim()) : '',
+                    phone: phoneEl ? sanitizeHTML(phoneEl.value.trim()) : ''
+                };
+            }).filter(c => c.name || c.email || c.phone); // Only keep contacts with at least one field filled
+
             const data = {
                 name: sanitizeHTML(name),
                 type: sanitizeHTML(document.getElementById('vendorType').value.trim()) || 'SI',
                 tier: document.getElementById('vendorTier').value,
                 strengths: sanitizeHTML(document.getElementById('vendorStrengths').value.trim()),
                 relevance: sanitizeHTML(document.getElementById('vendorRelevance').value.trim()),
-                status: 'longlist'
+                status: 'longlist',
+                contacts: contacts
             };
 
             if (appState.editingVendorId) {
