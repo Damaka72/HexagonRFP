@@ -2135,15 +2135,19 @@
                     appState.meetingCalendarMonth = new Date(appState.meetingCalendarMonth || '2025-12-01');
 
                     // If tasks array is empty or very small, reload defaults (user has old data)
-                    // But preserve user-uploaded content (meeting notes, uploaded files)
+                    // But preserve user-uploaded content (meeting notes, uploaded files, stakeholders, RACI)
                     if (!appState.tasks || appState.tasks.length < 15) {
-                        console.log('Outdated data detected, reloading defaults while preserving uploads...');
+                        console.log('Outdated data detected, reloading defaults while preserving user data...');
                         const preservedMeetingNotes = appState.meetingNotes || [];
                         const preservedUploadedFiles = appState.uploadedFiles || {};
+                        const preservedStakeholders = appState.stakeholders || [];
+                        const preservedRaciActivities = appState.raciActivities || [];
                         initializeFromDefault();
-                        // Restore user-uploaded content
+                        // Restore user-uploaded content and stakeholder data
                         appState.meetingNotes = preservedMeetingNotes;
                         appState.uploadedFiles = preservedUploadedFiles;
+                        appState.stakeholders = preservedStakeholders.length > 0 ? preservedStakeholders : appState.stakeholders;
+                        appState.raciActivities = preservedRaciActivities.length > 0 ? preservedRaciActivities : appState.raciActivities;
                         saveState();
                     }
                 } catch(e) {
