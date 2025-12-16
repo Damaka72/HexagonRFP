@@ -1,4 +1,5 @@
 import { put } from '@vercel/blob';
+import { getAuthenticatedUser } from './_utils/supabase.js';
 
 export const config = {
   api: {
@@ -15,13 +16,14 @@ export default async function handler(req, res) {
     'x-folder': req.headers['x-folder'],
     'x-document-type': req.headers['x-document-type'],
     'content-type': req.headers['content-type'],
-    'content-length': req.headers['content-length']
+    'content-length': req.headers['content-length'],
+    'authorization': req.headers['authorization'] ? 'Bearer ***' : 'none'
   }));
 
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Filename, X-Folder, X-Document-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Filename, X-Folder, X-Document-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
     console.log('Handling OPTIONS preflight request');
@@ -35,6 +37,14 @@ export default async function handler(req, res) {
 
   try {
     console.log('Processing POST request...');
+
+    // Verify authentication
+    const user = await getAuthenticatedUser(req);
+    if (!user) {
+      console.log('Unauthorized upload attempt');
+      return res.status(401).json({ error: 'Unauthorized', message: 'You must be logged in to upload files' });
+    }
+    console.log('User authenticated:', user.id);
     // Get and decode URI-encoded headers
     let filename = req.headers['x-filename'];
     let folder = req.headers['x-folder'] || 'documents';
@@ -71,12 +81,12 @@ export default async function handler(req, res) {
         .replace(/[^a-zA-Z0-9]+$/, ''); // Remove trailing non-alphanumeric
     };
 
-    // Create a unique path for the file
+    // Create a unique path for the file (with user_id prefix for multi-tenant isolation)
     const timestamp = Date.now();
     const sanitizedFilename = sanitizePath(filename, true) || 'file';
     const sanitizedFolder = sanitizePath(folder) || 'documents';
     const sanitizedDocumentType = sanitizePath(documentType) || 'document';
-    const blobPath = `hexagon-rfp/${sanitizedDocumentType}/${sanitizedFolder}/${timestamp}-${sanitizedFilename}`;
+    const blobPath = `${user.id}/hexagon-rfp/${sanitizedDocumentType}/${sanitizedFolder}/${timestamp}-${sanitizedFilename}`;
 
     console.log('Upload path details:', {
       originalFilename: filename,
