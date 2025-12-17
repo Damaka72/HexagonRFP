@@ -9,6 +9,7 @@
     <meta name="theme-color" content="#079fdb">
     <title>Hexagon SAP AMS RFP | Complete Programme Management</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -1905,6 +1906,55 @@
         </div>
     </div>
 
+    <!-- Authentication Modal -->
+    <div id="authModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 450px;">
+            <!-- Login Form -->
+            <div id="loginForm">
+                <h2 style="text-align: center; margin-bottom: 24px;">Sign In to HexagonRFP</h2>
+                <div class="form-group">
+                    <label class="form-label" for="loginEmail">Email</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="your.email@company.com" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+                </div>
+                <button class="btn btn-primary" onclick="handleLogin()" style="width: 100%; margin-top: 16px;">Sign In</button>
+                <button class="btn" onclick="handleGoogleLogin()" style="width: 100%; margin-top: 12px; background: white; color: #333; border: 1px solid #ddd;">
+                    <span style="margin-right: 8px;">🔵</span> Sign in with Google
+                </button>
+                <div style="text-align: center; margin-top: 20px; font-size: 14px;">
+                    <a href="#" onclick="showSignupForm(); return false;" style="color: var(--primary);">Create Account</a>
+                    <span style="margin: 0 8px;">•</span>
+                    <a href="#" onclick="handlePasswordReset(); return false;" style="color: var(--primary);">Forgot Password?</a>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" style="display: none;">
+                <span class="modal-close" onclick="hideAuthModal()">&times;</span>
+                <h2 style="text-align: center; margin-bottom: 24px;">Create Account</h2>
+                <div class="form-group">
+                    <label class="form-label" for="signupName">Full Name</label>
+                    <input type="text" class="form-input" id="signupName" placeholder="John Smith">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="signupEmail">Email</label>
+                    <input type="email" class="form-input" id="signupEmail" placeholder="your.email@company.com" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="signupPassword">Password</label>
+                    <input type="password" class="form-input" id="signupPassword" placeholder="Minimum 6 characters" autocomplete="new-password">
+                </div>
+                <button class="btn btn-primary" onclick="handleSignup()" style="width: 100%; margin-top: 16px;">Create Account</button>
+                <div style="text-align: center; margin-top: 20px; font-size: 14px;">
+                    <a href="#" onclick="showLoginForm(); return false;" style="color: var(--primary);">Already have an account? Sign in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Initial Data from Hexagon Excel File
         const INITIAL_DATA = {
@@ -2080,6 +2130,17 @@
             ],
             meetingNotes: []
         };
+
+        // Supabase Client Initialization
+        const supabase = window.supabase.createClient(
+            'https://kspkxbkmlypkuxkfduqs.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcGt4YmttbHlwa3V4a2ZkdXFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5MTQ2NjgsImV4cCI6MjA4MTQ5MDY2OH0.3xhDv6CQxSR_qZQCC0NJI6EMsmyXrppM-KuKGY6Liaw'
+        );
+
+        // Authentication State
+        let currentUser = null;
+        let currentSession = null;
+        let currentProjectId = null;
 
         // State Management
         let appState = {
