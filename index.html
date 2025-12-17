@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#079fdb">
     <title>Hexagon SAP AMS RFP | Complete Programme Management</title>
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -2187,22 +2187,31 @@
             meetingNotes: []
         };
 
-        // Supabase Client Initialization (Optional - graceful fallback)
+        // Supabase Client Initialization (with retry for deferred loading)
         let supabase = null;
-        try {
-            if (window.supabase) {
-                supabase = window.supabase.createClient(
-                    'https://kspkxbkmlypkuxkfduqs.supabase.co',
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcGt4YmttbHlwa3V4a2ZkdXFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5MTQ2NjgsImV4cCI6MjA4MTQ5MDY2OH0.3xhDv6CQxSR_qZQCC0NJI6EMsmyXrppM-KuKGY6Liaw'
-                );
-                console.log('Supabase client initialized successfully');
-            } else {
-                console.warn('Supabase not available, using localStorage mode');
+
+        function initializeSupabase() {
+            try {
+                if (window.supabase) {
+                    supabase = window.supabase.createClient(
+                        'https://kspkxbkmlypkuxkfduqs.supabase.co',
+                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcGt4YmttbHlwa3V4a2ZkdXFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5MTQ2NjgsImV4cCI6MjA4MTQ5MDY2OH0.3xhDv6CQxSR_qZQCC0NJI6EMsmyXrppM-KuKGY6Liaw'
+                    );
+                    console.log('Supabase client initialized successfully');
+                    return true;
+                } else {
+                    console.warn('Supabase not loaded yet, will retry...');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Failed to initialize Supabase:', error);
+                supabase = null;
+                return false;
             }
-        } catch (error) {
-            console.error('Failed to initialize Supabase:', error);
-            supabase = null;
         }
+
+        // Try to initialize Supabase immediately
+        initializeSupabase();
         window.scriptCheckpoint = 'SUPABASE_INIT';
         console.log('====== CHECKPOINT 1: Supabase init completed ======');
 
@@ -2529,6 +2538,12 @@
             try {
                 showDebugStatus('DOMContentLoaded fired - checking setup...', false);
                 console.log('DOMContentLoaded event fired');
+
+                // Retry Supabase initialization if it wasn't available before (deferred script)
+                if (!supabase) {
+                    console.log('Retrying Supabase initialization after DOMContentLoaded...');
+                    initializeSupabase();
+                }
 
                 // Try authentication if Supabase is available, otherwise fall back to localStorage
                 if (supabase) {
