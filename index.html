@@ -1072,6 +1072,9 @@
                 <p>Complete Programme Management Platform | Start: 8 December 2025 | <span id="appVersion" style="background: #ff0000; color: white; padding: 4px 12px; border-radius: 10px; font-size: 1em; font-weight: bold;">v2.1-FIX</span></p>
             </div>
             <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="theme-toggle" id="cloudSyncBtn" onclick="showAuthModal()" aria-label="Cloud sync" title="Enable cloud sync and login" style="font-size: 14px; display: none;">
+                    ☁️
+                </button>
                 <button class="theme-toggle" onclick="resetAppData()" aria-label="Reset data" title="Reset to default data (loads latest features)" style="font-size: 14px;">
                     🔄
                 </button>
@@ -2310,6 +2313,16 @@
                     console.log('User session found:', session.user.email);
                     currentSession = session;
                     currentUser = session.user;
+
+                    // Update cloud sync button to show logout
+                    const cloudBtn = document.getElementById('cloudSyncBtn');
+                    if (cloudBtn) {
+                        cloudBtn.style.display = 'block';
+                        cloudBtn.innerHTML = '☁️✓';
+                        cloudBtn.title = 'Logged in as ' + session.user.email + ' - Click to logout';
+                        cloudBtn.onclick = () => handleLogout();
+                    }
+
                     await onAuthSuccess();
                 } else {
                     showDebugStatus('No auth - using localStorage (click here to enable cloud sync)', false);
@@ -2320,6 +2333,13 @@
                     updateDashboard();
                     renderAll();
                     checkOverdue();
+
+                    // Show cloud sync button
+                    const cloudBtn = document.getElementById('cloudSyncBtn');
+                    if (cloudBtn) {
+                        cloudBtn.style.display = 'block';
+                        cloudBtn.title = 'Enable cloud sync - Login or create account';
+                    }
 
                     // Make banner clickable to show login
                     document.getElementById('authDebug').onclick = () => showAuthModal();
