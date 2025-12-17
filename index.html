@@ -2,9 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#079fdb">
     <title>Hexagon SAP AMS RFP | Complete Programme Management</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -324,6 +329,56 @@
         .status-finalist { background: #ffe5f0; color: #c51162; }
         .status-winner { background: #c8e6c9; color: #1b5e20; }
 
+        .vendor-contact-card {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .vendor-contact-card .contact-remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+
+        .vendor-contact-card .contact-remove-btn:hover {
+            background: #c82333;
+        }
+
+        .vendor-contacts-display {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .vendor-contacts-display .contact-item {
+            background: var(--gray-50);
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .vendor-contacts-display .contact-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .vendor-contacts-display .contact-detail {
+            color: var(--gray-700);
+            margin-left: 5px;
+        }
+
         .risk-card {
             border-left: 4px solid;
             padding: 15px;
@@ -369,6 +424,8 @@
             background: rgba(0,0,0,0.5);
             z-index: 1000;
             overflow-y: auto;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-content {
@@ -573,13 +630,242 @@
             .evaluation-table th, .evaluation-table td { padding: 8px; }
         }
 
+        /* Mobile Responsive Styles */
+        @media (max-width: 1024px) {
+            body { padding: 10px; }
+            .container { max-width: 100%; }
+            .header { padding: 20px; }
+            .header h1 { font-size: 1.8em; }
+            .card { padding: 15px; }
+            .nav-tabs { gap: 5px; padding: 8px; }
+            .nav-tab { padding: 10px 16px; font-size: 0.9em; }
+        }
+
         @media (max-width: 768px) {
-            .header { flex-direction: column; text-align: center; }
-            .grid-4 { grid-template-columns: 1fr; }
-            .task-item { grid-template-columns: 1fr; }
+            body { padding: 8px; }
+
+            /* Header */
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+                gap: 15px;
+            }
+            .header h1 { font-size: 1.5em; margin-bottom: 5px; }
+            .header p { font-size: 0.85em; line-height: 1.4; }
+            .days-counter { font-size: 1.5em; }
+
+            /* Navigation Tabs - Horizontal Scroll */
+            .nav-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                gap: 6px;
+                padding: 8px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                margin-bottom: 15px;
+            }
+            .nav-tabs::-webkit-scrollbar { display: none; }
+            .nav-tab {
+                white-space: nowrap;
+                flex-shrink: 0;
+                padding: 10px 14px;
+                font-size: 0.85em;
+                min-height: 44px; /* Touch-friendly */
+            }
+
+            /* Cards */
+            .card {
+                padding: 12px;
+                margin-bottom: 12px;
+                border-radius: 8px;
+            }
+            .card-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            .card-header h2 { font-size: 1.2em; }
+
+            /* Dashboard Grid */
+            .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stat-card { padding: 15px; }
+            .stat-value { font-size: 1.8em; }
+            .stat-label { font-size: 0.85em; }
+
+            /* Tasks */
+            .task-item {
+                grid-template-columns: auto 1fr;
+                gap: 10px;
+                padding: 12px;
+            }
+            .task-item > div:last-child {
+                grid-column: 1 / -1;
+                display: flex;
+                gap: 8px;
+                justify-content: flex-end;
+                margin-top: 8px;
+            }
+            .task-checkbox { width: 28px; height: 28px; }
+            .task-title { font-size: 0.95em; }
+            .task-meta { font-size: 0.8em; }
+
+            /* Buttons */
+            .btn {
+                padding: 12px 16px;
+                min-height: 44px;
+                font-size: 0.9em;
+            }
+            .btn-small {
+                padding: 10px 14px;
+                min-height: 40px;
+            }
+
+            /* Vendor Grid */
             .vendor-grid { grid-template-columns: 1fr; }
-            .nav-tabs { overflow-x: auto; flex-wrap: nowrap; }
-            .nav-tab { white-space: nowrap; flex-shrink: 0; }
+            .vendor-card { padding: 15px; }
+
+            /* Calendar */
+            .calendar-grid { gap: 1px; }
+            .calendar-day {
+                min-height: 60px;
+                padding: 4px;
+            }
+            .calendar-date { font-size: 0.8em; }
+            .calendar-event {
+                font-size: 0.65em;
+                padding: 2px 3px;
+            }
+            .calendar-header {
+                padding: 6px;
+                font-size: 0.75em;
+            }
+            .calendar-nav h3 { font-size: 1.1em; }
+
+            /* Tables */
+            .evaluation-table { font-size: 0.8em; }
+            .evaluation-table th,
+            .evaluation-table td { padding: 8px 6px; }
+
+            /* Forms */
+            .form-input, .form-textarea, .form-select {
+                font-size: 16px; /* Prevents iOS zoom */
+                padding: 12px;
+                min-height: 44px;
+            }
+
+            /* Modals */
+            .modal-content {
+                width: 95%;
+                max-width: 95%;
+                margin: 10px auto;
+                padding: 15px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            /* Phase Header */
+            .phase-header {
+                flex-direction: column;
+                gap: 5px;
+                align-items: flex-start;
+                font-size: 0.9em;
+            }
+
+            /* Filter Buttons */
+            .filter-btn {
+                padding: 8px 12px;
+                font-size: 0.8em;
+                min-height: 40px;
+            }
+
+            /* Document Tree */
+            .folder-header { padding: 12px; }
+            .folder-name { font-size: 0.9em; }
+            .document-item {
+                padding: 10px;
+                flex-wrap: wrap;
+            }
+            .doc-name {
+                font-size: 0.85em;
+                flex: 1 1 100%;
+                margin-bottom: 8px;
+            }
+            .doc-actions {
+                flex: 1 1 100%;
+                justify-content: flex-end;
+            }
+
+            /* Meetings */
+            .meeting-card { padding: 12px; }
+
+            /* Risk Cards */
+            .risk-card { padding: 12px; }
+
+            /* GANTT - Show simplified message on mobile */
+            #ganttChart > div:first-child {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 5px; }
+
+            .header h1 { font-size: 1.3em; }
+            .header p { font-size: 0.8em; }
+
+            .grid-4 { grid-template-columns: 1fr; }
+            .stat-card { padding: 12px; }
+            .stat-value { font-size: 1.5em; }
+
+            .nav-tab {
+                padding: 8px 12px;
+                font-size: 0.8em;
+            }
+
+            .card { padding: 10px; }
+            .card-header h2 { font-size: 1.1em; }
+
+            .task-item { padding: 10px; }
+
+            .calendar-day { min-height: 50px; }
+            .calendar-event { font-size: 0.6em; }
+
+            /* Hide some text on very small screens */
+            .hide-mobile { display: none; }
+        }
+
+        /* Touch-friendly improvements */
+        @media (pointer: coarse) {
+            .btn, .nav-tab, .filter-btn, .task-checkbox {
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            .theme-toggle {
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            /* Larger touch targets */
+            .task-item { padding: 15px; }
+            .document-item { padding: 12px; }
+            .folder-header { padding: 14px; }
+        }
+
+        /* Landscape phone */
+        @media (max-width: 896px) and (orientation: landscape) {
+            .header { padding: 10px 20px; }
+            .header h1 { font-size: 1.3em; }
+            .days-counter { font-size: 1.3em; }
+            .modal-content { max-height: 85vh; }
+        }
+
+        /* iPad specific */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+            .vendor-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav-tabs { flex-wrap: wrap; }
         }
 
         /* Calendar Styles */
@@ -783,9 +1069,12 @@
         <header class="header" role="banner">
             <div>
                 <h1>Hexagon SAP AMS RFP</h1>
-                <p>Complete Programme Management Platform | Start: 8 December 2025</p>
+                <p>Complete Programme Management Platform | Start: 8 December 2025 | <span id="appVersion" style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; font-size: 0.85em;">v1.0.0</span></p>
             </div>
-            <div style="display: flex; align-items: center; gap: 20px;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="theme-toggle" onclick="resetAppData()" aria-label="Reset data" title="Reset to default data (loads latest features)" style="font-size: 14px;">
+                    🔄
+                </button>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark/light mode">
                     <span id="themeIcon">🌙</span>
                 </button>
@@ -795,6 +1084,11 @@
                 </div>
             </div>
         </header>
+
+        <!-- Debug Status Banner - Visible by default for iPad debugging -->
+        <div id="authDebug" style="background: #ff9800; color: white; padding: 20px; text-align: center; font-weight: bold; font-size: 18px; z-index: 9999; position: relative;">
+            🔄 Authentication Status: <span id="authStatus">Loading JavaScript...</span>
+        </div>
 
         <nav class="nav-tabs" role="tablist" aria-label="Main navigation">
             <button class="nav-tab active" onclick="switchTab('dashboard', event)" role="tab" aria-selected="true" aria-controls="dashboard" id="tab-dashboard">Dashboard</button>
@@ -807,6 +1101,7 @@
             <button class="nav-tab" onclick="switchTab('vendors', event)" role="tab" aria-selected="false" aria-controls="vendors" id="tab-vendors">Vendors</button>
             <button class="nav-tab" onclick="switchTab('documents', event)" role="tab" aria-selected="false" aria-controls="documents" id="tab-documents">Documents</button>
             <button class="nav-tab" onclick="switchTab('meetings', event)" role="tab" aria-selected="false" aria-controls="meetings" id="tab-meetings">Meetings</button>
+            <button class="nav-tab" onclick="switchTab('email', event)" role="tab" aria-selected="false" aria-controls="email" id="tab-email">Email</button>
             <button class="nav-tab" onclick="switchTab('risks', event)" role="tab" aria-selected="false" aria-controls="risks" id="tab-risks">Risks</button>
             <button class="nav-tab" onclick="switchTab('decisions', event)" role="tab" aria-selected="false" aria-controls="decisions" id="tab-decisions">Decisions</button>
             <button class="nav-tab" onclick="switchTab('stakeholders', event)" role="tab" aria-selected="false" aria-controls="stakeholders" id="tab-stakeholders">Stakeholders</button>
@@ -970,7 +1265,10 @@
             <div class="card">
                 <div class="card-header">
                     <h2>Vendor Management</h2>
-                    <button class="btn btn-primary" onclick="openVendorModal()" aria-label="Add new vendor">+ Add Vendor</button>
+                    <div>
+                        <button class="btn btn-success" onclick="exportVendorsToExcel()" aria-label="Export vendors to Excel">📊 Export to Excel</button>
+                        <button class="btn btn-primary" onclick="openVendorModal()" aria-label="Add new vendor">+ Add Vendor</button>
+                    </div>
                 </div>
                 <div class="filter-bar">
                     <input type="text" class="form-input" style="max-width: 300px;" placeholder="Search vendors..." id="vendorSearch" oninput="renderVendorGrid()" aria-label="Search vendors">
@@ -1062,6 +1360,40 @@
             </div>
         </div>
 
+        <!-- Email -->
+        <div id="email" class="tab-content" role="tabpanel" aria-labelledby="tab-email">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Email Access</h2>
+                </div>
+                <div style="text-align: center; padding: 40px 20px;">
+                    <div style="font-size: 4em; margin-bottom: 20px;">📧</div>
+                    <h3 style="color: var(--primary); margin-bottom: 15px;">Access Your Microsoft 365 Email</h3>
+                    <p style="color: var(--gray-700); margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        Open Outlook Web to view and manage your emails alongside your RFP work.
+                        Links will open in Microsoft Edge.
+                    </p>
+                    <button class="btn btn-primary" onclick="openOutlookWeb()" style="font-size: 1.1em; padding: 15px 40px;">
+                        📬 Open Outlook Web
+                    </button>
+                    <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--gray-200);">
+                        <h4 style="color: var(--gray-700); margin-bottom: 15px;">Quick Links</h4>
+                        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                            <button class="btn" onclick="openOutlookCalendar()" style="background: var(--gray-100);">
+                                📅 Outlook Calendar
+                            </button>
+                            <button class="btn" onclick="openTeams()" style="background: var(--gray-100);">
+                                💬 Microsoft Teams
+                            </button>
+                            <button class="btn" onclick="openOneDrive()" style="background: var(--gray-100);">
+                                ☁️ OneDrive
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Risks -->
         <div id="risks" class="tab-content" role="tabpanel" aria-labelledby="tab-risks">
             <div class="card">
@@ -1118,7 +1450,10 @@
             <div class="card">
                 <div class="card-header">
                     <h2>Stakeholder Management</h2>
-                    <button class="btn btn-primary" onclick="addStakeholder()">➕ Add Stakeholder</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="addStakeholder()">➕ Add Stakeholder</button>
+                        <button class="btn btn-success" onclick="exportStakeholdersToExcel()">📊 Export to Excel</button>
+                    </div>
                 </div>
                 <div class="vendor-grid" id="stakeholderGrid"></div>
             </div>
@@ -1126,7 +1461,10 @@
             <div class="card">
                 <div class="card-header">
                     <h2>RACI Matrix</h2>
-                    <button class="btn btn-success" onclick="saveRaci()">💾 Save RACI</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-success" onclick="saveRaci()">💾 Save RACI</button>
+                        <button class="btn btn-success" onclick="exportRaciToExcel()">📊 Export to Excel</button>
+                    </div>
                 </div>
                 <div style="overflow-x: auto;">
                     <table class="evaluation-table" id="raciTable">
@@ -1275,6 +1613,16 @@
                 <label class="form-label" for="vendorRelevance">Hexagon Relevance</label>
                 <textarea class="form-textarea" id="vendorRelevance"></textarea>
             </div>
+
+            <!-- Vendor Contacts Section -->
+            <div class="form-group" style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--gray-200);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <label class="form-label" style="margin: 0;">Vendor Contacts</label>
+                    <button type="button" class="btn btn-small" onclick="addVendorContact()" style="padding: 6px 12px;">+ Add Contact</button>
+                </div>
+                <div id="vendorContactsContainer"></div>
+            </div>
+
             <button class="btn btn-primary" onclick="saveVendor()">Save Vendor</button>
         </div>
     </div>
@@ -1396,7 +1744,7 @@
     <div id="stakeholderModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('stakeholderModal')">&times;</span>
-            <h2>Add New Stakeholder</h2>
+            <h2 id="stakeholderModalTitle">Add New Stakeholder</h2>
             <div class="form-group">
                 <label class="form-label" for="stakeholderName">Name/Title *</label>
                 <input type="text" class="form-input" id="stakeholderName" required>
@@ -1527,7 +1875,7 @@
             </div>
             <div style="background: var(--gray-50); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                 <p style="font-size: 0.9em; color: var(--gray-700);">
-                    <strong>Note:</strong> Files are stored locally in your browser. Supported formats: Word, Excel, PowerPoint, PDF, Text, CSV.
+                    <strong>Note:</strong> Files are stored securely in the cloud (up to 50MB). Supported formats: Word, Excel, PowerPoint, PDF, Text, CSV.
                 </p>
             </div>
             <button class="btn btn-primary" onclick="uploadDocument()">📤 Upload Document</button>
@@ -1565,6 +1913,55 @@
         </div>
     </div>
 
+    <!-- Authentication Modal -->
+    <div id="authModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 450px;">
+            <!-- Login Form -->
+            <div id="loginForm">
+                <h2 style="text-align: center; margin-bottom: 24px;">Sign In to HexagonRFP</h2>
+                <div class="form-group">
+                    <label class="form-label" for="loginEmail">Email</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="your.email@company.com" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+                </div>
+                <button class="btn btn-primary" onclick="handleLogin()" style="width: 100%; margin-top: 16px;">Sign In</button>
+                <button class="btn" onclick="handleGoogleLogin()" style="width: 100%; margin-top: 12px; background: white; color: #333; border: 1px solid #ddd;">
+                    <span style="margin-right: 8px;">🔵</span> Sign in with Google
+                </button>
+                <div style="text-align: center; margin-top: 20px; font-size: 14px;">
+                    <a href="#" onclick="showSignupForm(); return false;" style="color: var(--primary);">Create Account</a>
+                    <span style="margin: 0 8px;">•</span>
+                    <a href="#" onclick="handlePasswordReset(); return false;" style="color: var(--primary);">Forgot Password?</a>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" style="display: none;">
+                <span class="modal-close" onclick="hideAuthModal()">&times;</span>
+                <h2 style="text-align: center; margin-bottom: 24px;">Create Account</h2>
+                <div class="form-group">
+                    <label class="form-label" for="signupName">Full Name</label>
+                    <input type="text" class="form-input" id="signupName" placeholder="John Smith">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="signupEmail">Email</label>
+                    <input type="email" class="form-input" id="signupEmail" placeholder="your.email@company.com" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="signupPassword">Password</label>
+                    <input type="password" class="form-input" id="signupPassword" placeholder="Minimum 6 characters" autocomplete="new-password">
+                </div>
+                <button class="btn btn-primary" onclick="handleSignup()" style="width: 100%; margin-top: 16px;">Create Account</button>
+                <div style="text-align: center; margin-top: 20px; font-size: 14px;">
+                    <a href="#" onclick="showLoginForm(); return false;" style="color: var(--primary);">Already have an account? Sign in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Initial Data from Hexagon Excel File
         const INITIAL_DATA = {
@@ -1583,22 +1980,47 @@
                 {id: 12, name: "Refine Strategy & RFP Roadmap", owner: "Self", dueDate: "2025-12-23", status: "notstarted", phase: "documentation", description: "Strategy V0.2"},
                 {id: 13, name: "Final Strategy Pack Creation", owner: "Self", dueDate: "2025-12-29", status: "notstarted", phase: "documentation", description: "Final Sourcing Strategy"},
                 {id: 14, name: "Executive Sign-off Meeting", owner: "CIO / CFO", dueDate: "2025-12-30", status: "notstarted", phase: "documentation", description: "Signed Approval"},
-                {id: 15, name: "RFP Readiness Check", owner: "Self", dueDate: "2025-12-31", status: "notstarted", phase: "documentation", description: "RFP Launch Pack Ready - Ready for Jan launch"}
+                {id: 15, name: "RFP Readiness Check", owner: "Self", dueDate: "2025-12-31", status: "notstarted", phase: "documentation", description: "RFP Launch Pack Ready - Ready for Jan launch"},
+                {id: 16, name: "Issue Selection Questionnaire", owner: "Procurement Director", dueDate: "2026-01-05", status: "notstarted", phase: "evaluation", description: "Send SQ to long-listed vendors"},
+                {id: 17, name: "SQ Response Collection", owner: "Programme Lead", dueDate: "2026-01-20", status: "notstarted", phase: "evaluation", description: "Collect and log all vendor SQ responses"},
+                {id: 18, name: "SQ Evaluation & Scoring", owner: "Evaluation Team", dueDate: "2026-01-25", status: "notstarted", phase: "evaluation", description: "Score SQ responses against criteria"},
+                {id: 19, name: "Shortlist Decision Meeting", owner: "CIO / Procurement Director", dueDate: "2026-01-30", status: "notstarted", phase: "evaluation", description: "Select 5-6 vendors for final RFP"},
+                {id: 20, name: "Final RFP Document Preparation", owner: "Self", dueDate: "2026-02-01", status: "notstarted", phase: "evaluation", description: "Prepare detailed RFP for shortlist"},
+                {id: 21, name: "Issue Final RFP to Shortlist", owner: "Procurement Director", dueDate: "2026-02-05", status: "notstarted", phase: "evaluation", description: "Send RFP to shortlisted vendors"},
+                {id: 22, name: "Vendor Q&A Period", owner: "Programme Lead", dueDate: "2026-02-20", status: "notstarted", phase: "evaluation", description: "Manage vendor clarification questions"},
+                {id: 23, name: "RFP Response Collection", owner: "Programme Lead", dueDate: "2026-03-01", status: "notstarted", phase: "evaluation", description: "Collect final RFP responses"},
+                {id: 24, name: "Technical Evaluation", owner: "IT Ops Manager", dueDate: "2026-03-07", status: "notstarted", phase: "evaluation", description: "Technical assessment of proposals"},
+                {id: 25, name: "Commercial Evaluation", owner: "Finance / Procurement", dueDate: "2026-03-10", status: "notstarted", phase: "evaluation", description: "Commercial and pricing analysis"},
+                {id: 26, name: "Vendor Presentations Week 1", owner: "Evaluation Team", dueDate: "2026-03-12", status: "notstarted", phase: "evaluation", description: "First round of vendor presentations"},
+                {id: 27, name: "Vendor Presentations Week 2", owner: "Evaluation Team", dueDate: "2026-03-15", status: "notstarted", phase: "evaluation", description: "Second round of vendor presentations"},
+                {id: 28, name: "Reference Checks", owner: "Procurement Director", dueDate: "2026-03-25", status: "notstarted", phase: "selection", description: "Contact vendor references"},
+                {id: 29, name: "Final Evaluation Consolidation", owner: "Programme Lead", dueDate: "2026-04-01", status: "notstarted", phase: "selection", description: "Consolidate all evaluation scores"},
+                {id: 30, name: "Selection Recommendation", owner: "Evaluation Team", dueDate: "2026-04-10", status: "notstarted", phase: "selection", description: "Prepare recommendation for executives"},
+                {id: 31, name: "Executive Decision Meeting", owner: "CIO / CFO", dueDate: "2026-04-15", status: "notstarted", phase: "selection", description: "Final vendor selection decision"},
+                {id: 32, name: "Contract Negotiations", owner: "Procurement Director / Legal", dueDate: "2026-04-25", status: "notstarted", phase: "selection", description: "Negotiate final contract terms"},
+                {id: 33, name: "Contract Signature", owner: "CIO / CFO", dueDate: "2026-04-30", status: "notstarted", phase: "selection", description: "Sign AMS contract with selected vendor"},
+                {id: 34, name: "Transition Kick-off", owner: "Programme Lead", dueDate: "2026-05-05", status: "notstarted", phase: "selection", description: "Begin transition planning with vendor"},
+                {id: 35, name: "Knowledge Transfer Phase 1", owner: "IT Ops Manager", dueDate: "2026-05-30", status: "notstarted", phase: "selection", description: "Initial knowledge transfer sessions"},
+                {id: 36, name: "Knowledge Transfer Phase 2", owner: "IT Ops Manager", dueDate: "2026-06-30", status: "notstarted", phase: "selection", description: "Advanced knowledge transfer and handover"},
+                {id: 37, name: "Hypercare Planning", owner: "Programme Lead", dueDate: "2026-07-15", status: "notstarted", phase: "selection", description: "Plan hypercare support model"},
+                {id: 38, name: "Pre-Go-Live Readiness", owner: "IT Ops Manager", dueDate: "2026-08-15", status: "notstarted", phase: "selection", description: "Verify all systems ready for transition"},
+                {id: 39, name: "Mobilisation Complete", owner: "Programme Lead", dueDate: "2026-08-31", status: "notstarted", phase: "selection", description: "Full mobilisation of new AMS team"},
+                {id: 40, name: "US Go-Live Support", owner: "New AMS Vendor", dueDate: "2026-09-01", status: "notstarted", phase: "selection", description: "Hypercare support for US Go-Live"}
             ],
             vendors: [
-                {id: 1, name: "Accenture", type: "Global SI", tier: "Tier 1", strengths: "Market leader in S/4HANA. Massive scale. 'Soar with Accenture' methodology.", relevance: "Deep expertise in High Tech & Manufacturing industries.", status: "longlist"},
-                {id: 2, name: "Deloitte", type: "Global SI", tier: "Tier 1", strengths: "Strong on Business Transformation. Often already in the C-suite.", relevance: "Author of your Due Diligence Report (High Context).", status: "warm"},
-                {id: 3, name: "Capgemini", type: "Global SI", tier: "Tier 1", strengths: "Very strong in Europe/Manufacturing. Focus on 'Intelligent Enterprise'.", relevance: "Excellent track record in discrete manufacturing.", status: "longlist"},
-                {id: 4, name: "NTT DATA", type: "Global SI", tier: "Tier 2", strengths: "Strategic Note: Known partner for Hexagon's own products (HxGN EAM).", relevance: "High Synergy. They may already know Hexagon's ecosystem.", status: "warm"},
-                {id: 5, name: "Infosys", type: "Global SI", tier: "Tier 1", strengths: "Strong on cost-optimization and AI automation (Infosys Cobalt).", relevance: "Good for 'keeping the lights on' at lower cost.", status: "longlist"},
-                {id: 6, name: "TCS", type: "Global SI", tier: "Tier 1", strengths: "Massive scale, very process-driven. 'Perpetual Beta' model.", relevance: "Strong in Engineering & Industrial services.", status: "longlist"},
-                {id: 7, name: "HCLTech", type: "Global SI", tier: "Tier 2", strengths: "'Engineering DNA'. Very strong in technical SAP landscape management.", relevance: "Culturally fits Hexagon's engineering background.", status: "longlist"},
-                {id: 8, name: "IBM Consulting", type: "Tech Giant", tier: "Tier 1", strengths: "'Rise with SAP' premium partner. Deep AI/Watson integration capabilities.", relevance: "Heritage in complex legacy-to-cloud migrations.", status: "longlist"},
-                {id: 9, name: "SAP (DBS)", type: "OEM", tier: "Tier 1", strengths: "SAP's own 'Digital Business Services' (MaxAttention).", relevance: "Highest cost, but 100% proximity to product dev.", status: "longlist"},
-                {id: 10, name: "Lemongrass", type: "Boutique", tier: "Niche", strengths: "'SAP on Cloud' specialists (esp. AWS). Very technical, less functional.", relevance: "If Hexagon is moving SAP to AWS/Azure, they are top tier.", status: "longlist"},
-                {id: 11, name: "BirlaSoft", type: "Boutique", tier: "Mid", strengths: "Strong in Manufacturing and Energy. 'Challenger' status.", relevance: "Good agile alternative to the Big 4.", status: "longlist"},
-                {id: 12, name: "LTIMindtree", type: "Global SI", tier: "Mid", strengths: "'Challenger' to the big players. Agile and hungry for deals.", relevance: "Good balance of size vs. attention.", status: "longlist"},
-                {id: 13, name: "Wipro", type: "Global SI", tier: "Tier 2", strengths: "Recognized for significant growth in SAP S/4HANA revenue recently.", relevance: "Strong presence in US markets.", status: "longlist"}
+                {id: 1, name: "Accenture", type: "Global SI", tier: "Tier 1", strengths: "Market leader in S/4HANA. Massive scale. 'Soar with Accenture' methodology.", relevance: "Deep expertise in High Tech & Manufacturing industries.", status: "longlist", contacts: []},
+                {id: 2, name: "Deloitte", type: "Global SI", tier: "Tier 1", strengths: "Strong on Business Transformation. Often already in the C-suite.", relevance: "Author of your Due Diligence Report (High Context).", status: "warm", contacts: []},
+                {id: 3, name: "Capgemini", type: "Global SI", tier: "Tier 1", strengths: "Very strong in Europe/Manufacturing. Focus on 'Intelligent Enterprise'.", relevance: "Excellent track record in discrete manufacturing.", status: "longlist", contacts: []},
+                {id: 4, name: "NTT DATA", type: "Global SI", tier: "Tier 2", strengths: "Strategic Note: Known partner for Hexagon's own products (HxGN EAM).", relevance: "High Synergy. They may already know Hexagon's ecosystem.", status: "warm", contacts: []},
+                {id: 5, name: "Infosys", type: "Global SI", tier: "Tier 1", strengths: "Strong on cost-optimization and AI automation (Infosys Cobalt).", relevance: "Good for 'keeping the lights on' at lower cost.", status: "longlist", contacts: []},
+                {id: 6, name: "TCS", type: "Global SI", tier: "Tier 1", strengths: "Massive scale, very process-driven. 'Perpetual Beta' model.", relevance: "Strong in Engineering & Industrial services.", status: "longlist", contacts: []},
+                {id: 7, name: "HCLTech", type: "Global SI", tier: "Tier 2", strengths: "'Engineering DNA'. Very strong in technical SAP landscape management.", relevance: "Culturally fits Hexagon's engineering background.", status: "longlist", contacts: []},
+                {id: 8, name: "IBM Consulting", type: "Tech Giant", tier: "Tier 1", strengths: "'Rise with SAP' premium partner. Deep AI/Watson integration capabilities.", relevance: "Heritage in complex legacy-to-cloud migrations.", status: "longlist", contacts: []},
+                {id: 9, name: "SAP (DBS)", type: "OEM", tier: "Tier 1", strengths: "SAP's own 'Digital Business Services' (MaxAttention).", relevance: "Highest cost, but 100% proximity to product dev.", status: "longlist", contacts: []},
+                {id: 10, name: "Lemongrass", type: "Boutique", tier: "Niche", strengths: "'SAP on Cloud' specialists (esp. AWS). Very technical, less functional.", relevance: "If Hexagon is moving SAP to AWS/Azure, they are top tier.", status: "longlist", contacts: []},
+                {id: 11, name: "BirlaSoft", type: "Boutique", tier: "Mid", strengths: "Strong in Manufacturing and Energy. 'Challenger' status.", relevance: "Good agile alternative to the Big 4.", status: "longlist", contacts: []},
+                {id: 12, name: "LTIMindtree", type: "Global SI", tier: "Mid", strengths: "'Challenger' to the big players. Agile and hungry for deals.", relevance: "Good balance of size vs. attention.", status: "longlist", contacts: []},
+                {id: 13, name: "Wipro", type: "Global SI", tier: "Tier 2", strengths: "Recognized for significant growth in SAP S/4HANA revenue recently.", relevance: "Strong presence in US markets.", status: "longlist", contacts: []}
             ],
             risks: [
                 {id: 1, risk: "SAP USA Go-Live Date", impact: "Critical. If moves to Sept, transition period extends.", owner: "CIO / Program Lead", dueDate: "2025-12-15", rag: "red", mitigation: "Need Scenario A (June) and B (Sept) in RFP", probability: "high", impactLevel: "high"},
@@ -1696,10 +2118,47 @@
                 {id: 2, title: "Stakeholder Workshop - USA Requirements", date: "2025-12-10", time: "14:00", duration: 3, location: "Teams", attendees: "USA Ops Lead, IT Ops Manager, CIO", agenda: "Deep dive into US operations requirements and June vs Sept scenarios", type: "workshop"},
                 {id: 3, title: "Deloitte Report Review", date: "2025-12-09", time: "10:00", duration: 1.5, location: "Teams", attendees: "Deloitte Rep, CIO, Programme Lead", agenda: "Review due diligence findings, identify gaps", type: "review"},
                 {id: 4, title: "CFO Budget Discussion", date: "2025-12-11", time: "11:00", duration: 1, location: "CFO Office", attendees: "CFO, CIO, Global Procurement", agenda: "Budget envelope discussion, commercial constraints", type: "internal"},
-                {id: 5, title: "Steering Committee Meeting", date: "2025-12-22", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "CIO, CFO, Procurement Director, Programme Lead", agenda: "Strategy review, milestone approval, risk escalation", type: "steering"}
+                {id: 5, title: "Steering Committee Meeting", date: "2025-12-22", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "CIO, CFO, Procurement Director, Programme Lead", agenda: "Strategy review, milestone approval, risk escalation", type: "steering"},
+                {id: 6, title: "SQ Launch Briefing", date: "2026-01-05", time: "10:00", duration: 1, location: "Teams", attendees: "Procurement Director, Programme Lead", agenda: "Finalize SQ distribution, vendor communication plan", type: "internal"},
+                {id: 7, title: "Steering Committee - January", date: "2026-01-15", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "CIO, CFO, Procurement Director, Programme Lead", agenda: "SQ progress update, vendor response tracking", type: "steering"},
+                {id: 8, title: "Shortlist Decision Workshop", date: "2026-01-30", time: "09:00", duration: 4, location: "Main Conference Room", attendees: "CIO, Procurement Director, IT Ops, USA Ops Lead", agenda: "Review SQ scores, select shortlist vendors", type: "workshop"},
+                {id: 9, title: "RFP Final Review", date: "2026-02-01", time: "14:00", duration: 2, location: "Teams", attendees: "Procurement Director, Legal, Programme Lead", agenda: "Final RFP document review before issue", type: "review"},
+                {id: 10, title: "Steering Committee - February", date: "2026-02-15", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "CIO, CFO, Procurement Director, Programme Lead", agenda: "RFP status, vendor Q&A summary", type: "steering"},
+                {id: 11, title: "Vendor Presentation: Accenture", date: "2026-03-12", time: "09:00", duration: 3, location: "Main Conference Room", attendees: "Evaluation Team, CIO", agenda: "Vendor capability presentation and Q&A", type: "vendor"},
+                {id: 12, title: "Vendor Presentation: Deloitte", date: "2026-03-12", time: "14:00", duration: 3, location: "Main Conference Room", attendees: "Evaluation Team, CIO", agenda: "Vendor capability presentation and Q&A", type: "vendor"},
+                {id: 13, title: "Vendor Presentation: NTT DATA", date: "2026-03-13", time: "09:00", duration: 3, location: "Main Conference Room", attendees: "Evaluation Team, CIO", agenda: "Vendor capability presentation and Q&A", type: "vendor"},
+                {id: 14, title: "Vendor Presentation: Capgemini", date: "2026-03-13", time: "14:00", duration: 3, location: "Main Conference Room", attendees: "Evaluation Team, CIO", agenda: "Vendor capability presentation and Q&A", type: "vendor"},
+                {id: 15, title: "Steering Committee - March", date: "2026-03-20", time: "15:00", duration: 2, location: "Boardroom", attendees: "CIO, CFO, Procurement Director, Programme Lead", agenda: "Vendor presentation debrief, preliminary scoring", type: "steering"},
+                {id: 16, title: "Final Selection Board", date: "2026-04-15", time: "09:00", duration: 4, location: "Boardroom", attendees: "CIO, CFO, Procurement Director, USA Ops Lead, IT Ops", agenda: "Final vendor selection decision", type: "steering"},
+                {id: 17, title: "Contract Negotiation Kick-off", date: "2026-04-20", time: "10:00", duration: 2, location: "Teams", attendees: "Procurement Director, Legal, Selected Vendor", agenda: "Begin contract negotiations", type: "vendor"},
+                {id: 18, title: "Transition Planning Workshop", date: "2026-05-05", time: "09:00", duration: 4, location: "Main Conference Room", attendees: "Programme Lead, IT Ops, Selected Vendor", agenda: "Detailed transition planning", type: "workshop"},
+                {id: 19, title: "Steering Committee - Monthly", date: "2026-06-15", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "CIO, CFO, Procurement Director, Programme Lead", agenda: "Transition progress, knowledge transfer status", type: "steering"},
+                {id: 20, title: "Go-Live Readiness Review", date: "2026-08-25", time: "09:00", duration: 3, location: "Main Conference Room", attendees: "CIO, IT Ops, Programme Lead, AMS Vendor", agenda: "Final readiness check before US Go-Live", type: "review"}
             ],
             meetingNotes: []
         };
+
+        // Supabase Client Initialization (Optional - graceful fallback)
+        let supabase = null;
+        try {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(
+                    'https://kspkxbkmlypkuxkfduqs.supabase.co',
+                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcGt4YmttbHlwa3V4a2ZkdXFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5MTQ2NjgsImV4cCI6MjA4MTQ5MDY2OH0.3xhDv6CQxSR_qZQCC0NJI6EMsmyXrppM-KuKGY6Liaw'
+                );
+                console.log('Supabase client initialized successfully');
+            } else {
+                console.warn('Supabase not available, using localStorage mode');
+            }
+        } catch (error) {
+            console.error('Failed to initialize Supabase:', error);
+            supabase = null;
+        }
+
+        // Authentication State
+        let currentUser = null;
+        let currentSession = null;
+        let currentProjectId = null;
 
         // State Management
         let appState = {
@@ -1734,13 +2193,292 @@
         // Confirmation callback
         let confirmCallback = null;
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            loadState();
+        // ==========================================
+        // AUTHENTICATION FUNCTIONS
+        // ==========================================
+
+        function showDebugStatus(message, isError = true) {
+            const debugBanner = document.getElementById('authDebug');
+            const statusSpan = document.getElementById('authStatus');
+            if (debugBanner && statusSpan) {
+                statusSpan.textContent = message;
+                debugBanner.style.background = isError ? '#ff6b6b' : '#51cf66';
+                // Keep visible for debugging
+            }
+        }
+
+        async function initAuth() {
+            try {
+                showDebugStatus('Initializing auth (optional)...', false);
+                console.log('Initializing authentication...');
+
+                // Check if Supabase client is available
+                if (!window.supabase || !supabase) {
+                    showDebugStatus('Supabase unavailable - using localStorage mode', false);
+                    console.warn('Supabase not available, falling back to localStorage');
+                    // Fall back to localStorage mode
+                    loadState();
+                    applyTheme();
+                    updateDashboard();
+                    renderAll();
+                    checkOverdue();
+                    return;
+                }
+
+                showDebugStatus('Checking session (optional auth)...', false);
+
+                // Check for existing session
+                const { data: { session }, error } = await supabase.auth.getSession();
+
+                if (error) {
+                    showDebugStatus('Auth error - using localStorage: ' + error.message, false);
+                    console.error('Error getting session, using localStorage:', error);
+                    // Fall back to localStorage mode
+                    loadState();
+                    applyTheme();
+                    updateDashboard();
+                    renderAll();
+                    checkOverdue();
+                    return;
+                }
+
+                if (session) {
+                    showDebugStatus('Cloud mode: Logged in as ' + session.user.email, false);
+                    console.log('User session found:', session.user.email);
+                    currentSession = session;
+                    currentUser = session.user;
+                    await onAuthSuccess();
+                } else {
+                    showDebugStatus('No auth - using localStorage (click here to enable cloud sync)', false);
+                    console.log('No session, using localStorage mode');
+                    // No session, use localStorage mode
+                    loadState();
+                    applyTheme();
+                    updateDashboard();
+                    renderAll();
+                    checkOverdue();
+
+                    // Make banner clickable to show login
+                    document.getElementById('authDebug').onclick = () => showAuthModal();
+                    document.getElementById('authDebug').style.cursor = 'pointer';
+                }
+
+                // Listen for auth changes
+                supabase.auth.onAuthStateChange((event, session) => {
+                    console.log('Auth state changed:', event);
+                    if (event === 'SIGNED_IN') {
+                        currentSession = session;
+                        currentUser = session.user;
+                        showDebugStatus('Signed in!', false);
+                        onAuthSuccess();
+                    } else if (event === 'SIGNED_OUT') {
+                        currentUser = null;
+                        currentSession = null;
+                        showDebugStatus('Signed out - using localStorage', false);
+                        location.reload(); // Reload to localStorage mode
+                    }
+                });
+            } catch (error) {
+                showDebugStatus('Auth failed - using localStorage: ' + error.message, false);
+                console.error('Init auth error, using localStorage:', error);
+                // Fall back to localStorage mode on any error
+                loadState();
+                applyTheme();
+                updateDashboard();
+                renderAll();
+                checkOverdue();
+            }
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showToast('Please enter both email and password', 'error');
+                return;
+            }
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
+
+            if (error) {
+                showToast(error.message, 'error');
+            } else {
+                hideAuthModal();
+                await checkForLocalDataMigration();
+            }
+        }
+
+        async function handleSignup() {
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const fullName = document.getElementById('signupName').value.trim();
+
+            if (!email || !password) {
+                showToast('Please enter email and password', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showToast('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: { full_name: fullName }
+                }
+            });
+
+            if (error) {
+                showToast(error.message, 'error');
+            } else {
+                showToast('Account created! Please check your email to verify.', 'success');
+                showLoginForm();
+            }
+        }
+
+        async function handleGoogleLogin() {
+            const { data, error} = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin
+                }
+            });
+
+            if (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function handleLogout() {
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+                showToast(error.message, 'error');
+            } else {
+                showToast('Signed out successfully', 'success');
+            }
+        }
+
+        async function handlePasswordReset() {
+            const email = document.getElementById('loginEmail').value.trim();
+            if (!email) {
+                showToast('Please enter your email address first', 'error');
+                return;
+            }
+
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin
+            });
+
+            if (error) {
+                showToast(error.message, 'error');
+            } else {
+                showToast('Password reset email sent! Check your inbox.', 'success');
+            }
+        }
+
+        function showAuthModal() {
+            document.getElementById('authModal').style.display = 'flex';
+            showLoginForm();
+        }
+
+        function hideAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('signupForm').style.display = 'none';
+        }
+
+        function showSignupForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'block';
+        }
+
+        async function onAuthSuccess() {
+            hideAuthModal();
+            await loadStateFromCloud();
             applyTheme();
             updateDashboard();
             renderAll();
             checkOverdue();
+        }
+
+        async function checkForLocalDataMigration() {
+            const localData = localStorage.getItem('hexagonRFP');
+
+            if (!localData) {
+                await loadStateFromCloud();
+                applyTheme();
+                updateDashboard();
+                renderAll();
+                checkOverdue();
+                return;
+            }
+
+            const migrate = confirm(
+                'We found data in your browser. Would you like to import it to your cloud account? ' +
+                'This will allow you to access it from any device.'
+            );
+
+            if (migrate) {
+                try {
+                    const data = JSON.parse(localData);
+
+                    // Create backup download first
+                    const backupBlob = new Blob([localData], { type: 'application/json' });
+                    const backupUrl = URL.createObjectURL(backupBlob);
+                    const a = document.createElement('a');
+                    a.href = backupUrl;
+                    a.download = `hexagonRFP-backup-${Date.now()}.json`;
+                    a.click();
+                    URL.revokeObjectURL(backupUrl);
+
+                    // Upload to cloud
+                    await saveStateToCloud(data);
+                    showToast('Data migrated successfully!', 'success');
+
+                    // Clear local storage
+                    localStorage.removeItem('hexagonRFP');
+
+                    await loadStateFromCloud();
+                    applyTheme();
+                    updateDashboard();
+                    renderAll();
+                    checkOverdue();
+                } catch (error) {
+                    console.error('Migration error:', error);
+                    showToast('Migration failed. Your local data is still safe.', 'error');
+                }
+            } else {
+                await loadStateFromCloud();
+                applyTheme();
+                updateDashboard();
+                renderAll();
+                checkOverdue();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Try authentication if Supabase is available, otherwise fall back to localStorage
+            if (supabase) {
+                initAuth();
+            } else {
+                showDebugStatus('Running in localStorage mode (no cloud sync)', false);
+                loadState();
+                applyTheme();
+                updateDashboard();
+                renderAll();
+                checkOverdue();
+            }
         });
 
         function loadState() {
@@ -1751,7 +2489,25 @@
                     appState = { ...appState, ...loaded };
                     appState.startDate = new Date(appState.startDate);
                     appState.goLiveDate = new Date(appState.goLiveDate);
+                    appState.calendarMonth = new Date(appState.calendarMonth || '2025-12-01');
                     appState.meetingCalendarMonth = new Date(appState.meetingCalendarMonth || '2025-12-01');
+
+                    // If tasks array is empty or very small, reload defaults (user has old data)
+                    // But preserve user-uploaded content (meeting notes, uploaded files, stakeholders, RACI)
+                    if (!appState.tasks || appState.tasks.length < 15) {
+                        console.log('Outdated data detected, reloading defaults while preserving user data...');
+                        const preservedMeetingNotes = appState.meetingNotes || [];
+                        const preservedUploadedFiles = appState.uploadedFiles || {};
+                        const preservedStakeholders = appState.stakeholders || [];
+                        const preservedRaciActivities = appState.raciActivities || [];
+                        initializeFromDefault();
+                        // Restore user-uploaded content and stakeholder data
+                        appState.meetingNotes = preservedMeetingNotes;
+                        appState.uploadedFiles = preservedUploadedFiles;
+                        appState.stakeholders = preservedStakeholders.length > 0 ? preservedStakeholders : appState.stakeholders;
+                        appState.raciActivities = preservedRaciActivities.length > 0 ? preservedRaciActivities : appState.raciActivities;
+                        saveState();
+                    }
                 } catch(e) {
                     console.error('Error loading state:', e);
                     initializeFromDefault();
@@ -1783,6 +2539,158 @@
             const div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
+        }
+
+        // ==========================================
+        // VERCEL BLOB STORAGE FUNCTIONS
+        // ==========================================
+
+        // Check if we're running on Vercel (has API routes) or locally
+        function isVercelEnvironment() {
+            return window.location.hostname !== 'localhost' &&
+                   window.location.hostname !== '127.0.0.1' &&
+                   !window.location.hostname.includes('file://');
+        }
+
+        // Upload file to Vercel Blob storage
+        async function uploadToVercelBlob(file, folder, documentType = 'document') {
+            // For local development, fall back to base64 storage
+            if (!isVercelEnvironment()) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve({
+                        url: e.target.result,
+                        isBase64: true,
+                        filename: file.name
+                    });
+                    reader.onerror = () => reject(new Error('Failed to read file'));
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            try {
+                console.log('Starting upload to /api/upload', {
+                    filename: file.name,
+                    folder: folder,
+                    documentType: documentType,
+                    fileSize: file.size,
+                    fileType: file.type
+                });
+
+                const headers = {
+                    'X-Filename': encodeURIComponent(file.name),
+                    'X-Folder': encodeURIComponent(folder),
+                    'X-Document-Type': encodeURIComponent(documentType),
+                };
+
+                // Add authorization if user is logged in
+                if (currentSession) {
+                    headers['Authorization'] = `Bearer ${currentSession.access_token}`;
+                }
+
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    headers: headers,
+                    body: file,
+                });
+
+                console.log('Upload response received:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    ok: response.ok
+                });
+
+                if (!response.ok) {
+                    let errorMessage = 'Upload failed';
+                    let errorDetails = '';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorData.error || 'Upload failed';
+                        errorDetails = JSON.stringify(errorData);
+                    } catch (parseError) {
+                        // Response wasn't JSON - might be HTML error page
+                        const text = await response.text();
+                        errorMessage = `Server returned ${response.status}: ${response.statusText}`;
+                        errorDetails = text.substring(0, 200);
+                        console.error('Non-JSON error response:', text);
+                    }
+                    console.error('Upload failed:', { status: response.status, errorMessage, errorDetails });
+                    throw new Error(errorMessage);
+                }
+
+                const result = await response.json();
+                console.log('Upload successful:', result);
+                return {
+                    url: result.url,
+                    pathname: result.pathname,
+                    filename: result.filename,
+                    size: result.size,
+                    uploadedAt: result.uploadedAt,
+                    isBase64: false
+                };
+            } catch (error) {
+                console.error('Vercel Blob upload error:', error);
+                console.error('Error details:', {
+                    name: error.name,
+                    message: error.message,
+                    stack: error.stack
+                });
+                throw error;
+            }
+        }
+
+        // Delete file from Vercel Blob storage
+        async function deleteFromVercelBlob(url) {
+            // Skip deletion for base64 data URLs
+            if (!url || url.startsWith('data:')) {
+                return true;
+            }
+
+            if (!isVercelEnvironment()) {
+                return true;
+            }
+
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                };
+
+                // Add authorization if user is logged in
+                if (currentSession) {
+                    headers['Authorization'] = `Bearer ${currentSession.access_token}`;
+                }
+
+                const response = await fetch('/api/delete', {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({ url }),
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    console.error('Delete error:', error);
+                    return false;
+                }
+
+                return true;
+            } catch (error) {
+                console.error('Vercel Blob delete error:', error);
+                return false;
+            }
+        }
+
+        // Download file from URL or base64
+        function downloadFile(url, filename) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            // For Vercel Blob URLs, we need to handle cross-origin
+            if (!url.startsWith('data:')) {
+                link.target = '_blank';
+            }
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         // Toast notification
@@ -1825,8 +2733,122 @@
             document.getElementById('confirmModal').style.display = 'block';
         }
 
-        function saveState() {
-            localStorage.setItem('hexagonRFP', JSON.stringify(appState));
+        // Cloud Storage Functions
+        async function loadStateFromCloud() {
+            if (!currentSession) return;
+
+            try {
+                const response = await fetch('/api/data/sync', {
+                    headers: {
+                        'Authorization': `Bearer ${currentSession.access_token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load data from cloud');
+                }
+
+                const { data } = await response.json();
+
+                if (data) {
+                    // Merge cloud data with appState
+                    appState = { ...appState, ...data };
+
+                    // Parse dates
+                    appState.startDate = new Date(appState.startDate);
+                    appState.goLiveDate = new Date(appState.goLiveDate);
+                    appState.calendarMonth = new Date(appState.calendarMonth || '2025-12-01');
+                    appState.meetingCalendarMonth = new Date(appState.meetingCalendarMonth || '2025-12-01');
+
+                    // If no data, initialize from defaults
+                    if (!appState.tasks || appState.tasks.length === 0) {
+                        initializeFromDefault();
+                        await saveStateToCloud();
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load from cloud:', error);
+                showToast('Failed to load data. Please refresh the page.', 'error');
+            }
+        }
+
+        let saveTimeout;
+        async function saveStateToCloud(customData = null) {
+            if (!currentSession) return;
+
+            // Debounce saves
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(async () => {
+                try {
+                    const dataToSave = customData || appState;
+
+                    const response = await fetch('/api/data/save', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${currentSession.access_token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            projectId: currentProjectId,
+                            data: dataToSave
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to save data');
+                    }
+
+                    console.log('Data saved to cloud');
+                } catch (error) {
+                    console.error('Failed to save to cloud:', error);
+                    showToast('Failed to save changes', 'error');
+                }
+            }, 1000);
+        }
+
+        function saveState(showNotification = false) {
+            if (currentUser) {
+                // Save to cloud if authenticated
+                saveStateToCloud();
+            } else {
+                // Fallback to localStorage if not authenticated
+                localStorage.setItem('hexagonRFP', JSON.stringify(appState));
+            }
+
+            if (showNotification) {
+                showToast('Changes saved', 'success');
+            }
+        }
+
+        function resetAppData() {
+            if (confirm('Reset all data to defaults? This will load the latest tasks, meetings, and features. Your current changes will be lost.')) {
+                localStorage.removeItem('hexagonRFP');
+                showToast('Reloading with fresh data...', 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            }
+        }
+
+        // Microsoft 365 Quick Access Functions
+        function openOutlookWeb() {
+            window.open('microsoft-edge:https://outlook.office.com/mail/', '_blank');
+            showToast('Opening Outlook Web in Microsoft Edge...', 'success');
+        }
+
+        function openOutlookCalendar() {
+            window.open('microsoft-edge:https://outlook.office.com/calendar/', '_blank');
+            showToast('Opening Outlook Calendar in Microsoft Edge...', 'success');
+        }
+
+        function openTeams() {
+            window.open('microsoft-edge:https://teams.microsoft.com/', '_blank');
+            showToast('Opening Microsoft Teams in Microsoft Edge...', 'success');
+        }
+
+        function openOneDrive() {
+            window.open('microsoft-edge:https://onedrive.live.com/', '_blank');
+            showToast('Opening OneDrive in Microsoft Edge...', 'success');
         }
 
         function updateDashboard() {
@@ -2135,12 +3157,39 @@
                 }
             }
 
-            const html = vendors.map(v => `
-                <div class="vendor-card">
+            const html = vendors.map(v => {
+                // Build contacts display HTML
+                let contactsHTML = '';
+                if (v.contacts && v.contacts.length > 0) {
+                    contactsHTML = `
+                        <div class="vendor-contacts-display">
+                            <strong style="font-size: 0.9em; display: block; margin-bottom: 8px;">Contacts:</strong>
+                            ${v.contacts.map(c => {
+                                let contactParts = [];
+                                if (c.name) contactParts.push(`<span class="contact-name">${c.name}</span>`);
+                                if (c.title) contactParts.push(`<span class="contact-detail">${c.title}</span>`);
+                                if (c.company) contactParts.push(`<span class="contact-detail">@ ${c.company}</span>`);
+
+                                let contactLine = contactParts.join(' ');
+
+                                let detailsLine = [];
+                                if (c.email) detailsLine.push(`📧 ${c.email}`);
+                                if (c.phone) detailsLine.push(`📞 ${c.phone}`);
+
+                                let details = detailsLine.length > 0 ? `<div style="margin-top: 4px; font-size: 0.85em;">${detailsLine.join(' | ')}</div>` : '';
+
+                                return `<div class="contact-item">${contactLine}${details}</div>`;
+                            }).join('')}
+                        </div>
+                    `;
+                }
+
+                return `
+                <div class="vendor-card" onclick="openVendorModal(${v.id})" style="cursor: pointer;">
                     <div class="vendor-name">${v.name}</div>
                     <span class="vendor-status status-${v.status}">
-                        ${v.status === 'warm' ? '🟢 Warm' : 
-                          v.status === 'shortlist' ? '⭐ Shortlist' : 
+                        ${v.status === 'warm' ? '🟢 Warm' :
+                          v.status === 'shortlist' ? '⭐ Shortlist' :
                           v.status === 'finalist' ? '🎯 Finalist' :
                           v.status === 'winner' ? '🏆 Winner' : '⚪ Long List'}
                     </span>
@@ -2151,7 +3200,8 @@
                     <div style="font-size: 0.9em; color: var(--gray-700); margin: 10px 0; padding-top: 10px; border-top: 1px solid var(--gray-200);">
                         <strong>Hexagon Fit:</strong> ${v.relevance}
                     </div>
-                    <select class="form-select" style="margin-top: 10px;" onchange="updateVendorStatus(${v.id}, this.value)">
+                    ${contactsHTML}
+                    <select class="form-select" style="margin-top: 10px;" onchange="event.stopPropagation(); updateVendorStatus(${v.id}, this.value)">
                         <option value="longlist" ${v.status === 'longlist' ? 'selected' : ''}>Long List</option>
                         <option value="warm" ${v.status === 'warm' ? 'selected' : ''}>Warm Lead</option>
                         <option value="shortlist" ${v.status === 'shortlist' ? 'selected' : ''}>Shortlist</option>
@@ -2159,9 +3209,10 @@
                         <option value="winner" ${v.status === 'winner' ? 'selected' : ''}>Winner</option>
                         <option value="rejected" ${v.status === 'rejected' ? 'selected' : ''}>Rejected</option>
                     </select>
-                    <button class="btn btn-small btn-danger" style="width: 100%; margin-top: 10px;" onclick="deleteVendor(${v.id})">Delete</button>
+                    <button class="btn btn-small btn-danger" style="width: 100%; margin-top: 10px;" onclick="event.stopPropagation(); deleteVendor(${v.id})">Delete</button>
                 </div>
-            `).join('');
+                `;
+            }).join('');
 
             const el = document.getElementById('vendorGrid');
             if (el) el.innerHTML = html;
@@ -2301,10 +3352,12 @@
         function toggleTask(id) {
             const task = appState.tasks.find(t => t.id === id);
             if (task) {
-                task.status = task.status === 'done' ? 'notstarted' : 'done';
+                const wasCompleted = task.status === 'done';
+                task.status = wasCompleted ? 'notstarted' : 'done';
                 saveState();
                 renderAll();
                 updateDashboard();
+                showToast(wasCompleted ? 'Task reopened' : 'Task completed & saved!', 'success');
             }
         }
 
@@ -2398,6 +3451,69 @@
         }
 
         // Vendor Management
+        let vendorContactsTemp = [];
+
+        function addVendorContact() {
+            const contactIndex = vendorContactsTemp.length;
+            vendorContactsTemp.push({
+                name: '',
+                title: '',
+                company: '',
+                email: '',
+                phone: ''
+            });
+            renderVendorContactsForm();
+        }
+
+        function removeVendorContact(index) {
+            vendorContactsTemp.splice(index, 1);
+            renderVendorContactsForm();
+        }
+
+        function renderVendorContactsForm() {
+            const container = document.getElementById('vendorContactsContainer');
+            if (!container) return;
+
+            if (vendorContactsTemp.length === 0) {
+                container.innerHTML = '<p style="color: var(--gray-600); font-size: 0.9em; text-align: center; padding: 20px;">No contacts added yet. Click "+ Add Contact" to add one.</p>';
+                return;
+            }
+
+            const html = vendorContactsTemp.map((contact, index) => `
+                <div class="vendor-contact-card">
+                    <button type="button" class="contact-remove-btn" onclick="removeVendorContact(${index})">✕ Remove</button>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label class="form-label" style="font-size: 0.9em;">Contact Name</label>
+                            <input type="text" class="form-input" id="contactName${index}" value="${contact.name}" placeholder="John Doe">
+                        </div>
+                        <div>
+                            <label class="form-label" style="font-size: 0.9em;">Title</label>
+                            <input type="text" class="form-input" id="contactTitle${index}" value="${contact.title}" placeholder="Account Manager">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label class="form-label" style="font-size: 0.9em;">Company</label>
+                            <input type="text" class="form-input" id="contactCompany${index}" value="${contact.company}" placeholder="Accenture">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label class="form-label" style="font-size: 0.9em;">Email</label>
+                            <input type="email" class="form-input" id="contactEmail${index}" value="${contact.email}" placeholder="john.doe@company.com">
+                        </div>
+                        <div>
+                            <label class="form-label" style="font-size: 0.9em;">Phone</label>
+                            <input type="tel" class="form-input" id="contactPhone${index}" value="${contact.phone}" placeholder="+1 234 567 8900">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
         function openVendorModal(id = null) {
             appState.editingVendorId = id;
             if (id) {
@@ -2409,6 +3525,10 @@
                     document.getElementById('vendorTier').value = v.tier || 'Tier 2';
                     document.getElementById('vendorStrengths').value = v.strengths || '';
                     document.getElementById('vendorRelevance').value = v.relevance || '';
+
+                    // Load existing contacts
+                    vendorContactsTemp = v.contacts ? JSON.parse(JSON.stringify(v.contacts)) : [];
+                    renderVendorContactsForm();
                 }
             } else {
                 document.getElementById('vendorModalTitle').textContent = 'Add New Vendor';
@@ -2417,6 +3537,10 @@
                 document.getElementById('vendorTier').value = 'Tier 2';
                 document.getElementById('vendorStrengths').value = '';
                 document.getElementById('vendorRelevance').value = '';
+
+                // Reset contacts
+                vendorContactsTemp = [];
+                renderVendorContactsForm();
             }
             document.getElementById('vendorModal').style.display = 'block';
         }
@@ -2428,13 +3552,31 @@
                 return;
             }
 
+            // Collect contact information from form fields
+            const contacts = vendorContactsTemp.map((contact, index) => {
+                const nameEl = document.getElementById(`contactName${index}`);
+                const titleEl = document.getElementById(`contactTitle${index}`);
+                const companyEl = document.getElementById(`contactCompany${index}`);
+                const emailEl = document.getElementById(`contactEmail${index}`);
+                const phoneEl = document.getElementById(`contactPhone${index}`);
+
+                return {
+                    name: nameEl ? sanitizeHTML(nameEl.value.trim()) : '',
+                    title: titleEl ? sanitizeHTML(titleEl.value.trim()) : '',
+                    company: companyEl ? sanitizeHTML(companyEl.value.trim()) : '',
+                    email: emailEl ? sanitizeHTML(emailEl.value.trim()) : '',
+                    phone: phoneEl ? sanitizeHTML(phoneEl.value.trim()) : ''
+                };
+            }).filter(c => c.name || c.email || c.phone); // Only keep contacts with at least one field filled
+
             const data = {
                 name: sanitizeHTML(name),
                 type: sanitizeHTML(document.getElementById('vendorType').value.trim()) || 'SI',
                 tier: document.getElementById('vendorTier').value,
                 strengths: sanitizeHTML(document.getElementById('vendorStrengths').value.trim()),
                 relevance: sanitizeHTML(document.getElementById('vendorRelevance').value.trim()),
-                status: 'longlist'
+                status: 'longlist',
+                contacts: contacts
             };
 
             if (appState.editingVendorId) {
@@ -2709,6 +3851,8 @@
         }
 
         // Stakeholder Management
+        let editingStakeholderId = null;
+
         function renderStakeholders() {
             const html = appState.stakeholders.map(s => `
                 <div class="vendor-card">
@@ -2726,7 +3870,10 @@
                             ${s.interest === 'high' ? 'High' : 'Medium'}
                         </span>
                     </div>
-                    <button class="btn btn-small btn-danger" style="width: 100%; margin-top: 10px;" onclick="deleteStakeholder(${s.id})">Delete</button>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn btn-small btn-primary" style="flex: 1;" onclick="editStakeholder(${s.id})">✏️ Edit</button>
+                        <button class="btn btn-small btn-danger" style="flex: 1;" onclick="deleteStakeholder(${s.id})">🗑️ Delete</button>
+                    </div>
                 </div>
             `).join('');
 
@@ -2873,6 +4020,285 @@
             alert('✓ RACI matrix saved successfully!');
         }
 
+        // Excel Export Functions
+        function exportStakeholdersToExcel() {
+            if (appState.stakeholders.length === 0) {
+                showToast('No stakeholders to export', 'error');
+                return;
+            }
+
+            // Create Excel-compatible HTML table
+            let html = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="UTF-8">
+                    <!--[if gte mso 9]>
+                    <xml>
+                        <x:ExcelWorkbook>
+                            <x:ExcelWorksheets>
+                                <x:ExcelWorksheet>
+                                    <x:Name>Stakeholders</x:Name>
+                                    <x:WorksheetOptions>
+                                        <x:DisplayGridlines/>
+                                    </x:WorksheetOptions>
+                                </x:ExcelWorksheet>
+                            </x:ExcelWorksheets>
+                        </x:ExcelWorkbook>
+                    </xml>
+                    <![endif]-->
+                    <style>
+                        table { border-collapse: collapse; }
+                        th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+                        th { background-color: #0A4D68; color: white; font-weight: bold; }
+                        .high-influence { background-color: #ffe5e5; }
+                        .medium-influence { background-color: #e3f2fd; }
+                        .high-interest { background-color: #e8f5e9; }
+                        .medium-interest { background-color: #fff9e5; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Hexagon RFP - Stakeholder Register</h2>
+                    <p>Generated: ${new Date().toLocaleDateString()}</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Department</th>
+                                <th>Influence</th>
+                                <th>Interest</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            appState.stakeholders.forEach(s => {
+                html += `
+                    <tr>
+                        <td>${s.name}</td>
+                        <td>${s.role || ''}</td>
+                        <td>${s.department || ''}</td>
+                        <td class="${s.influence === 'high' ? 'high-influence' : 'medium-influence'}">${s.influence === 'high' ? 'High' : 'Medium'}</td>
+                        <td class="${s.interest === 'high' ? 'high-interest' : 'medium-interest'}">${s.interest === 'high' ? 'High' : 'Medium'}</td>
+                        <td>${s.notes || ''}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `;
+
+            downloadExcel(html, `Hexagon-Stakeholders-${new Date().toISOString().split('T')[0]}.xls`);
+            showToast('Stakeholders exported to Excel', 'success');
+        }
+
+        function exportRaciToExcel() {
+            if (appState.raciActivities.length === 0) {
+                showToast('No RACI activities to export', 'error');
+                return;
+            }
+
+            // Create Excel-compatible HTML table
+            let html = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="UTF-8">
+                    <!--[if gte mso 9]>
+                    <xml>
+                        <x:ExcelWorkbook>
+                            <x:ExcelWorksheets>
+                                <x:ExcelWorksheet>
+                                    <x:Name>RACI Matrix</x:Name>
+                                    <x:WorksheetOptions>
+                                        <x:DisplayGridlines/>
+                                    </x:WorksheetOptions>
+                                </x:ExcelWorksheet>
+                            </x:ExcelWorksheets>
+                        </x:ExcelWorkbook>
+                    </xml>
+                    <![endif]-->
+                    <style>
+                        table { border-collapse: collapse; }
+                        th, td { border: 1px solid #000; padding: 8px; text-align: center; }
+                        th { background-color: #0A4D68; color: white; font-weight: bold; }
+                        td:first-child { text-align: left; }
+                        .raci-R { background-color: #e3f2fd; font-weight: bold; }
+                        .raci-A { background-color: #fff9e5; font-weight: bold; }
+                        .raci-C { background-color: #e8f5e9; font-weight: bold; }
+                        .raci-I { background-color: #fce4ec; font-weight: bold; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Hexagon RFP - RACI Matrix</h2>
+                    <p>Generated: ${new Date().toLocaleDateString()}</p>
+                    <p><strong>Legend:</strong> R = Responsible, A = Accountable, C = Consulted, I = Informed</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Activity / Deliverable</th>
+                                ${appState.stakeholders.map(s => `<th>${s.name}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            appState.raciActivities.forEach(a => {
+                html += `
+                    <tr>
+                        <td>${a.activity}</td>
+                        ${appState.stakeholders.map(s => {
+                            const value = a.raci[s.id] || '';
+                            const cssClass = value ? `raci-${value}` : '';
+                            return `<td class="${cssClass}">${value}</td>`;
+                        }).join('')}
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `;
+
+            downloadExcel(html, `Hexagon-RACI-Matrix-${new Date().toISOString().split('T')[0]}.xls`);
+            showToast('RACI Matrix exported to Excel', 'success');
+        }
+
+        function exportVendorsToExcel() {
+            if (appState.vendors.length === 0) {
+                showToast('No vendors to export', 'error');
+                return;
+            }
+
+            // Create Excel-compatible HTML table
+            let html = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="UTF-8">
+                    <!--[if gte mso 9]>
+                    <xml>
+                        <x:ExcelWorkbook>
+                            <x:ExcelWorksheets>
+                                <x:ExcelWorksheet>
+                                    <x:Name>Vendors</x:Name>
+                                    <x:WorksheetOptions>
+                                        <x:DisplayGridlines/>
+                                    </x:WorksheetOptions>
+                                </x:ExcelWorksheet>
+                            </x:ExcelWorksheets>
+                        </x:ExcelWorkbook>
+                    </xml>
+                    <![endif]-->
+                    <style>
+                        table { border-collapse: collapse; }
+                        th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+                        th { background-color: #0A4D68; color: white; font-weight: bold; }
+                        .status-warm { background-color: #e8f5e9; }
+                        .status-longlist { background-color: #e3f2fd; }
+                        .status-shortlist { background-color: #fff9e5; }
+                        .status-finalist { background-color: #ffe5f0; }
+                        .status-winner { background-color: #c8e6c9; }
+                        .tier1 { background-color: #fff3cd; }
+                        .contacts-section { background-color: #f8f9fa; font-size: 0.9em; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Hexagon RFP - Vendor List</h2>
+                    <p>Generated: ${new Date().toLocaleDateString()}</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Vendor Name</th>
+                                <th>Type</th>
+                                <th>Tier</th>
+                                <th>Status</th>
+                                <th>Key Strengths</th>
+                                <th>Hexagon Relevance</th>
+                                <th>Contact Name</th>
+                                <th>Contact Title</th>
+                                <th>Contact Company</th>
+                                <th>Contact Email</th>
+                                <th>Contact Phone</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            appState.vendors.forEach(v => {
+                const statusClass = `status-${v.status}`;
+                const tierClass = v.tier === 'Tier 1' ? 'tier1' : '';
+
+                // If vendor has contacts, create a row for each contact
+                if (v.contacts && v.contacts.length > 0) {
+                    v.contacts.forEach((contact, index) => {
+                        html += `
+                            <tr class="${statusClass} ${tierClass}">
+                                ${index === 0 ? `
+                                    <td rowspan="${v.contacts.length}">${v.name}</td>
+                                    <td rowspan="${v.contacts.length}">${v.type || ''}</td>
+                                    <td rowspan="${v.contacts.length}">${v.tier || ''}</td>
+                                    <td rowspan="${v.contacts.length}">${v.status || ''}</td>
+                                    <td rowspan="${v.contacts.length}">${v.strengths || ''}</td>
+                                    <td rowspan="${v.contacts.length}">${v.relevance || ''}</td>
+                                ` : ''}
+                                <td>${contact.name || ''}</td>
+                                <td>${contact.title || ''}</td>
+                                <td>${contact.company || ''}</td>
+                                <td>${contact.email || ''}</td>
+                                <td>${contact.phone || ''}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    // No contacts - create a single row with empty contact fields
+                    html += `
+                        <tr class="${statusClass} ${tierClass}">
+                            <td>${v.name}</td>
+                            <td>${v.type || ''}</td>
+                            <td>${v.tier || ''}</td>
+                            <td>${v.status || ''}</td>
+                            <td>${v.strengths || ''}</td>
+                            <td>${v.relevance || ''}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    `;
+                }
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `;
+
+            downloadExcel(html, `Hexagon-Vendors-${new Date().toISOString().split('T')[0]}.xls`);
+            showToast('Vendors exported to Excel', 'success');
+        }
+
+        function downloadExcel(html, filename) {
+            const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
         // Calendar Functions
         function renderCalendar() {
             const grid = document.getElementById('calendarGrid');
@@ -2910,6 +4336,7 @@
                 const dateStr = `${year}-${String(monthNum + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const tasksOnDay = appState.tasks.filter(t => t.dueDate === dateStr);
                 const milestonesOnDay = appState.milestones.filter(m => m.date === dateStr);
+                const meetingsOnDay = appState.meetings.filter(m => m.date === dateStr);
 
                 const today = new Date();
                 const isToday = day === today.getDate() && monthNum === today.getMonth() && year === today.getFullYear();
@@ -2919,6 +4346,10 @@
 
                 tasksOnDay.forEach(t => {
                     html += `<div class="calendar-event task" title="${t.name}">${t.name.substring(0, 15)}${t.name.length > 15 ? '...' : ''}</div>`;
+                });
+
+                meetingsOnDay.forEach(m => {
+                    html += `<div class="calendar-event meeting" title="${m.title}" style="background: #e8f5e9; color: #2e7d32; font-size: 10px; padding: 2px 4px; margin: 1px 0; border-radius: 3px; cursor: pointer;">📅 ${m.title.substring(0, 12)}${m.title.length > 12 ? '...' : ''}</div>`;
                 });
 
                 milestonesOnDay.forEach(m => {
@@ -2970,59 +4401,85 @@
             maxDate.setDate(maxDate.getDate() + 14);
 
             const totalDays = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
-            const dayWidth = 30;
+            const dayWidth = 3; // Compact for long timelines
+            const timelineWidth = totalDays * dayWidth;
+            const rowHeight = 32;
 
-            let html = '<div class="gantt-timeline" style="position: relative; min-width: ' + (totalDays * dayWidth) + 'px;">';
+            // Build the split-pane Gantt layout
+            let html = '<div style="display: flex; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white;">';
 
-            // Header with months
-            html += '<div class="gantt-header" style="display: flex; border-bottom: 2px solid #ddd; padding: 10px 0;">';
+            // Left panel - Fixed task names
+            html += '<div style="flex-shrink: 0; width: 200px; border-right: 2px solid #ddd; background: #fafafa;">';
+            html += `<div style="height: ${rowHeight}px; padding: 8px; font-weight: 600; background: #f0f0f0; border-bottom: 2px solid #ddd; font-size: 12px;">Task / Milestone</div>`;
+
+            tasks.filter(t => t.dueDate).forEach((task) => {
+                const phase = task.phase || 'discovery';
+                const phaseColors = { discovery: '#079fdb', documentation: '#0447bb', evaluation: '#5c74a7', selection: '#242c3c' };
+                html += `<div style="height: ${rowHeight}px; padding: 6px 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 1px solid #eee; border-left: 3px solid ${phaseColors[phase] || '#079fdb'};" title="${task.name}">${task.name}</div>`;
+            });
+
+            milestones.filter(m => m.date).forEach(m => {
+                const mTitle = m.title || m.name;
+                html += `<div style="height: ${rowHeight}px; padding: 6px 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 1px solid #eee; border-left: 3px solid #764ba2; color: #764ba2; font-weight: 500;" title="${mTitle}">🎯 ${mTitle}</div>`;
+            });
+            html += '</div>';
+
+            // Right panel - Scrollable timeline
+            html += `<div style="flex: 1; overflow-x: auto;" id="ganttTimelineScroll">`;
+            html += `<div style="min-width: ${timelineWidth}px;">`;
+
+            // Month header
+            html += `<div style="display: flex; height: ${rowHeight}px; background: #f0f0f0; border-bottom: 2px solid #ddd;">`;
             let currentMonth = new Date(minDate);
             while (currentMonth <= maxDate) {
-                const monthDays = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
-                const remainingDays = Math.min(monthDays - currentMonth.getDate() + 1, Math.ceil((maxDate - currentMonth) / (1000 * 60 * 60 * 24)));
-                html += `<div style="width: ${remainingDays * dayWidth}px; text-align: center; font-weight: 600; color: #333;">
-                    ${currentMonth.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                const nextMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+                const monthEnd = new Date(Math.min(nextMonth.getTime() - 1, maxDate.getTime()));
+                const daysInView = Math.ceil((monthEnd - currentMonth) / (1000 * 60 * 60 * 24)) + 1;
+                const monthWidth = daysInView * dayWidth;
+
+                html += `<div style="width: ${monthWidth}px; text-align: center; font-weight: 600; color: #333; padding: 8px 2px; border-right: 1px solid #ddd; font-size: 10px; white-space: nowrap; overflow: hidden;">
+                    ${currentMonth.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
                 </div>`;
-                currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+                currentMonth = nextMonth;
             }
             html += '</div>';
 
-            // Task rows - use actual task phase for coloring
+            // Task bars
             tasks.filter(t => t.dueDate).forEach((task) => {
                 const taskDate = new Date(task.dueDate);
                 const dayOffset = Math.ceil((taskDate - minDate) / (1000 * 60 * 60 * 24));
                 const phase = task.phase || 'discovery';
-                const statusLabel = task.status === 'notstarted' ? 'Not Started' :
-                                   task.status === 'inprogress' ? 'In Progress' :
-                                   task.status === 'complete' ? 'Complete' : task.status;
+                const isDone = task.status === 'done';
+                const barWidth = Math.max(dayWidth * 14, 50); // 2 weeks or minimum 50px
 
-                html += `<div class="gantt-row" style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
-                    <div style="width: 250px; padding-right: 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${task.name}">${task.name}</div>
-                    <div style="position: relative; flex: 1; height: 24px;">
-                        <div class="gantt-bar ${phase}" style="position: absolute; left: ${dayOffset * dayWidth}px; width: ${dayWidth * 5}px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white;">
-                            ${statusLabel}
-                        </div>
+                html += `<div style="height: ${rowHeight}px; position: relative; border-bottom: 1px solid #eee; background: ${isDone ? '#f0fff0' : 'white'};">
+                    <div class="gantt-bar ${phase}" style="position: absolute; top: 4px; left: ${dayOffset * dayWidth}px; width: ${barWidth}px; height: 24px; border-radius: 4px; opacity: ${isDone ? '0.6' : '1'}; ${isDone ? 'text-decoration: line-through;' : ''}">
                     </div>
                 </div>`;
             });
 
-            // Milestone rows
+            // Milestone markers
             milestones.filter(m => m.date).forEach(m => {
                 const mDate = new Date(m.date);
                 const dayOffset = Math.ceil((mDate - minDate) / (1000 * 60 * 60 * 24));
 
-                const mTitle = m.title || m.name;
-                html += `<div class="gantt-row" style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
-                    <div style="width: 200px; padding-right: 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🎯 ${mTitle}</div>
-                    <div style="position: relative; flex: 1; height: 24px;">
-                        <div style="position: absolute; left: ${dayOffset * dayWidth}px; width: 24px; height: 24px; background: #764ba2; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                            <span style="color: white; font-size: 12px;">◆</span>
-                        </div>
-                    </div>
+                html += `<div style="height: ${rowHeight}px; position: relative; border-bottom: 1px solid #eee;">
+                    <div style="position: absolute; top: 6px; left: ${dayOffset * dayWidth - 10}px; width: 20px; height: 20px; background: #764ba2; transform: rotate(45deg);"></div>
                 </div>`;
             });
 
+            html += '</div></div></div>';
+
+            // Add legend
+            html += '<div style="margin-top: 15px; padding: 10px; background: #f5f5f5; border-radius: 6px; display: flex; gap: 20px; flex-wrap: wrap; font-size: 11px;">';
+            html += '<strong>Phases:</strong>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #079fdb; border-radius: 2px; margin-right: 4px;"></span>Discovery</span>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #0447bb; border-radius: 2px; margin-right: 4px;"></span>Documentation</span>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #5c74a7; border-radius: 2px; margin-right: 4px;"></span>Evaluation</span>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #242c3c; border-radius: 2px; margin-right: 4px;"></span>Selection</span>';
+            html += '<span><span style="display: inline-block; width: 12px; height: 12px; background: #764ba2; transform: rotate(45deg); margin-right: 4px;"></span>Milestone</span>';
             html += '</div>';
+
             container.innerHTML = html;
         }
 
@@ -3057,12 +4514,16 @@
                                 doc.name.endsWith('.pptx') ? '📽️' :
                                 doc.name.endsWith('.pdf') ? '📕' : '📄';
 
+                    // Check if document has a downloadable file
+                    const hasFile = doc.fileUrl || doc.fileData || (appState.uploadedFiles && appState.uploadedFiles[doc.id]);
+
                     html += `
                         <div class="document-item">
                             <span class="doc-icon">${icon}</span>
                             <span class="doc-name">${doc.name}</span>
                             <span class="doc-status ${statusClass}">${doc.status}</span>
                             <div class="doc-actions">
+                                ${hasFile ? `<button class="btn btn-small btn-primary" onclick="downloadDocument('${folder.id}', ${doc.id})" title="Download">📥</button>` : ''}
                                 <button class="btn btn-small" onclick="editDocument('${folder.id}', ${doc.id})" title="Edit">✏️</button>
                                 <button class="btn btn-small btn-danger" onclick="deleteDocument('${folder.id}', ${doc.id})" title="Delete">🗑️</button>
                             </div>
@@ -3072,7 +4533,62 @@
                 html += `</div></div>`;
             });
 
+            // Add Meeting Notes section if there are any meeting notes with files
+            const meetingNotesWithFiles = (appState.meetingNotes || []).filter(note => note.hasFile);
+            if (meetingNotesWithFiles.length > 0) {
+                const isExpanded = appState.meetingNotesExpanded !== false;
+                html += `
+                    <div class="folder-item">
+                        <div class="folder-header" onclick="toggleMeetingNotesFolder()" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">
+                            <span class="folder-icon">${isExpanded ? '📂' : '📁'}</span>
+                            <span class="folder-name">6. Meeting Notes</span>
+                            <span class="folder-count">${meetingNotesWithFiles.length} files</span>
+                            <span class="folder-toggle">${isExpanded ? '▼' : '▶'}</span>
+                        </div>
+                        <div class="folder-contents" style="display: ${isExpanded ? 'block' : 'none'};">`;
+
+                meetingNotesWithFiles.forEach(note => {
+                    const icon = note.fileName.endsWith('.docx') ? '📄' :
+                                note.fileName.endsWith('.xlsx') ? '📊' :
+                                note.fileName.endsWith('.pptx') ? '📽️' :
+                                note.fileName.endsWith('.pdf') ? '📕' : '📄';
+                    const meeting = note.meetingId ? appState.meetings.find(m => m.id === note.meetingId) : null;
+                    const meetingInfo = meeting ? ` (${meeting.title})` : '';
+
+                    html += `
+                        <div class="document-item">
+                            <span class="doc-icon">${icon}</span>
+                            <span class="doc-name">${note.title}${meetingInfo}</span>
+                            <span class="doc-status draft">${note.date}</span>
+                            <div class="doc-actions">
+                                <button class="btn btn-small btn-primary" onclick="downloadMeetingNoteFromDocs(${note.id})" title="Download">📥</button>
+                            </div>
+                        </div>`;
+                });
+
+                html += `</div></div>`;
+            }
+
             tree.innerHTML = html;
+        }
+
+        function toggleMeetingNotesFolder() {
+            appState.meetingNotesExpanded = !appState.meetingNotesExpanded;
+            renderDocuments();
+        }
+
+        function downloadMeetingNoteFromDocs(noteId) {
+            const note = appState.meetingNotes.find(n => n.id === noteId);
+            if (note && note.fileUrl) {
+                window.open(note.fileUrl, '_blank');
+            } else if (note && note.fileData) {
+                const link = document.createElement('a');
+                link.href = note.fileData;
+                link.download = note.fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         }
 
         function toggleFolder(folderId) {
@@ -3134,14 +4650,56 @@
             renderDocuments();
         }
 
-        function deleteDocument(folderId, docId) {
+        function downloadDocument(folderId, docId) {
+            const folder = appState.documents.find(f => f.id === folderId);
+            if (!folder) {
+                showToast('Folder not found', 'error');
+                return;
+            }
+
+            const doc = folder.documents.find(d => d.id === docId);
+            if (!doc) {
+                showToast('Document not found', 'error');
+                return;
+            }
+
+            // Get file URL from various possible sources (new format or legacy)
+            const fileUrl = doc.fileUrl || doc.fileData || (appState.uploadedFiles && appState.uploadedFiles[docId]);
+
+            if (!fileUrl) {
+                showToast('No file available for download', 'error');
+                return;
+            }
+
+            // Use the helper function for downloading
+            downloadFile(fileUrl, doc.name);
+        }
+
+        async function deleteDocument(folderId, docId) {
             if (!confirm('Delete this document?')) return;
 
             const folder = appState.documents.find(f => f.id === folderId);
             if (folder) {
+                const doc = folder.documents.find(d => d.id === docId);
+
+                // Delete file from Vercel Blob if it's cloud-stored
+                if (doc?.fileUrl && doc?.isCloudStored) {
+                    await deleteFromVercelBlob(doc.fileUrl);
+                }
+
+                // Also clean up from uploadedFiles
+                if (appState.uploadedFiles && appState.uploadedFiles[docId]) {
+                    const fileUrl = appState.uploadedFiles[docId];
+                    if (doc?.isCloudStored && !fileUrl.startsWith('data:')) {
+                        await deleteFromVercelBlob(fileUrl);
+                    }
+                    delete appState.uploadedFiles[docId];
+                }
+
                 folder.documents = folder.documents.filter(d => d.id !== docId);
                 saveState();
                 renderDocuments();
+                showToast('Document deleted', 'success');
             }
         }
 
@@ -3255,12 +4813,29 @@
 
         // Stakeholder Modal Functions
         function openStakeholderModal() {
+            editingStakeholderId = null;
+            document.getElementById('stakeholderModalTitle').textContent = 'Add New Stakeholder';
             document.getElementById('stakeholderName').value = '';
             document.getElementById('stakeholderRole').value = '';
             document.getElementById('stakeholderDept').value = '';
             document.getElementById('stakeholderInfluence').value = 'high';
             document.getElementById('stakeholderInterest').value = 'high';
             document.getElementById('stakeholderNotes').value = '';
+            document.getElementById('stakeholderModal').style.display = 'block';
+        }
+
+        function editStakeholder(id) {
+            const stakeholder = appState.stakeholders.find(s => s.id === id);
+            if (!stakeholder) return;
+
+            editingStakeholderId = id;
+            document.getElementById('stakeholderModalTitle').textContent = 'Edit Stakeholder';
+            document.getElementById('stakeholderName').value = stakeholder.name;
+            document.getElementById('stakeholderRole').value = stakeholder.role || '';
+            document.getElementById('stakeholderDept').value = stakeholder.department || '';
+            document.getElementById('stakeholderInfluence').value = stakeholder.influence || 'medium';
+            document.getElementById('stakeholderInterest').value = stakeholder.interest || 'medium';
+            document.getElementById('stakeholderNotes').value = stakeholder.notes || '';
             document.getElementById('stakeholderModal').style.display = 'block';
         }
 
@@ -3271,23 +4846,39 @@
                 return;
             }
 
-            const newId = Math.max(...appState.stakeholders.map(s => s.id), 0) + 1;
-            appState.stakeholders.push({
-                id: newId,
-                name: sanitizeHTML(name),
-                role: sanitizeHTML(document.getElementById('stakeholderRole').value.trim()) || 'Stakeholder',
-                department: sanitizeHTML(document.getElementById('stakeholderDept').value.trim()),
-                email: '',
-                influence: document.getElementById('stakeholderInfluence').value,
-                interest: document.getElementById('stakeholderInterest').value,
-                notes: sanitizeHTML(document.getElementById('stakeholderNotes').value.trim())
-            });
+            if (editingStakeholderId) {
+                // Update existing stakeholder
+                const stakeholder = appState.stakeholders.find(s => s.id === editingStakeholderId);
+                if (stakeholder) {
+                    stakeholder.name = sanitizeHTML(name);
+                    stakeholder.role = sanitizeHTML(document.getElementById('stakeholderRole').value.trim()) || 'Stakeholder';
+                    stakeholder.department = sanitizeHTML(document.getElementById('stakeholderDept').value.trim());
+                    stakeholder.influence = document.getElementById('stakeholderInfluence').value;
+                    stakeholder.interest = document.getElementById('stakeholderInterest').value;
+                    stakeholder.notes = sanitizeHTML(document.getElementById('stakeholderNotes').value.trim());
+                }
+                editingStakeholderId = null;
+                showToast('Stakeholder updated', 'success');
+            } else {
+                // Add new stakeholder
+                const newId = Math.max(...appState.stakeholders.map(s => s.id), 0) + 1;
+                appState.stakeholders.push({
+                    id: newId,
+                    name: sanitizeHTML(name),
+                    role: sanitizeHTML(document.getElementById('stakeholderRole').value.trim()) || 'Stakeholder',
+                    department: sanitizeHTML(document.getElementById('stakeholderDept').value.trim()),
+                    email: '',
+                    influence: document.getElementById('stakeholderInfluence').value,
+                    interest: document.getElementById('stakeholderInterest').value,
+                    notes: sanitizeHTML(document.getElementById('stakeholderNotes').value.trim())
+                });
+                showToast('Stakeholder added', 'success');
+            }
 
             saveState();
             renderStakeholders();
             renderRaciMatrix();
             closeModal('stakeholderModal');
-            showToast('Stakeholder added', 'success');
         }
 
         // Vendor Scoring Functions
@@ -3757,7 +5348,7 @@
             document.getElementById('meetingNotesModal').style.display = 'block';
         }
 
-        function saveMeetingNotes() {
+        async function saveMeetingNotes() {
             const title = document.getElementById('notesTitle').value.trim();
             if (!title) {
                 showToast('Please enter a title for the notes', 'error');
@@ -3788,18 +5379,35 @@
             // Handle file upload
             if (fileInput.files && fileInput.files.length > 0) {
                 const file = fileInput.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
+                showToast('Uploading file...', 'info');
+
+                try {
+                    // Upload to Vercel Blob (or base64 fallback for local dev)
+                    const uploadResult = await uploadToVercelBlob(file, 'meeting-notes', 'meeting-note');
+
                     note.hasFile = true;
                     note.fileName = file.name;
-                    note.fileData = e.target.result;
+                    note.fileUrl = uploadResult.url;  // Store URL instead of base64
+                    note.fileData = uploadResult.isBase64 ? uploadResult.url : null; // Keep base64 for backwards compatibility
+                    note.isCloudStored = !uploadResult.isBase64;
+
                     appState.meetingNotes.push(note);
                     saveState();
                     renderMeetingNotesList();
                     closeModal('meetingNotesModal');
                     showToast('Meeting notes saved', 'success');
-                };
-                reader.readAsDataURL(file);
+                } catch (error) {
+                    console.error('Meeting notes upload error:', error);
+                    console.error('Full error object:', error);
+                    // Provide more specific error messages
+                    let userMessage = error.message || 'Unknown error';
+                    if (error.message && error.message.includes('Failed to fetch')) {
+                        userMessage = 'Network error - could not reach server. Please check your connection.';
+                    } else if (error.message && error.message.includes('413')) {
+                        userMessage = 'File is too large. Please try a smaller file.';
+                    }
+                    showToast(`Error uploading file: ${userMessage}`, 'error');
+                }
             } else {
                 appState.meetingNotes.push(note);
                 saveState();
@@ -3810,7 +5418,14 @@
         }
 
         function deleteMeetingNotes(id) {
-            showConfirm('Delete these meeting notes?', () => {
+            showConfirm('Delete these meeting notes?', async () => {
+                const note = appState.meetingNotes.find(n => n.id === id);
+
+                // Delete file from Vercel Blob if it's cloud-stored
+                if (note?.fileUrl && note?.isCloudStored) {
+                    await deleteFromVercelBlob(note.fileUrl);
+                }
+
                 appState.meetingNotes = appState.meetingNotes.filter(n => n.id !== id);
                 saveState();
                 renderMeetingNotesList();
@@ -3853,17 +5468,15 @@
 
         function downloadNoteFile(noteId) {
             const note = appState.meetingNotes.find(n => n.id === noteId);
-            if (!note || !note.fileData) {
+            // Support both new fileUrl and legacy fileData
+            const fileUrl = note?.fileUrl || note?.fileData;
+            if (!note || !fileUrl) {
                 showToast('File not found', 'error');
                 return;
             }
 
-            const link = document.createElement('a');
-            link.href = note.fileData;
-            link.download = note.fileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // Use the helper function for downloading
+            downloadFile(fileUrl, note.fileName);
         }
 
         // ==========================================
@@ -3877,7 +5490,7 @@
             document.getElementById('uploadModal').style.display = 'block';
         }
 
-        function uploadDocument() {
+        async function uploadDocument() {
             const fileInput = document.getElementById('uploadFile');
             const folderId = document.getElementById('uploadFolder').value;
             const status = document.getElementById('uploadStatus').value;
@@ -3888,10 +5501,10 @@
             }
 
             const file = fileInput.files[0];
-            const maxSize = 5 * 1024 * 1024; // 5MB limit
+            const maxSize = 50 * 1024 * 1024; // 50MB limit with Vercel Blob
 
             if (file.size > maxSize) {
-                showToast('File size must be less than 5MB', 'error');
+                showToast('File size must be less than 50MB', 'error');
                 return;
             }
 
@@ -3901,8 +5514,13 @@
                 return;
             }
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
+            // Show uploading indicator
+            showToast('Uploading document...', 'info');
+
+            try {
+                // Upload to Vercel Blob (or base64 fallback for local dev)
+                const uploadResult = await uploadToVercelBlob(file, folderId, 'document');
+
                 const newId = Math.max(...folder.documents.map(d => d.id), 100) + 1;
 
                 folder.documents.push({
@@ -3910,24 +5528,25 @@
                     name: file.name,
                     status: status,
                     folder: folderId,
-                    fileData: e.target.result,
-                    uploadDate: new Date().toISOString()
+                    fileUrl: uploadResult.url,  // Store URL instead of base64
+                    fileData: uploadResult.isBase64 ? uploadResult.url : null, // Keep base64 for backwards compatibility
+                    uploadDate: new Date().toISOString(),
+                    isCloudStored: !uploadResult.isBase64
                 });
 
-                // Store file data separately to avoid localStorage limits
+                // Store file reference (URL or base64) separately
                 if (!appState.uploadedFiles) appState.uploadedFiles = {};
-                appState.uploadedFiles[newId] = e.target.result;
+                appState.uploadedFiles[newId] = uploadResult.url;
 
                 folder.expanded = true;
                 saveState();
                 renderDocuments();
                 closeModal('uploadModal');
                 showToast(`Document "${file.name}" uploaded successfully`, 'success');
-            };
-            reader.onerror = function() {
-                showToast('Error reading file', 'error');
-            };
-            reader.readAsDataURL(file);
+            } catch (error) {
+                console.error('Upload error:', error);
+                showToast(`Error uploading file: ${error.message}`, 'error');
+            }
         }
 
         // ==========================================
