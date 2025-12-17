@@ -1069,7 +1069,7 @@
         <header class="header" role="banner">
             <div>
                 <h1>Hexagon SAP AMS RFP</h1>
-                <p>Complete Programme Management Platform | Start: 8 December 2025 | <span id="appVersion" style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; font-size: 0.85em;">v1.0.0</span></p>
+                <p>Complete Programme Management Platform | Start: 8 December 2025 | <span id="appVersion" style="background: #ff0000; color: white; padding: 4px 12px; border-radius: 10px; font-size: 1em; font-weight: bold;">v2.1-FIX</span></p>
             </div>
             <div style="display: flex; align-items: center; gap: 15px;">
                 <button class="theme-toggle" onclick="resetAppData()" aria-label="Reset data" title="Reset to default data (loads latest features)" style="font-size: 14px;">
@@ -1087,8 +1087,55 @@
 
         <!-- Debug Status Banner - Visible by default for iPad debugging -->
         <div id="authDebug" style="background: #ff9800; color: white; padding: 20px; text-align: center; font-weight: bold; font-size: 18px; z-index: 9999; position: relative;">
-            🔄 Authentication Status: <span id="authStatus">Loading JavaScript...</span>
+            🔄 Authentication Status: <span id="authStatus">Starting v2.1 - If you see this, JS hasn't loaded yet</span>
         </div>
+
+        <script>
+        // This runs IMMEDIATELY to test if JavaScript is working
+        (function() {
+            const statusSpan = document.getElementById('authStatus');
+            const banner = document.getElementById('authDebug');
+
+            function updateStatus(msg, color) {
+                if (statusSpan) statusSpan.textContent = msg;
+                if (banner) banner.style.background = color;
+                console.log('STATUS:', msg);
+            }
+
+            if (statusSpan) {
+                updateStatus('v2.1 DEPLOYED - JavaScript IS running!', '#4CAF50');
+
+                // Track DOMContentLoaded
+                document.addEventListener('DOMContentLoaded', function() {
+                    updateStatus('DOMContentLoaded fired - initializing app...', '#2196F3');
+
+                    setTimeout(function() {
+                        // Check if initialization completed
+                        if (typeof switchTab === 'function') {
+                            updateStatus('✅ App ready - all functions loaded!', '#4CAF50');
+                            setTimeout(function() {
+                                banner.style.display = 'none'; // Hide after 3 seconds
+                            }, 3000);
+                        } else {
+                            const checkpoint = window.scriptCheckpoint || 'UNKNOWN';
+                            updateStatus('❌ ERROR: Functions not loaded! Click here for details', '#f44336');
+                            banner.style.cursor = 'pointer';
+                            banner.onclick = function() {
+                                alert('Script failed to load functions.\n\nLast successful checkpoint: ' + checkpoint + '\n\nCheckpoints:\n- STARTED: Script began\n- SUPABASE_INIT: Supabase initialized\n- BEFORE_FUNCTIONS: Ready to define functions\n- BEFORE_UTILITY_FUNCTIONS: Defining utilities\n- SWITCHTAB_DEFINED: switchTab function created\n- ALL_FUNCTIONS_DEFINED: All functions ready\n\nThe script failed AFTER: ' + checkpoint);
+                            };
+                        }
+                    }, 1000);
+                });
+
+                // Safety check - if DOMContentLoaded doesn't fire in 5 seconds
+                setTimeout(function() {
+                    if (banner.style.background === '#4CAF50') {
+                        updateStatus('⚠️ DOMContentLoaded never fired!', '#ff9800');
+                    }
+                }, 5000);
+            }
+        })();
+        </script>
 
         <nav class="nav-tabs" role="tablist" aria-label="Main navigation">
             <button class="nav-tab active" onclick="switchTab('dashboard', event)" role="tab" aria-selected="true" aria-controls="dashboard" id="tab-dashboard">Dashboard</button>
@@ -1963,6 +2010,8 @@
     </div>
 
     <script>
+        window.scriptCheckpoint = 'STARTED';
+        console.log('====== SCRIPT START: Main script execution began ======');
         // Initial Data from Hexagon Excel File
         const INITIAL_DATA = {
             tasks: [
@@ -2154,6 +2203,8 @@
             console.error('Failed to initialize Supabase:', error);
             supabase = null;
         }
+        window.scriptCheckpoint = 'SUPABASE_INIT';
+        console.log('====== CHECKPOINT 1: Supabase init completed ======');
 
         // Authentication State
         let currentUser = null;
@@ -2192,6 +2243,9 @@
 
         // Confirmation callback
         let confirmCallback = null;
+
+        window.scriptCheckpoint = 'BEFORE_FUNCTIONS';
+        console.log('====== CHECKPOINT 2: About to define functions ======');
 
         // ==========================================
         // AUTHENTICATION FUNCTIONS
@@ -2466,18 +2520,42 @@
             }
         }
 
+        window.scriptCheckpoint = 'ALL_FUNCTIONS_DEFINED';
+        console.log('====== CHECKPOINT 5: All functions defined, ready for DOMContentLoaded ======');
+        console.log('====== switchTab function exists:', typeof switchTab === 'function');
+
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            // Try authentication if Supabase is available, otherwise fall back to localStorage
-            if (supabase) {
-                initAuth();
-            } else {
-                showDebugStatus('Running in localStorage mode (no cloud sync)', false);
-                loadState();
-                applyTheme();
-                updateDashboard();
-                renderAll();
-                checkOverdue();
+            try {
+                showDebugStatus('DOMContentLoaded fired - checking setup...', false);
+                console.log('DOMContentLoaded event fired');
+
+                // Try authentication if Supabase is available, otherwise fall back to localStorage
+                if (supabase) {
+                    console.log('Supabase available, calling initAuth()');
+                    initAuth();
+                } else {
+                    console.log('Supabase not available, using localStorage mode');
+                    showDebugStatus('Running in localStorage mode (no cloud sync)', false);
+                    loadState();
+                    applyTheme();
+                    updateDashboard();
+                    renderAll();
+                    checkOverdue();
+                }
+            } catch (error) {
+                console.error('Error in DOMContentLoaded:', error);
+                showDebugStatus('Error initializing: ' + error.message, true);
+                // Still try to load the app
+                try {
+                    loadState();
+                    applyTheme();
+                    updateDashboard();
+                    renderAll();
+                    checkOverdue();
+                } catch (e) {
+                    console.error('Critical error:', e);
+                }
             }
         });
 
@@ -3241,6 +3319,9 @@
         }
 
         // Utility Functions
+        window.scriptCheckpoint = 'BEFORE_UTILITY_FUNCTIONS';
+        console.log('====== CHECKPOINT 3: About to define utility functions ======');
+
         function formatDate(d) {
             if (!d) return 'No date';
             const date = new Date(d);
@@ -3275,6 +3356,8 @@
             if (tab === 'dashboard') updateDashboard();
             if (tab === 'scoring') renderScoringTable();
         }
+        window.scriptCheckpoint = 'SWITCHTAB_DEFINED';
+        console.log('====== CHECKPOINT 4: switchTab function defined successfully ======');
 
         function filterTasks(f, e) {
             appState.currentFilter = f;
