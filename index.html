@@ -424,6 +424,8 @@
             background: rgba(0,0,0,0.5);
             z-index: 1000;
             overflow-y: auto;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-content {
@@ -1082,6 +1084,11 @@
                 </div>
             </div>
         </header>
+
+        <!-- Debug Status Banner -->
+        <div id="authDebug" style="background: #ff6b6b; color: white; padding: 15px; text-align: center; font-weight: bold; display: none;">
+            Authentication Status: <span id="authStatus">Checking...</span>
+        </div>
 
         <nav class="nav-tabs" role="tablist" aria-label="Main navigation">
             <button class="nav-tab active" onclick="switchTab('dashboard', event)" role="tab" aria-selected="true" aria-controls="dashboard" id="tab-dashboard">Dashboard</button>
@@ -2179,30 +2186,78 @@
         // AUTHENTICATION FUNCTIONS
         // ==========================================
 
-        async function initAuth() {
-            // Check for existing session
-            const { data: { session } } = await supabase.auth.getSession();
-
-            if (session) {
-                currentSession = session;
-                currentUser = session.user;
-                await onAuthSuccess();
-            } else {
-                showAuthModal();
+        function showDebugStatus(message, isError = true) {
+            const debugBanner = document.getElementById('authDebug');
+            const statusSpan = document.getElementById('authStatus');
+            if (debugBanner && statusSpan) {
+                statusSpan.textContent = message;
+                debugBanner.style.display = 'block';
+                debugBanner.style.background = isError ? '#ff6b6b' : '#51cf66';
             }
+        }
 
-            // Listen for auth changes
-            supabase.auth.onAuthStateChange((event, session) => {
-                if (event === 'SIGNED_IN') {
+        async function initAuth() {
+            try {
+                showDebugStatus('Initializing...', false);
+                console.log('Initializing authentication...');
+
+                // Check if Supabase client is available
+                if (!window.supabase) {
+                    showDebugStatus('ERROR: Supabase library not loaded! CDN may be blocked.');
+                    console.error('Supabase client not loaded!');
+                    return;
+                }
+
+                if (!supabase) {
+                    showDebugStatus('ERROR: Supabase client not initialized!');
+                    console.error('Supabase client not initialized!');
+                    return;
+                }
+
+                showDebugStatus('Checking session...', false);
+
+                // Check for existing session
+                const { data: { session }, error } = await supabase.auth.getSession();
+
+                if (error) {
+                    showDebugStatus('Session error: ' + error.message);
+                    console.error('Error getting session:', error);
+                    showAuthModal();
+                    return;
+                }
+
+                if (session) {
+                    showDebugStatus('Logged in as: ' + session.user.email, false);
+                    console.log('User session found:', session.user.email);
                     currentSession = session;
                     currentUser = session.user;
-                    onAuthSuccess();
-                } else if (event === 'SIGNED_OUT') {
-                    currentUser = null;
-                    currentSession = null;
+                    await onAuthSuccess();
+                } else {
+                    showDebugStatus('Not logged in - showing login screen', false);
+                    console.log('No session found, showing login');
                     showAuthModal();
                 }
-            });
+
+                // Listen for auth changes
+                supabase.auth.onAuthStateChange((event, session) => {
+                    console.log('Auth state changed:', event);
+                    if (event === 'SIGNED_IN') {
+                        currentSession = session;
+                        currentUser = session.user;
+                        showDebugStatus('Signed in!', false);
+                        onAuthSuccess();
+                    } else if (event === 'SIGNED_OUT') {
+                        currentUser = null;
+                        currentSession = null;
+                        showDebugStatus('Signed out', false);
+                        showAuthModal();
+                    }
+                });
+            } catch (error) {
+                showDebugStatus('ERROR: ' + error.message);
+                console.error('Init auth error:', error);
+                showAuthModal();
+            }
         }
 
         async function handleLogin() {
