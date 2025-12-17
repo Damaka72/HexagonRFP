@@ -424,6 +424,8 @@
             background: rgba(0,0,0,0.5);
             z-index: 1000;
             overflow-y: auto;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-content {
@@ -2180,29 +2182,52 @@
         // ==========================================
 
         async function initAuth() {
-            // Check for existing session
-            const { data: { session } } = await supabase.auth.getSession();
+            try {
+                console.log('Initializing authentication...');
 
-            if (session) {
-                currentSession = session;
-                currentUser = session.user;
-                await onAuthSuccess();
-            } else {
-                showAuthModal();
-            }
+                // Check if Supabase client is available
+                if (!window.supabase || !supabase) {
+                    console.error('Supabase client not loaded!');
+                    alert('Failed to load authentication service. Please refresh the page.');
+                    return;
+                }
 
-            // Listen for auth changes
-            supabase.auth.onAuthStateChange((event, session) => {
-                if (event === 'SIGNED_IN') {
+                // Check for existing session
+                const { data: { session }, error } = await supabase.auth.getSession();
+
+                if (error) {
+                    console.error('Error getting session:', error);
+                    showAuthModal();
+                    return;
+                }
+
+                if (session) {
+                    console.log('User session found:', session.user.email);
                     currentSession = session;
                     currentUser = session.user;
-                    onAuthSuccess();
-                } else if (event === 'SIGNED_OUT') {
-                    currentUser = null;
-                    currentSession = null;
+                    await onAuthSuccess();
+                } else {
+                    console.log('No session found, showing login');
                     showAuthModal();
                 }
-            });
+
+                // Listen for auth changes
+                supabase.auth.onAuthStateChange((event, session) => {
+                    console.log('Auth state changed:', event);
+                    if (event === 'SIGNED_IN') {
+                        currentSession = session;
+                        currentUser = session.user;
+                        onAuthSuccess();
+                    } else if (event === 'SIGNED_OUT') {
+                        currentUser = null;
+                        currentSession = null;
+                        showAuthModal();
+                    }
+                });
+            } catch (error) {
+                console.error('Init auth error:', error);
+                showAuthModal();
+            }
         }
 
         async function handleLogin() {
