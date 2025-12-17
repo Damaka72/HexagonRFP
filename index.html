@@ -1087,7 +1087,7 @@
 
         <!-- Debug Status Banner - Visible by default for iPad debugging -->
         <div id="authDebug" style="background: #ff9800; color: white; padding: 20px; text-align: center; font-weight: bold; font-size: 18px; z-index: 9999; position: relative;">
-            🔄 Authentication Status: <span id="authStatus">Loading JavaScript...</span>
+            🔄 Authentication Status: <span id="authStatus">Starting v2.0 - If you see this, JS hasn't loaded yet</span>
         </div>
 
         <nav class="nav-tabs" role="tablist" aria-label="Main navigation">
@@ -2468,16 +2468,36 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            // Try authentication if Supabase is available, otherwise fall back to localStorage
-            if (supabase) {
-                initAuth();
-            } else {
-                showDebugStatus('Running in localStorage mode (no cloud sync)', false);
-                loadState();
-                applyTheme();
-                updateDashboard();
-                renderAll();
-                checkOverdue();
+            try {
+                showDebugStatus('DOMContentLoaded fired - checking setup...', false);
+                console.log('DOMContentLoaded event fired');
+
+                // Try authentication if Supabase is available, otherwise fall back to localStorage
+                if (supabase) {
+                    console.log('Supabase available, calling initAuth()');
+                    initAuth();
+                } else {
+                    console.log('Supabase not available, using localStorage mode');
+                    showDebugStatus('Running in localStorage mode (no cloud sync)', false);
+                    loadState();
+                    applyTheme();
+                    updateDashboard();
+                    renderAll();
+                    checkOverdue();
+                }
+            } catch (error) {
+                console.error('Error in DOMContentLoaded:', error);
+                showDebugStatus('Error initializing: ' + error.message, true);
+                // Still try to load the app
+                try {
+                    loadState();
+                    applyTheme();
+                    updateDashboard();
+                    renderAll();
+                    checkOverdue();
+                } catch (e) {
+                    console.error('Critical error:', e);
+                }
             }
         });
 
