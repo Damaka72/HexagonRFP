@@ -9,6 +9,7 @@
     <meta name="theme-color" content="#079fdb">
     <title>Hexagon SAP AMS RFP | Complete Programme Management</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -1905,6 +1906,55 @@
         </div>
     </div>
 
+    <!-- Authentication Modal -->
+    <div id="authModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 450px;">
+            <!-- Login Form -->
+            <div id="loginForm">
+                <h2 style="text-align: center; margin-bottom: 24px;">Sign In to HexagonRFP</h2>
+                <div class="form-group">
+                    <label class="form-label" for="loginEmail">Email</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="your.email@company.com" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+                </div>
+                <button class="btn btn-primary" onclick="handleLogin()" style="width: 100%; margin-top: 16px;">Sign In</button>
+                <button class="btn" onclick="handleGoogleLogin()" style="width: 100%; margin-top: 12px; background: white; color: #333; border: 1px solid #ddd;">
+                    <span style="margin-right: 8px;">🔵</span> Sign in with Google
+                </button>
+                <div style="text-align: center; margin-top: 20px; font-size: 14px;">
+                    <a href="#" onclick="showSignupForm(); return false;" style="color: var(--primary);">Create Account</a>
+                    <span style="margin: 0 8px;">•</span>
+                    <a href="#" onclick="handlePasswordReset(); return false;" style="color: var(--primary);">Forgot Password?</a>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" style="display: none;">
+                <span class="modal-close" onclick="hideAuthModal()">&times;</span>
+                <h2 style="text-align: center; margin-bottom: 24px;">Create Account</h2>
+                <div class="form-group">
+                    <label class="form-label" for="signupName">Full Name</label>
+                    <input type="text" class="form-input" id="signupName" placeholder="John Smith">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="signupEmail">Email</label>
+                    <input type="email" class="form-input" id="signupEmail" placeholder="your.email@company.com" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="signupPassword">Password</label>
+                    <input type="password" class="form-input" id="signupPassword" placeholder="Minimum 6 characters" autocomplete="new-password">
+                </div>
+                <button class="btn btn-primary" onclick="handleSignup()" style="width: 100%; margin-top: 16px;">Create Account</button>
+                <div style="text-align: center; margin-top: 20px; font-size: 14px;">
+                    <a href="#" onclick="showLoginForm(); return false;" style="color: var(--primary);">Already have an account? Sign in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Initial Data from Hexagon Excel File
         const INITIAL_DATA = {
@@ -2081,6 +2131,17 @@
             meetingNotes: []
         };
 
+        // Supabase Client Initialization
+        const supabase = window.supabase.createClient(
+            'https://kspkxbkmlypkuxkfduqs.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcGt4YmttbHlwa3V4a2ZkdXFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5MTQ2NjgsImV4cCI6MjA4MTQ5MDY2OH0.3xhDv6CQxSR_qZQCC0NJI6EMsmyXrppM-KuKGY6Liaw'
+        );
+
+        // Authentication State
+        let currentUser = null;
+        let currentSession = null;
+        let currentProjectId = null;
+
         // State Management
         let appState = {
             startDate: new Date('2025-12-08'),
@@ -2114,13 +2175,215 @@
         // Confirmation callback
         let confirmCallback = null;
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            loadState();
+        // ==========================================
+        // AUTHENTICATION FUNCTIONS
+        // ==========================================
+
+        async function initAuth() {
+            // Check for existing session
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (session) {
+                currentSession = session;
+                currentUser = session.user;
+                await onAuthSuccess();
+            } else {
+                showAuthModal();
+            }
+
+            // Listen for auth changes
+            supabase.auth.onAuthStateChange((event, session) => {
+                if (event === 'SIGNED_IN') {
+                    currentSession = session;
+                    currentUser = session.user;
+                    onAuthSuccess();
+                } else if (event === 'SIGNED_OUT') {
+                    currentUser = null;
+                    currentSession = null;
+                    showAuthModal();
+                }
+            });
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showToast('Please enter both email and password', 'error');
+                return;
+            }
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
+
+            if (error) {
+                showToast(error.message, 'error');
+            } else {
+                hideAuthModal();
+                await checkForLocalDataMigration();
+            }
+        }
+
+        async function handleSignup() {
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const fullName = document.getElementById('signupName').value.trim();
+
+            if (!email || !password) {
+                showToast('Please enter email and password', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showToast('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: { full_name: fullName }
+                }
+            });
+
+            if (error) {
+                showToast(error.message, 'error');
+            } else {
+                showToast('Account created! Please check your email to verify.', 'success');
+                showLoginForm();
+            }
+        }
+
+        async function handleGoogleLogin() {
+            const { data, error} = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin
+                }
+            });
+
+            if (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function handleLogout() {
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+                showToast(error.message, 'error');
+            } else {
+                showToast('Signed out successfully', 'success');
+            }
+        }
+
+        async function handlePasswordReset() {
+            const email = document.getElementById('loginEmail').value.trim();
+            if (!email) {
+                showToast('Please enter your email address first', 'error');
+                return;
+            }
+
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin
+            });
+
+            if (error) {
+                showToast(error.message, 'error');
+            } else {
+                showToast('Password reset email sent! Check your inbox.', 'success');
+            }
+        }
+
+        function showAuthModal() {
+            document.getElementById('authModal').style.display = 'flex';
+            showLoginForm();
+        }
+
+        function hideAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('signupForm').style.display = 'none';
+        }
+
+        function showSignupForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'block';
+        }
+
+        async function onAuthSuccess() {
+            hideAuthModal();
+            await loadStateFromCloud();
             applyTheme();
             updateDashboard();
             renderAll();
             checkOverdue();
+        }
+
+        async function checkForLocalDataMigration() {
+            const localData = localStorage.getItem('hexagonRFP');
+
+            if (!localData) {
+                await loadStateFromCloud();
+                applyTheme();
+                updateDashboard();
+                renderAll();
+                checkOverdue();
+                return;
+            }
+
+            const migrate = confirm(
+                'We found data in your browser. Would you like to import it to your cloud account? ' +
+                'This will allow you to access it from any device.'
+            );
+
+            if (migrate) {
+                try {
+                    const data = JSON.parse(localData);
+
+                    // Create backup download first
+                    const backupBlob = new Blob([localData], { type: 'application/json' });
+                    const backupUrl = URL.createObjectURL(backupBlob);
+                    const a = document.createElement('a');
+                    a.href = backupUrl;
+                    a.download = `hexagonRFP-backup-${Date.now()}.json`;
+                    a.click();
+                    URL.revokeObjectURL(backupUrl);
+
+                    // Upload to cloud
+                    await saveStateToCloud(data);
+                    showToast('Data migrated successfully!', 'success');
+
+                    // Clear local storage
+                    localStorage.removeItem('hexagonRFP');
+
+                    await loadStateFromCloud();
+                    applyTheme();
+                    updateDashboard();
+                    renderAll();
+                    checkOverdue();
+                } catch (error) {
+                    console.error('Migration error:', error);
+                    showToast('Migration failed. Your local data is still safe.', 'error');
+                }
+            } else {
+                await loadStateFromCloud();
+                applyTheme();
+                updateDashboard();
+                renderAll();
+                checkOverdue();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initAuth();
         });
 
         function loadState() {
@@ -2135,15 +2398,19 @@
                     appState.meetingCalendarMonth = new Date(appState.meetingCalendarMonth || '2025-12-01');
 
                     // If tasks array is empty or very small, reload defaults (user has old data)
-                    // But preserve user-uploaded content (meeting notes, uploaded files)
+                    // But preserve user-uploaded content (meeting notes, uploaded files, stakeholders, RACI)
                     if (!appState.tasks || appState.tasks.length < 15) {
-                        console.log('Outdated data detected, reloading defaults while preserving uploads...');
+                        console.log('Outdated data detected, reloading defaults while preserving user data...');
                         const preservedMeetingNotes = appState.meetingNotes || [];
                         const preservedUploadedFiles = appState.uploadedFiles || {};
+                        const preservedStakeholders = appState.stakeholders || [];
+                        const preservedRaciActivities = appState.raciActivities || [];
                         initializeFromDefault();
-                        // Restore user-uploaded content
+                        // Restore user-uploaded content and stakeholder data
                         appState.meetingNotes = preservedMeetingNotes;
                         appState.uploadedFiles = preservedUploadedFiles;
+                        appState.stakeholders = preservedStakeholders.length > 0 ? preservedStakeholders : appState.stakeholders;
+                        appState.raciActivities = preservedRaciActivities.length > 0 ? preservedRaciActivities : appState.raciActivities;
                         saveState();
                     }
                 } catch(e) {
@@ -2215,13 +2482,20 @@
                     fileType: file.type
                 });
 
+                const headers = {
+                    'X-Filename': encodeURIComponent(file.name),
+                    'X-Folder': encodeURIComponent(folder),
+                    'X-Document-Type': encodeURIComponent(documentType),
+                };
+
+                // Add authorization if user is logged in
+                if (currentSession) {
+                    headers['Authorization'] = `Bearer ${currentSession.access_token}`;
+                }
+
                 const response = await fetch('/api/upload', {
                     method: 'POST',
-                    headers: {
-                        'X-Filename': encodeURIComponent(file.name),
-                        'X-Folder': encodeURIComponent(folder),
-                        'X-Document-Type': encodeURIComponent(documentType),
-                    },
+                    headers: headers,
                     body: file,
                 });
 
@@ -2282,11 +2556,18 @@
             }
 
             try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                };
+
+                // Add authorization if user is logged in
+                if (currentSession) {
+                    headers['Authorization'] = `Bearer ${currentSession.access_token}`;
+                }
+
                 const response = await fetch('/api/delete', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: headers,
                     body: JSON.stringify({ url }),
                 });
 
@@ -2357,8 +2638,88 @@
             document.getElementById('confirmModal').style.display = 'block';
         }
 
+        // Cloud Storage Functions
+        async function loadStateFromCloud() {
+            if (!currentSession) return;
+
+            try {
+                const response = await fetch('/api/data/sync', {
+                    headers: {
+                        'Authorization': `Bearer ${currentSession.access_token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load data from cloud');
+                }
+
+                const { data } = await response.json();
+
+                if (data) {
+                    // Merge cloud data with appState
+                    appState = { ...appState, ...data };
+
+                    // Parse dates
+                    appState.startDate = new Date(appState.startDate);
+                    appState.goLiveDate = new Date(appState.goLiveDate);
+                    appState.calendarMonth = new Date(appState.calendarMonth || '2025-12-01');
+                    appState.meetingCalendarMonth = new Date(appState.meetingCalendarMonth || '2025-12-01');
+
+                    // If no data, initialize from defaults
+                    if (!appState.tasks || appState.tasks.length === 0) {
+                        initializeFromDefault();
+                        await saveStateToCloud();
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load from cloud:', error);
+                showToast('Failed to load data. Please refresh the page.', 'error');
+            }
+        }
+
+        let saveTimeout;
+        async function saveStateToCloud(customData = null) {
+            if (!currentSession) return;
+
+            // Debounce saves
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(async () => {
+                try {
+                    const dataToSave = customData || appState;
+
+                    const response = await fetch('/api/data/save', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${currentSession.access_token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            projectId: currentProjectId,
+                            data: dataToSave
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to save data');
+                    }
+
+                    console.log('Data saved to cloud');
+                } catch (error) {
+                    console.error('Failed to save to cloud:', error);
+                    showToast('Failed to save changes', 'error');
+                }
+            }, 1000);
+        }
+
         function saveState(showNotification = false) {
-            localStorage.setItem('hexagonRFP', JSON.stringify(appState));
+            if (currentUser) {
+                // Save to cloud if authenticated
+                saveStateToCloud();
+            } else {
+                // Fallback to localStorage if not authenticated
+                localStorage.setItem('hexagonRFP', JSON.stringify(appState));
+            }
+
             if (showNotification) {
                 showToast('Changes saved', 'success');
             }
