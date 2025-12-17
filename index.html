@@ -1085,9 +1085,9 @@
             </div>
         </header>
 
-        <!-- Debug Status Banner -->
-        <div id="authDebug" style="background: #ff6b6b; color: white; padding: 15px; text-align: center; font-weight: bold; display: none;">
-            Authentication Status: <span id="authStatus">Checking...</span>
+        <!-- Debug Status Banner - Visible by default for iPad debugging -->
+        <div id="authDebug" style="background: #ff9800; color: white; padding: 20px; text-align: center; font-weight: bold; font-size: 18px; z-index: 9999; position: relative;">
+            🔄 Authentication Status: <span id="authStatus">Loading JavaScript...</span>
         </div>
 
         <nav class="nav-tabs" role="tablist" aria-label="Main navigation">
@@ -2191,8 +2191,8 @@
             const statusSpan = document.getElementById('authStatus');
             if (debugBanner && statusSpan) {
                 statusSpan.textContent = message;
-                debugBanner.style.display = 'block';
                 debugBanner.style.background = isError ? '#ff6b6b' : '#51cf66';
+                // Keep visible for debugging
             }
         }
 
