@@ -1094,10 +1094,44 @@
         // This runs IMMEDIATELY to test if JavaScript is working
         (function() {
             const statusSpan = document.getElementById('authStatus');
+            const banner = document.getElementById('authDebug');
+
+            function updateStatus(msg, color) {
+                if (statusSpan) statusSpan.textContent = msg;
+                if (banner) banner.style.background = color;
+                console.log('STATUS:', msg);
+            }
+
             if (statusSpan) {
-                statusSpan.textContent = 'v2.1 DEPLOYED - JavaScript IS running!';
-                document.getElementById('authDebug').style.background = '#4CAF50';
-                console.log('IMMEDIATE SCRIPT: JavaScript is working!');
+                updateStatus('v2.1 DEPLOYED - JavaScript IS running!', '#4CAF50');
+
+                // Track DOMContentLoaded
+                document.addEventListener('DOMContentLoaded', function() {
+                    updateStatus('DOMContentLoaded fired - initializing app...', '#2196F3');
+
+                    setTimeout(function() {
+                        // Check if initialization completed
+                        if (typeof switchTab === 'function') {
+                            updateStatus('✅ App ready - all functions loaded!', '#4CAF50');
+                            setTimeout(function() {
+                                banner.style.display = 'none'; // Hide after 3 seconds
+                            }, 3000);
+                        } else {
+                            updateStatus('❌ ERROR: Functions not loaded! Click here for details', '#f44336');
+                            banner.style.cursor = 'pointer';
+                            banner.onclick = function() {
+                                alert('switchTab function not found. Main script may have errors. Check console.');
+                            };
+                        }
+                    }, 1000);
+                });
+
+                // Safety check - if DOMContentLoaded doesn't fire in 5 seconds
+                setTimeout(function() {
+                    if (banner.style.background === '#4CAF50') {
+                        updateStatus('⚠️ DOMContentLoaded never fired!', '#ff9800');
+                    }
+                }, 5000);
             }
         })();
         </script>
