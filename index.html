@@ -2138,11 +2138,22 @@
             meetingNotes: []
         };
 
-        // Supabase Client Initialization
-        const supabase = window.supabase.createClient(
-            'https://kspkxbkmlypkuxkfduqs.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcGt4YmttbHlwa3V4a2ZkdXFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5MTQ2NjgsImV4cCI6MjA4MTQ5MDY2OH0.3xhDv6CQxSR_qZQCC0NJI6EMsmyXrppM-KuKGY6Liaw'
-        );
+        // Supabase Client Initialization (Optional - graceful fallback)
+        let supabase = null;
+        try {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(
+                    'https://kspkxbkmlypkuxkfduqs.supabase.co',
+                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcGt4YmttbHlwa3V4a2ZkdXFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5MTQ2NjgsImV4cCI6MjA4MTQ5MDY2OH0.3xhDv6CQxSR_qZQCC0NJI6EMsmyXrppM-KuKGY6Liaw'
+                );
+                console.log('Supabase client initialized successfully');
+            } else {
+                console.warn('Supabase not available, using localStorage mode');
+            }
+        } catch (error) {
+            console.error('Failed to initialize Supabase:', error);
+            supabase = null;
+        }
 
         // Authentication State
         let currentUser = null;
@@ -2198,44 +2209,58 @@
 
         async function initAuth() {
             try {
-                showDebugStatus('Initializing...', false);
+                showDebugStatus('Initializing auth (optional)...', false);
                 console.log('Initializing authentication...');
 
                 // Check if Supabase client is available
-                if (!window.supabase) {
-                    showDebugStatus('ERROR: Supabase library not loaded! CDN may be blocked.');
-                    console.error('Supabase client not loaded!');
+                if (!window.supabase || !supabase) {
+                    showDebugStatus('Supabase unavailable - using localStorage mode', false);
+                    console.warn('Supabase not available, falling back to localStorage');
+                    // Fall back to localStorage mode
+                    loadState();
+                    applyTheme();
+                    updateDashboard();
+                    renderAll();
+                    checkOverdue();
                     return;
                 }
 
-                if (!supabase) {
-                    showDebugStatus('ERROR: Supabase client not initialized!');
-                    console.error('Supabase client not initialized!');
-                    return;
-                }
-
-                showDebugStatus('Checking session...', false);
+                showDebugStatus('Checking session (optional auth)...', false);
 
                 // Check for existing session
                 const { data: { session }, error } = await supabase.auth.getSession();
 
                 if (error) {
-                    showDebugStatus('Session error: ' + error.message);
-                    console.error('Error getting session:', error);
-                    showAuthModal();
+                    showDebugStatus('Auth error - using localStorage: ' + error.message, false);
+                    console.error('Error getting session, using localStorage:', error);
+                    // Fall back to localStorage mode
+                    loadState();
+                    applyTheme();
+                    updateDashboard();
+                    renderAll();
+                    checkOverdue();
                     return;
                 }
 
                 if (session) {
-                    showDebugStatus('Logged in as: ' + session.user.email, false);
+                    showDebugStatus('Cloud mode: Logged in as ' + session.user.email, false);
                     console.log('User session found:', session.user.email);
                     currentSession = session;
                     currentUser = session.user;
                     await onAuthSuccess();
                 } else {
-                    showDebugStatus('Not logged in - showing login screen', false);
-                    console.log('No session found, showing login');
-                    showAuthModal();
+                    showDebugStatus('No auth - using localStorage (click here to enable cloud sync)', false);
+                    console.log('No session, using localStorage mode');
+                    // No session, use localStorage mode
+                    loadState();
+                    applyTheme();
+                    updateDashboard();
+                    renderAll();
+                    checkOverdue();
+
+                    // Make banner clickable to show login
+                    document.getElementById('authDebug').onclick = () => showAuthModal();
+                    document.getElementById('authDebug').style.cursor = 'pointer';
                 }
 
                 // Listen for auth changes
@@ -2249,14 +2274,19 @@
                     } else if (event === 'SIGNED_OUT') {
                         currentUser = null;
                         currentSession = null;
-                        showDebugStatus('Signed out', false);
-                        showAuthModal();
+                        showDebugStatus('Signed out - using localStorage', false);
+                        location.reload(); // Reload to localStorage mode
                     }
                 });
             } catch (error) {
-                showDebugStatus('ERROR: ' + error.message);
-                console.error('Init auth error:', error);
-                showAuthModal();
+                showDebugStatus('Auth failed - using localStorage: ' + error.message, false);
+                console.error('Init auth error, using localStorage:', error);
+                // Fall back to localStorage mode on any error
+                loadState();
+                applyTheme();
+                updateDashboard();
+                renderAll();
+                checkOverdue();
             }
         }
 
@@ -2438,7 +2468,17 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            initAuth();
+            // Try authentication if Supabase is available, otherwise fall back to localStorage
+            if (supabase) {
+                initAuth();
+            } else {
+                showDebugStatus('Running in localStorage mode (no cloud sync)', false);
+                loadState();
+                applyTheme();
+                updateDashboard();
+                renderAll();
+                checkOverdue();
+            }
         });
 
         function loadState() {
