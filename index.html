@@ -61,7 +61,7 @@
         [data-theme="dark"] .nav-tabs,
         [data-theme="dark"] .card,
         [data-theme="dark"] .modal-content,
-        [data-theme="dark"] .vendor-card,
+        [data-theme="dark"] .bidder-card,
         [data-theme="dark"] .task-item,
         [data-theme="dark"] .risk-card,
         [data-theme="dark"] .folder-header,
@@ -298,24 +298,24 @@
             text-align: center;
         }
 
-        .vendor-grid {
+        .bidder-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 15px;
             margin-top: 20px;
         }
 
-        .vendor-card {
+        .bidder-card {
             border: 2px solid var(--gray-200);
             border-radius: 8px;
             padding: 15px;
             transition: all 0.3s;
         }
 
-        .vendor-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(0,102,204,0.15); }
-        .vendor-name { font-weight: 600; font-size: 1.1em; margin-bottom: 10px; }
+        .bidder-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(0,102,204,0.15); }
+        .bidder-name { font-weight: 600; font-size: 1.1em; margin-bottom: 10px; }
 
-        .vendor-status {
+        .bidder-status {
             display: inline-block;
             padding: 4px 12px;
             border-radius: 20px;
@@ -329,7 +329,7 @@
         .status-finalist { background: #ffe5f0; color: #c51162; }
         .status-winner { background: #c8e6c9; color: #1b5e20; }
 
-        .vendor-contact-card {
+        .bidder-contact-card {
             background: var(--gray-50);
             border: 1px solid var(--gray-200);
             border-radius: 6px;
@@ -338,7 +338,7 @@
             position: relative;
         }
 
-        .vendor-contact-card .contact-remove-btn {
+        .bidder-contact-card .contact-remove-btn {
             position: absolute;
             top: 10px;
             right: 10px;
@@ -351,17 +351,17 @@
             font-size: 0.85em;
         }
 
-        .vendor-contact-card .contact-remove-btn:hover {
+        .bidder-contact-card .contact-remove-btn:hover {
             background: #c82333;
         }
 
-        .vendor-contacts-display {
+        .bidder-contacts-display {
             margin-top: 10px;
             padding-top: 10px;
             border-top: 1px solid var(--gray-200);
         }
 
-        .vendor-contacts-display .contact-item {
+        .bidder-contacts-display .contact-item {
             background: var(--gray-50);
             padding: 8px 12px;
             margin-bottom: 6px;
@@ -369,12 +369,12 @@
             font-size: 0.9em;
         }
 
-        .vendor-contacts-display .contact-name {
+        .bidder-contacts-display .contact-name {
             font-weight: 600;
             color: var(--gray-900);
         }
 
-        .vendor-contacts-display .contact-detail {
+        .bidder-contacts-display .contact-detail {
             color: var(--gray-700);
             margin-left: 5px;
         }
@@ -646,7 +646,7 @@
             .tab-content { display: block !important; page-break-before: always; }
             .tab-content:first-of-type { page-break-before: avoid; }
             .stat-card { background: #f5f5f5 !important; color: #333 !important; }
-            .vendor-card, .risk-card, .task-item { page-break-inside: avoid; }
+            .bidder-card, .risk-card, .task-item { page-break-inside: avoid; }
             .gantt-container { overflow: visible; }
             a { text-decoration: none; color: inherit; }
             .evaluation-table { font-size: 10pt; }
@@ -744,9 +744,9 @@
                 min-height: 40px;
             }
 
-            /* Vendor Grid */
-            .vendor-grid { grid-template-columns: 1fr; }
-            .vendor-card { padding: 15px; }
+            /* Bidder Grid */
+            .bidder-grid { grid-template-columns: 1fr; }
+            .bidder-card { padding: 15px; }
 
             /* Calendar */
             .calendar-grid { gap: 1px; }
@@ -887,7 +887,7 @@
         /* iPad specific */
         @media (min-width: 768px) and (max-width: 1024px) {
             .grid-4 { grid-template-columns: repeat(2, 1fr); }
-            .vendor-grid { grid-template-columns: repeat(2, 1fr); }
+            .bidder-grid { grid-template-columns: repeat(2, 1fr); }
             .nav-tabs { flex-wrap: wrap; }
         }
 
@@ -1174,7 +1174,7 @@
             <button class="nav-tab" onclick="switchTab('pqqscoring', event)" role="tab" aria-selected="false" aria-controls="pqqscoring" id="tab-pqqscoring">PQQ Scoring</button>
             <button class="nav-tab" onclick="switchTab('rfpscoring', event)" role="tab" aria-selected="false" aria-controls="rfpscoring" id="tab-rfpscoring">RFP Scoring</button>
             <button class="nav-tab" onclick="switchTab('bafo', event)" role="tab" aria-selected="false" aria-controls="bafo" id="tab-bafo">BAFO</button>
-            <button class="nav-tab" onclick="switchTab('vendors', event)" role="tab" aria-selected="false" aria-controls="vendors" id="tab-vendors">Vendors</button>
+            <button class="nav-tab" onclick="switchTab('bidders', event)" role="tab" aria-selected="false" aria-controls="bidders" id="tab-bidders">Bidders</button>
             <button class="nav-tab" onclick="switchTab('documents', event)" role="tab" aria-selected="false" aria-controls="documents" id="tab-documents">Documents</button>
             <button class="nav-tab" onclick="switchTab('meetings', event)" role="tab" aria-selected="false" aria-controls="meetings" id="tab-meetings">Meetings</button>
             <button class="nav-tab" onclick="switchTab('email', event)" role="tab" aria-selected="false" aria-controls="email" id="tab-email">Email</button>
@@ -1196,9 +1196,9 @@
                     <div class="stat-value" id="taskProgress">0%</div>
                     <div class="stat-label">Tasks Complete</div>
                 </div>
-                <div class="stat-card" onclick="switchTab('vendors', event)" role="button" tabindex="0" aria-label="View vendors">
-                    <div class="stat-value" id="vendorCount">13</div>
-                    <div class="stat-label">Vendors Tracking</div>
+                <div class="stat-card" onclick="switchTab('bidders', event)" role="button" tabindex="0" aria-label="View bidders">
+                    <div class="stat-value" id="bidderCount">13</div>
+                    <div class="stat-label">Bidders Tracking</div>
                 </div>
                 <div class="stat-card" onclick="switchTab('milestones', event)" role="button" tabindex="0" aria-label="View milestones">
                     <div class="stat-value" id="daysToGoLive">268</div>
@@ -1339,39 +1339,39 @@
             </div>
         </div>
 
-        <!-- Vendors -->
-        <div id="vendors" class="tab-content" role="tabpanel" aria-labelledby="tab-vendors">
+        <!-- Bidders -->
+        <div id="bidders" class="tab-content" role="tabpanel" aria-labelledby="tab-bidders">
             <div class="card">
                 <div class="card-header">
-                    <h2>Vendor Management</h2>
+                    <h2>Bidder Management</h2>
                     <div>
-                        <button class="btn btn-success" onclick="exportVendorsToExcel()" aria-label="Export vendors to Excel">📊 Export to Excel</button>
-                        <button class="btn btn-primary" onclick="openVendorModal()" aria-label="Add new vendor">+ Add Vendor</button>
+                        <button class="btn btn-success" onclick="exportBiddersToExcel()" aria-label="Export bidders to Excel">📊 Export to Excel</button>
+                        <button class="btn btn-primary" onclick="openBidderModal()" aria-label="Add new bidder">+ Add Bidder</button>
                     </div>
                 </div>
                 <div class="filter-bar">
-                    <input type="text" class="form-input" style="max-width: 300px;" placeholder="Search vendors..." id="vendorSearch" oninput="renderVendorGrid()" aria-label="Search vendors">
-                    <button class="filter-btn active" onclick="filterVendors('all', event)">All Vendors</button>
-                    <button class="filter-btn" onclick="filterVendors('tier1', event)">Tier 1</button>
-                    <button class="filter-btn" onclick="filterVendors('tier2', event)">Tier 2</button>
-                    <button class="filter-btn" onclick="filterVendors('warm', event)">Warm Leads</button>
-                    <button class="filter-btn" onclick="filterVendors('shortlist', event)">Shortlist</button>
+                    <input type="text" class="form-input" style="max-width: 300px;" placeholder="Search bidders..." id="bidderSearch" oninput="renderBidderGrid()" aria-label="Search bidders">
+                    <button class="filter-btn active" onclick="filterBidders('all', event)">All Bidders</button>
+                    <button class="filter-btn" onclick="filterBidders('tier1', event)">Tier 1</button>
+                    <button class="filter-btn" onclick="filterBidders('tier2', event)">Tier 2</button>
+                    <button class="filter-btn" onclick="filterBidders('warm', event)">Warm Leads</button>
+                    <button class="filter-btn" onclick="filterBidders('shortlist', event)">Shortlist</button>
                 </div>
-                <div class="vendor-grid" id="vendorGrid" role="list"></div>
+                <div class="bidder-grid" id="bidderGrid" role="list"></div>
             </div>
         </div>
 
-        <!-- Vendor Scoring -->
+        <!-- Bidder Scoring -->
         <div id="scoring" class="tab-content" role="tabpanel" aria-labelledby="tab-scoring">
             <div class="card">
                 <div class="card-header">
-                    <h2>Vendor Scorecard</h2>
+                    <h2>Bidder Scorecard</h2>
                     <div>
                         <button class="btn btn-success" onclick="saveScores()">Save Scores</button>
                         <button class="btn btn-primary" onclick="generateScoreReport()">Generate Report</button>
                     </div>
                 </div>
-                <p style="margin-bottom: 20px; color: var(--gray-700);">Score each vendor against evaluation criteria (0-10 scale). Weighted scores are calculated automatically.</p>
+                <p style="margin-bottom: 20px; color: var(--gray-700);">Score each bidder against evaluation criteria (0-10 scale). Weighted scores are calculated automatically.</p>
                 <div style="overflow-x: auto;">
                     <table class="evaluation-table" id="scoringTable">
                         <thead id="scoringHeader"></thead>
@@ -1413,7 +1413,7 @@
                     </div>
                     <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
                         <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Participants</div>
-                        <div style="font-weight:700;margin-top:4px;">10 confirmed vendors</div>
+                        <div style="font-weight:700;margin-top:4px;">10 confirmed bidders</div>
                     </div>
                 </div>
             </div>
@@ -1422,7 +1422,7 @@
             <div class="card" style="margin-top:16px;">
                 <div class="card-header">
                     <h2>Pass / Fail Sections</h2>
-                    <span style="font-size:0.85rem;color:var(--gray-500);">All sections must PASS for a vendor to be eligible</span>
+                    <span style="font-size:0.85rem;color:var(--gray-500);">All sections must PASS for a bidder to be eligible</span>
                 </div>
                 <div style="overflow-x:auto;">
                     <table class="evaluation-table" id="pqqPassFailTable">
@@ -1487,7 +1487,7 @@
                     </div>
                 </div>
                 <p style="font-size:0.85rem;color:var(--gray-500);margin:0;">
-                    Criteria and weights are set in the <strong>Evaluation</strong> tab. Weighted total is calculated automatically. Top 2–3 scoring vendors will progress to BAFO.
+                    Criteria and weights are set in the <strong>Evaluation</strong> tab. Weighted total is calculated automatically. Top 2–3 scoring bidders will progress to BAFO.
                 </p>
             </div>
 
@@ -1509,7 +1509,7 @@
             <div class="card" style="margin-top:16px;">
                 <div class="card-header">
                     <h2>Down-Selection Ranking</h2>
-                    <span style="font-size:0.85rem;color:var(--gray-500);">Top 2–3 vendors will be invited to BAFO. Mark as Finalist to progress.</span>
+                    <span style="font-size:0.85rem;color:var(--gray-500);">Top 2–3 bidders will be invited to BAFO. Mark as Finalist to progress.</span>
                 </div>
                 <div id="rfpDownSelectSummary"></div>
             </div>
@@ -1550,7 +1550,7 @@
                     <button class="btn btn-success" onclick="saveBAFOData()">Save</button>
                 </div>
                 <p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:16px;">
-                    Vendors with <strong>Finalist</strong> or <strong>Shortlist</strong> status appear below. Update vendor status in the <strong>Vendors</strong> tab to control who appears here.
+                    Bidders with <strong>Finalist</strong> or <strong>Shortlist</strong> status appear below. Update bidder status in the <strong>Bidders</strong> tab to control who appears here.
                 </p>
                 <div style="overflow-x:auto;">
                     <table class="evaluation-table" id="bafoTable">
@@ -1719,7 +1719,7 @@
                         <button class="btn btn-success" onclick="exportStakeholdersToExcel()">📊 Export to Excel</button>
                     </div>
                 </div>
-                <div class="vendor-grid" id="stakeholderGrid"></div>
+                <div class="bidder-grid" id="stakeholderGrid"></div>
             </div>
 
             <div class="card">
@@ -1760,7 +1760,7 @@
                 <div class="card-header"><h2>Report Generator</h2></div>
                 <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
                     <button class="btn btn-primary" onclick="generateStatusReport()">Status Report</button>
-                    <button class="btn btn-primary" onclick="generateVendorReport()">Vendor Analysis</button>
+                    <button class="btn btn-primary" onclick="generateBidderReport()">Bidder Analysis</button>
                     <button class="btn btn-primary" onclick="generateRiskReport()">Risk Report</button>
                     <button class="btn btn-primary" onclick="generateScoreReport()">Scoring Report</button>
                 </div>
@@ -1845,23 +1845,23 @@
         </div>
     </div>
 
-    <!-- Vendor Modal -->
-    <div id="vendorModal" class="modal" role="dialog" aria-modal="true">
+    <!-- Bidder Modal -->
+    <div id="bidderModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-content">
-            <span class="modal-close" onclick="closeModal('vendorModal')">&times;</span>
-            <h2 id="vendorModalTitle">Add New Vendor</h2>
+            <span class="modal-close" onclick="closeModal('bidderModal')">&times;</span>
+            <h2 id="bidderModalTitle">Add New Bidder</h2>
             <div class="form-group">
-                <label class="form-label" for="vendorName">Vendor Name *</label>
-                <input type="text" class="form-input" id="vendorName" required>
+                <label class="form-label" for="bidderName">Bidder Name *</label>
+                <input type="text" class="form-input" id="bidderName" required>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div class="form-group">
-                    <label class="form-label" for="vendorType">Type</label>
-                    <input type="text" class="form-input" id="vendorType" placeholder="e.g., Global SI">
+                    <label class="form-label" for="bidderType">Type</label>
+                    <input type="text" class="form-input" id="bidderType" placeholder="e.g., Global SI">
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="vendorTier">Tier</label>
-                    <select class="form-select" id="vendorTier">
+                    <label class="form-label" for="bidderTier">Tier</label>
+                    <select class="form-select" id="bidderTier">
                         <option value="Tier 1">Tier 1</option>
                         <option value="Tier 2">Tier 2</option>
                         <option value="Mid">Mid-tier</option>
@@ -1870,24 +1870,24 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label" for="vendorStrengths">Key Strengths</label>
-                <textarea class="form-textarea" id="vendorStrengths"></textarea>
+                <label class="form-label" for="bidderStrengths">Key Strengths</label>
+                <textarea class="form-textarea" id="bidderStrengths"></textarea>
             </div>
             <div class="form-group">
-                <label class="form-label" for="vendorRelevance">Hexagon Relevance</label>
-                <textarea class="form-textarea" id="vendorRelevance"></textarea>
+                <label class="form-label" for="bidderRelevance">Hexagon Relevance</label>
+                <textarea class="form-textarea" id="bidderRelevance"></textarea>
             </div>
 
-            <!-- Vendor Contacts Section -->
+            <!-- Bidder Contacts Section -->
             <div class="form-group" style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--gray-200);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <label class="form-label" style="margin: 0;">Vendor Contacts</label>
-                    <button type="button" class="btn btn-small" onclick="addVendorContact()" style="padding: 6px 12px;">+ Add Contact</button>
+                    <label class="form-label" style="margin: 0;">Bidder Contacts</label>
+                    <button type="button" class="btn btn-small" onclick="addBidderContact()" style="padding: 6px 12px;">+ Add Contact</button>
                 </div>
-                <div id="vendorContactsContainer"></div>
+                <div id="bidderContactsContainer"></div>
             </div>
 
-            <button class="btn btn-primary" onclick="saveVendor()">Save Vendor</button>
+            <button class="btn btn-primary" onclick="saveBidder()">Save Bidder</button>
         </div>
     </div>
 
@@ -2100,7 +2100,7 @@
                 <label class="form-label" for="meetingType">Meeting Type</label>
                 <select class="form-select" id="meetingType">
                     <option value="internal">Internal</option>
-                    <option value="vendor">Vendor Meeting</option>
+                    <option value="bidder">Bidder Meeting</option>
                     <option value="steering">Steering Committee</option>
                     <option value="workshop">Workshop</option>
                     <option value="review">Review Meeting</option>
@@ -2237,9 +2237,9 @@
                 {id: 3, name: "Stakeholder Interviews (Business)", owner: "Pankaj Goswami / Jon Moran", dueDate: "2025-12-10", status: "done", phase: "discovery", description: "Business Requirements List - Focus on Go-Live timeline impact"},
                 {id: 4, name: "Stakeholder Interviews (Finance & IT)", owner: "Anders Linden / Laura Miller", dueDate: "2025-12-11", status: "done", phase: "discovery", description: "Commercial Constraints & IT requirements - Define Budget Envelope"},
                 {id: 5, name: "Draft PQQ Document", owner: "Nick Housley", dueDate: "2025-12-12", status: "done", phase: "documentation", description: "Draft PQQ V0.1 covering capability, experience and commercial model"},
-                {id: 6, name: "Market Engagement (Soft Sounding)", owner: "Nick Housley", dueDate: "2025-12-15", status: "done", phase: "discovery", description: "Vendor Interest Heatmap - Gauge appetite for timeline"},
+                {id: 6, name: "Market Engagement (Soft Sounding)", owner: "Nick Housley", dueDate: "2025-12-15", status: "done", phase: "discovery", description: "Bidder Interest Heatmap - Gauge appetite for timeline"},
                 {id: 7, name: "Market Engagement (Incumbent)", owner: "Nick Housley", dueDate: "2025-12-16", status: "done", phase: "discovery", description: "Incumbent Strategy Notes - Careful comms management"},
-                {id: 8, name: "Finalize PQQ & Long List (23 vendors)", owner: "Nick Housley", dueDate: "2025-12-17", status: "done", phase: "documentation", description: "Approved PQQ & 23-vendor long list"},
+                {id: 8, name: "Finalize PQQ & Long List (23 bidders)", owner: "Nick Housley", dueDate: "2025-12-17", status: "done", phase: "documentation", description: "Approved PQQ & 23-bidder long list"},
                 {id: 9, name: "Draft Sourcing Strategy", owner: "Nick Housley", dueDate: "2025-12-18", status: "done", phase: "documentation", description: "Sourcing Strategy V0.1"},
                 {id: 10, name: "Commercial Model Design", owner: "Anders Linden / Andreas Werner", dueDate: "2025-12-19", status: "done", phase: "documentation", description: "Pricing Template Draft - Fixed vs Variable validation"},
                 {id: 11, name: "Review Strategy with SteerCo", owner: "Anders Linden / Andreas Werner", dueDate: "2025-12-22", status: "done", phase: "documentation", description: "SteerCo feedback on sourcing strategy"},
@@ -2247,33 +2247,33 @@
                 {id: 13, name: "Final Strategy Pack Creation", owner: "Nick Housley", dueDate: "2025-12-29", status: "done", phase: "documentation", description: "Final Sourcing Strategy approved"},
                 {id: 14, name: "Executive Sign-off", owner: "Anders Linden / Andreas Werner", dueDate: "2025-12-30", status: "done", phase: "documentation", description: "SteerCo signed approval of strategy"},
                 {id: 15, name: "PQQ Launch Readiness Check", owner: "Nick Housley", dueDate: "2026-01-22", status: "done", phase: "documentation", description: "PQQ Launch Pack Ready"},
-                {id: 16, name: "Issue PQQ to Long List (23 vendors)", owner: "Nick Housley", dueDate: "2026-01-23", status: "done", phase: "evaluation", description: "PQQ issued to all 23 long-listed vendors"},
-                {id: 17, name: "Vendor PQQ Clarification Q&A", owner: "Nick Housley", dueDate: "2026-02-06", status: "done", phase: "evaluation", description: "Manage vendor clarification questions during PQQ period"},
+                {id: 16, name: "Issue PQQ to Long List (23 bidders)", owner: "Nick Housley", dueDate: "2026-01-23", status: "done", phase: "evaluation", description: "PQQ issued to all 23 long-listed bidders"},
+                {id: 17, name: "Bidder PQQ Clarification Q&A", owner: "Nick Housley", dueDate: "2026-02-06", status: "done", phase: "evaluation", description: "Manage bidder clarification questions during PQQ period"},
                 {id: 18, name: "PQQ Submission Deadline", owner: "Nick Housley", dueDate: "2026-02-13", status: "done", phase: "evaluation", description: "Receive and log all PQQ responses"},
                 {id: 19, name: "Evaluate PQQ Responses", owner: "Don Pillay / Laura Miller / Nick Housley", dueDate: "2026-02-19", status: "inprogress", phase: "evaluation", description: "Score and evaluate all PQQ submissions against evaluation criteria"},
-                {id: 20, name: "Shortlist Notification (~6 suppliers)", owner: "Nick Housley", dueDate: "2026-02-20", status: "notstarted", phase: "evaluation", description: "Notify shortlisted and unsuccessful vendors"},
-                {id: 21, name: "Prepare RFP Document", owner: "Don Pillay / Nick Housley", dueDate: "2026-02-23", status: "notstarted", phase: "documentation", description: "Prepare detailed RFP for shortlisted vendors"},
-                {id: 22, name: "Issue RFP to Shortlist", owner: "Nick Housley", dueDate: "2026-02-24", status: "notstarted", phase: "evaluation", description: "Issue RFP to ~6 shortlisted vendors"},
+                {id: 20, name: "Shortlist Notification (~6 suppliers)", owner: "Nick Housley", dueDate: "2026-02-20", status: "notstarted", phase: "evaluation", description: "Notify shortlisted and unsuccessful bidders"},
+                {id: 21, name: "Prepare RFP Document", owner: "Don Pillay / Nick Housley", dueDate: "2026-02-23", status: "notstarted", phase: "documentation", description: "Prepare detailed RFP for shortlisted bidders"},
+                {id: 22, name: "Issue RFP to Shortlist", owner: "Nick Housley", dueDate: "2026-02-24", status: "notstarted", phase: "evaluation", description: "Issue RFP to ~6 shortlisted bidders"},
                 {id: 23, name: "Supplier Briefing Sessions", owner: "Nick Housley / Don Pillay", dueDate: "2026-02-27", status: "notstarted", phase: "evaluation", description: "Host supplier briefing sessions WC 24th February"},
-                {id: 24, name: "Vendor Q&A Period", owner: "Nick Housley", dueDate: "2026-03-10", status: "notstarted", phase: "evaluation", description: "Manage vendor clarification questions during RFP period"},
+                {id: 24, name: "Bidder Q&A Period", owner: "Nick Housley", dueDate: "2026-03-10", status: "notstarted", phase: "evaluation", description: "Manage bidder clarification questions during RFP period"},
                 {id: 25, name: "RFP Submissions Due", owner: "Nick Housley", dueDate: "2026-03-20", status: "notstarted", phase: "evaluation", description: "Receive and log all RFP responses"},
                 {id: 26, name: "Supplier Presentations – Week 1", owner: "Don Pillay / Laura Miller / Nick Housley", dueDate: "2026-03-27", status: "notstarted", phase: "evaluation", description: "First round of supplier presentations and Q&A (WC 23rd March)"},
                 {id: 27, name: "Supplier Presentations – Week 2", owner: "Don Pillay / Laura Miller / Nick Housley", dueDate: "2026-04-03", status: "notstarted", phase: "evaluation", description: "Second round of supplier presentations and Q&A"},
                 {id: 28, name: "Evaluation Consolidation & Scoring", owner: "Don Pillay / Laura Miller / Nick Housley", dueDate: "2026-04-07", status: "notstarted", phase: "evaluation", description: "Consolidate all evaluation scores and prepare recommendation"},
-                {id: 29, name: "Down Selection Decision", owner: "Anders Linden / Andreas Werner / SteerCo", dueDate: "2026-04-10", status: "notstarted", phase: "selection", description: "SteerCo down selection to BAFO vendors"},
-                {id: 30, name: "Issue BAFO to Down-Selected Vendors", owner: "Nick Housley", dueDate: "2026-04-13", status: "notstarted", phase: "selection", description: "Issue Best and Final Offer request to down-selected vendors"},
+                {id: 29, name: "Down Selection Decision", owner: "Anders Linden / Andreas Werner / SteerCo", dueDate: "2026-04-10", status: "notstarted", phase: "selection", description: "SteerCo down selection to BAFO bidders"},
+                {id: 30, name: "Issue BAFO to Down-Selected Bidders", owner: "Nick Housley", dueDate: "2026-04-13", status: "notstarted", phase: "selection", description: "Issue Best and Final Offer request to down-selected bidders"},
                 {id: 31, name: "BAFO Submissions Due", owner: "Nick Housley", dueDate: "2026-04-24", status: "notstarted", phase: "selection", description: "Receive and evaluate BAFO responses"},
-                {id: 32, name: "Contract Negotiations", owner: "Nick Housley / Legal", dueDate: "2026-04-28", status: "notstarted", phase: "selection", description: "Negotiate final contract terms with preferred vendor"},
-                {id: 33, name: "Contract Award", owner: "Anders Linden / Andreas Werner", dueDate: "2026-04-30", status: "notstarted", phase: "selection", description: "SteerCo contract award decision and vendor notification"},
-                {id: 34, name: "Transition Kick-off", owner: "Don Pillay / Laura Miller", dueDate: "2026-05-05", status: "notstarted", phase: "selection", description: "Begin transition planning with selected vendor"},
+                {id: 32, name: "Contract Negotiations", owner: "Nick Housley / Legal", dueDate: "2026-04-28", status: "notstarted", phase: "selection", description: "Negotiate final contract terms with preferred bidder"},
+                {id: 33, name: "Contract Award", owner: "Anders Linden / Andreas Werner", dueDate: "2026-04-30", status: "notstarted", phase: "selection", description: "SteerCo contract award decision and bidder notification"},
+                {id: 34, name: "Transition Kick-off", owner: "Don Pillay / Laura Miller", dueDate: "2026-05-05", status: "notstarted", phase: "selection", description: "Begin transition planning with selected bidder"},
                 {id: 35, name: "Knowledge Transfer Phase 1", owner: "Laura Miller", dueDate: "2026-05-30", status: "notstarted", phase: "selection", description: "Initial knowledge transfer sessions"},
                 {id: 36, name: "Knowledge Transfer Phase 2", owner: "Laura Miller", dueDate: "2026-06-30", status: "notstarted", phase: "selection", description: "Advanced knowledge transfer and handover"},
                 {id: 37, name: "Hypercare Planning", owner: "Don Pillay / Laura Miller", dueDate: "2026-07-15", status: "notstarted", phase: "selection", description: "Plan hypercare support model"},
                 {id: 38, name: "Pre-Go-Live Readiness", owner: "Laura Miller / Don Pillay", dueDate: "2026-08-15", status: "notstarted", phase: "selection", description: "Verify all systems ready for transition"},
                 {id: 39, name: "Mobilisation Complete", owner: "Don Pillay", dueDate: "2026-08-31", status: "notstarted", phase: "selection", description: "Full mobilisation of new AMS team"},
-                {id: 40, name: "US Go-Live Support", owner: "Selected AMS Vendor", dueDate: "2026-09-01", status: "notstarted", phase: "selection", description: "Hypercare support for US Go-Live"}
+                {id: 40, name: "US Go-Live Support", owner: "Selected AMS Bidder", dueDate: "2026-09-01", status: "notstarted", phase: "selection", description: "Hypercare support for US Go-Live"}
             ],
-            vendors: [
+            bidders: [
                 {id: 1, name: "Accenture", type: "Global SI", tier: "Tier 1", strengths: "Market leader in S/4HANA. Massive scale. 'Soar with Accenture' methodology.", relevance: "Deep expertise in High Tech & Manufacturing industries.", status: "shortlist", contacts: []},
                 {id: 2, name: "Deloitte", type: "Global SI", tier: "Tier 1", strengths: "Strong on Business Transformation. Often already in the C-suite.", relevance: "Author of your Due Diligence Report (High Context).", status: "shortlist", contacts: []},
                 {id: 3, name: "Wipro", type: "Global SI", tier: "Tier 2", strengths: "Recognized for significant growth in SAP S/4HANA revenue recently.", relevance: "Strong presence in US markets.", status: "shortlist", contacts: []},
@@ -2299,17 +2299,17 @@
                 {id: 23, name: "Genpact", type: "Global SI", tier: "Mid", strengths: "Process-driven SAP services with strong finance and operations expertise.", relevance: "Effective for AMS in finance-heavy SAP landscapes.", status: "longlist", contacts: []}
             ],
             risks: [
-                {id: 1, risk: "SAP USA Go-Live Date (Sept 2026)", impact: "Critical. AMS vendor must be mobilised before Sept Go-Live — any timeline slip compresses the transition window.", owner: "Anders Linden / Don Pillay", dueDate: "2026-04-30", rag: "red", mitigation: "RFP must include Go-Live readiness as a scored criterion. Mobilisation clause in contract.", probability: "medium", impactLevel: "high"},
-                {id: 2, risk: "PQQ Shortlist Below Quality Threshold", impact: "High. If fewer than 6 vendors meet the 70% threshold, RFP field will be thin.", owner: "Nick Housley / Don Pillay", dueDate: "2026-02-20", rag: "amber", mitigation: "Review evaluation scores before issuing shortlist notification. Escalate to SteerCo if needed.", probability: "medium", impactLevel: "high"},
-                {id: 3, risk: "RFP Timeline Compression", impact: "Medium. Tight window (Feb 24 – Mar 20) leaves vendors little time to respond with quality proposals.", owner: "Nick Housley", dueDate: "2026-02-24", rag: "amber", mitigation: "Ensure briefing sessions are thorough. Be prepared to extend deadline by 1 week if needed.", probability: "medium", impactLevel: "medium"},
-                {id: 4, risk: "Incumbent Vendor Conflict", impact: "Medium. Deloitte authored the Due Diligence Report and may have an advantage in RFP evaluation.", owner: "Nick Housley / Anders Linden", dueDate: "2026-03-01", rag: "amber", mitigation: "Ensure blind scoring where possible. Document conflict of interest management.", probability: "low", impactLevel: "medium"},
-                {id: 5, risk: "China Legal Entity Capability", impact: "High. Section 2.4 (15 pts) requires vendors to have or establish a China legal entity — not all 10 PQQ vendors may qualify.", owner: "Laura Miller / Don Pillay", dueDate: "2026-02-19", rag: "red", mitigation: "Flag in shortlist evaluation. Confirm China capability before including vendor in RFP shortlist.", probability: "high", impactLevel: "high"},
-                {id: 6, risk: "Knowledge Transfer Failure", impact: "High. If winning vendor cannot extract sufficient knowledge from current teams, Go-Live support quality suffers.", owner: "Don Pillay / Laura Miller", dueDate: "2026-08-15", rag: "green", mitigation: "Section 4 (Transition Capability) heavily weighted in PQQ. Include KT deliverables in contract.", probability: "low", impactLevel: "high"}
+                {id: 1, risk: "SAP USA Go-Live Date (Sept 2026)", impact: "Critical. AMS bidder must be mobilised before Sept Go-Live — any timeline slip compresses the transition window.", owner: "Anders Linden / Don Pillay", dueDate: "2026-04-30", rag: "red", mitigation: "RFP must include Go-Live readiness as a scored criterion. Mobilisation clause in contract.", probability: "medium", impactLevel: "high"},
+                {id: 2, risk: "PQQ Shortlist Below Quality Threshold", impact: "High. If fewer than 6 bidders meet the 70% threshold, RFP field will be thin.", owner: "Nick Housley / Don Pillay", dueDate: "2026-02-20", rag: "amber", mitigation: "Review evaluation scores before issuing shortlist notification. Escalate to SteerCo if needed.", probability: "medium", impactLevel: "high"},
+                {id: 3, risk: "RFP Timeline Compression", impact: "Medium. Tight window (Feb 24 – Mar 20) leaves bidders little time to respond with quality proposals.", owner: "Nick Housley", dueDate: "2026-02-24", rag: "amber", mitigation: "Ensure briefing sessions are thorough. Be prepared to extend deadline by 1 week if needed.", probability: "medium", impactLevel: "medium"},
+                {id: 4, risk: "Incumbent Bidder Conflict", impact: "Medium. Deloitte authored the Due Diligence Report and may have an advantage in RFP evaluation.", owner: "Nick Housley / Anders Linden", dueDate: "2026-03-01", rag: "amber", mitigation: "Ensure blind scoring where possible. Document conflict of interest management.", probability: "low", impactLevel: "medium"},
+                {id: 5, risk: "China Legal Entity Capability", impact: "High. Section 2.4 (15 pts) requires bidders to have or establish a China legal entity — not all 10 PQQ bidders may qualify.", owner: "Laura Miller / Don Pillay", dueDate: "2026-02-19", rag: "red", mitigation: "Flag in shortlist evaluation. Confirm China capability before including bidder in RFP shortlist.", probability: "high", impactLevel: "high"},
+                {id: 6, risk: "Knowledge Transfer Failure", impact: "High. If winning bidder cannot extract sufficient knowledge from current teams, Go-Live support quality suffers.", owner: "Don Pillay / Laura Miller", dueDate: "2026-08-15", rag: "green", mitigation: "Section 4 (Transition Capability) heavily weighted in PQQ. Include KT deliverables in contract.", probability: "low", impactLevel: "high"}
             ],
             decisions: [
                 {id: 1, title: "RFP Timeline Confirmed", description: "Agreed on 9-month programme timeline", rationale: "Balances speed with thoroughness", owner: "CIO", date: "2025-12-08", status: "approved"}
             ],
-            vendorScores: {},
+            bidderScores: {},
             pqqCriteria: [
                 {id: 1, section: "2", title: "SAP Application Services Capability", maxPoints: 45, subCriteria: [
                     {id: "2.1", title: "S/4HANA Support Experience", maxPoints: 10},
@@ -2407,7 +2407,7 @@
                 {id: 3, activity: "PQQ Evaluation & Shortlisting", raci: {1: "A", 2: "A", 3: "R", 4: "R", 5: "R", 6: "C", 7: "C", 8: "C", 9: "I"}},
                 {id: 4, activity: "RFP Document Preparation", raci: {1: "I", 2: "I", 3: "C", 4: "R", 5: "A", 6: "C", 7: "C", 8: "I", 9: "I"}},
                 {id: 5, activity: "Supplier Briefings", raci: {1: "I", 2: "I", 3: "I", 4: "C", 5: "R", 6: "I", 7: "I", 8: "I", 9: "I"}},
-                {id: 6, activity: "Vendor Evaluation & Scoring", raci: {1: "A", 2: "A", 3: "R", 4: "R", 5: "R", 6: "C", 7: "C", 8: "C", 9: "I"}},
+                {id: 6, activity: "Bidder Evaluation & Scoring", raci: {1: "A", 2: "A", 3: "R", 4: "R", 5: "R", 6: "C", 7: "C", 8: "C", 9: "I"}},
                 {id: 7, activity: "Down Selection Decision", raci: {1: "A", 2: "A", 3: "C", 4: "C", 5: "R", 6: "C", 7: "C", 8: "C", 9: "C"}},
                 {id: 8, activity: "BAFO Evaluation", raci: {1: "A", 2: "A", 3: "R", 4: "R", 5: "R", 6: "C", 7: "C", 8: "C", 9: "I"}},
                 {id: 9, activity: "Contract Award Decision", raci: {1: "A", 2: "A", 3: "C", 4: "C", 5: "R", 6: "I", 7: "I", 8: "I", 9: "I"}},
@@ -2425,7 +2425,7 @@
                 ]},
                 {id: "documentation", name: "2. RFP Documentation", icon: "📂", documents: [
                     {id: 8, name: "PQQ Document - SAP AMS.pdf", status: "final", folder: "documentation"},
-                    {id: 9, name: "Vendor Long List (23 vendors).xlsx", status: "final", folder: "documentation"},
+                    {id: 9, name: "Bidder Long List (23 bidders).xlsx", status: "final", folder: "documentation"},
                     {id: 10, name: "Sourcing Strategy.docx", status: "final", folder: "documentation"},
                     {id: 11, name: "Commercial Model Template.xlsx", status: "template", folder: "documentation"},
                     {id: 12, name: "Pricing Template.xlsx", status: "template", folder: "documentation"},
@@ -2437,7 +2437,7 @@
                     {id: 16, name: "PQQ Response Evaluation Matrix.xlsx", status: "draft", folder: "evaluation"},
                     {id: 17, name: "PQQ Scoring Sheet.xlsx", status: "draft", folder: "evaluation"},
                     {id: 18, name: "Evaluation Criteria Matrix.xlsx", status: "template", folder: "evaluation"},
-                    {id: 19, name: "Vendor Scorecard Template.xlsx", status: "template", folder: "evaluation"},
+                    {id: 19, name: "Bidder Scorecard Template.xlsx", status: "template", folder: "evaluation"},
                     {id: 20, name: "Presentation Agenda Template.docx", status: "template", folder: "evaluation"},
                     {id: 21, name: "Reference Check Questions.docx", status: "template", folder: "evaluation"},
                     {id: 22, name: "Technical Assessment Checklist.xlsx", status: "template", folder: "evaluation"},
@@ -2449,7 +2449,7 @@
                     {id: 24, name: "SLA Document.docx", status: "template", folder: "selection"},
                     {id: 25, name: "Transition Plan Template.docx", status: "template", folder: "selection"},
                     {id: 26, name: "Executive Approval Form.docx", status: "template", folder: "selection"},
-                    {id: 27, name: "Vendor Notification Letters.docx", status: "template", folder: "selection"}
+                    {id: 27, name: "Bidder Notification Letters.docx", status: "template", folder: "selection"}
                 ]},
                 {id: "governance", name: "5. Programme Governance", icon: "📂", documents: [
                     {id: 28, name: "RACI Matrix.xlsx", status: "draft", folder: "governance"},
@@ -2466,25 +2466,25 @@
                 {id: 3, title: "Deloitte Report Review", date: "2025-12-09", time: "10:00", duration: 1.5, location: "Teams", attendees: "Deloitte Rep, Anders Linden, Nick Housley", agenda: "Review due diligence findings, identify gaps", type: "review"},
                 {id: 4, title: "Finance & Commercial Workshop", date: "2025-12-11", time: "11:00", duration: 1, location: "Teams", attendees: "Anders Linden, Andreas Werner, Nick Housley", agenda: "Budget envelope discussion, commercial constraints", type: "internal"},
                 {id: 5, title: "SteerCo – Strategy Sign-off", date: "2025-12-22", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "Strategy review, milestone approval, risk escalation", type: "steering"},
-                {id: 6, title: "PQQ Launch Preparation", date: "2026-01-20", time: "10:00", duration: 1, location: "Teams", attendees: "Nick Housley, Don Pillay, Laura Miller", agenda: "Finalise PQQ document and vendor communication plan ahead of 23rd Jan launch", type: "internal"},
-                {id: 7, title: "SteerCo – PQQ Launch Update", date: "2026-01-29", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "PQQ issued update, vendor engagement status, programme progress", type: "steering"},
+                {id: 6, title: "PQQ Launch Preparation", date: "2026-01-20", time: "10:00", duration: 1, location: "Teams", attendees: "Nick Housley, Don Pillay, Laura Miller", agenda: "Finalise PQQ document and bidder communication plan ahead of 23rd Jan launch", type: "internal"},
+                {id: 7, title: "SteerCo – PQQ Launch Update", date: "2026-01-29", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "PQQ issued update, bidder engagement status, programme progress", type: "steering"},
                 {id: 8, title: "SteerCo – PQQ Evaluation Progress", date: "2026-02-12", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "PQQ response review, shortlisting criteria, risk update", type: "steering"},
                 {id: 9, title: "PQQ Evaluation Workshop", date: "2026-02-16", time: "09:00", duration: 4, location: "Main Conference Room", attendees: "Nick Housley, Don Pillay, Laura Miller, Pankaj Goswami", agenda: "Score PQQ responses, agree shortlist of ~6 suppliers", type: "workshop"},
-                {id: 10, title: "Shortlist Notification", date: "2026-02-20", time: "14:00", duration: 1, location: "Teams", attendees: "Nick Housley, Don Pillay", agenda: "Notify shortlisted and unsuccessful vendors", type: "internal"},
+                {id: 10, title: "Shortlist Notification", date: "2026-02-20", time: "14:00", duration: 1, location: "Teams", attendees: "Nick Housley, Don Pillay", agenda: "Notify shortlisted and unsuccessful bidders", type: "internal"},
                 {id: 11, title: "RFP Document Final Review", date: "2026-02-23", time: "14:00", duration: 2, location: "Teams", attendees: "Nick Housley, Don Pillay, Laura Miller", agenda: "Final RFP document review before issue to shortlist", type: "review"},
-                {id: 12, title: "Supplier Briefing Sessions", date: "2026-02-27", time: "09:00", duration: 4, location: "Main Conference Room", attendees: "Nick Housley, Don Pillay, Laura Miller, Shortlisted Suppliers", agenda: "Supplier briefings for shortlisted vendors WC 24th February", type: "vendor"},
+                {id: 12, title: "Supplier Briefing Sessions", date: "2026-02-27", time: "09:00", duration: 4, location: "Main Conference Room", attendees: "Nick Housley, Don Pillay, Laura Miller, Shortlisted Suppliers", agenda: "Supplier briefings for shortlisted bidders WC 24th February", type: "bidder"},
                 {id: 13, title: "SteerCo – RFP Launch & Shortlist", date: "2026-02-26", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "RFP issued confirmation, shortlist approved, supplier briefing update", type: "steering"},
                 {id: 14, title: "SteerCo – RFP Period Progress", date: "2026-03-12", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "RFP Q&A summary, submission readiness, evaluation planning", type: "steering"},
-                {id: 15, title: "Supplier Presentations – Week 1", date: "2026-03-23", time: "09:00", duration: 6, location: "Main Conference Room", attendees: "Anders Linden, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng, Shortlisted Suppliers", agenda: "Supplier capability presentations and Q&A sessions", type: "vendor"},
+                {id: 15, title: "Supplier Presentations – Week 1", date: "2026-03-23", time: "09:00", duration: 6, location: "Main Conference Room", attendees: "Anders Linden, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng, Shortlisted Suppliers", agenda: "Supplier capability presentations and Q&A sessions", type: "bidder"},
                 {id: 16, title: "SteerCo – Presentations Debrief", date: "2026-03-26", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "Presentation debrief, preliminary scoring review, evaluation progress", type: "steering"},
-                {id: 17, title: "Supplier Presentations – Week 2", date: "2026-03-30", time: "09:00", duration: 6, location: "Main Conference Room", attendees: "Anders Linden, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng, Shortlisted Suppliers", agenda: "Remaining supplier presentations and final Q&A sessions", type: "vendor"},
+                {id: 17, title: "Supplier Presentations – Week 2", date: "2026-03-30", time: "09:00", duration: 6, location: "Main Conference Room", attendees: "Anders Linden, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng, Shortlisted Suppliers", agenda: "Remaining supplier presentations and final Q&A sessions", type: "bidder"},
                 {id: 18, title: "Evaluation Consolidation Workshop", date: "2026-04-07", time: "09:00", duration: 4, location: "Main Conference Room", attendees: "Nick Housley, Don Pillay, Laura Miller, Pankaj Goswami", agenda: "Consolidate scores, agree down-selection recommendation", type: "workshop"},
-                {id: 19, title: "SteerCo – Down Selection Decision", date: "2026-04-10", time: "14:00", duration: 2, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "Down selection gate approval, BAFO vendor approval, contract award authority", type: "steering"},
+                {id: 19, title: "SteerCo – Down Selection Decision", date: "2026-04-10", time: "14:00", duration: 2, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "Down selection gate approval, BAFO bidder approval, contract award authority", type: "steering"},
                 {id: 20, title: "BAFO Evaluation & Review", date: "2026-04-24", time: "09:00", duration: 3, location: "Main Conference Room", attendees: "Nick Housley, Don Pillay, Laura Miller, Anders Linden, Andreas Werner", agenda: "Evaluate BAFO responses, prepare contract award recommendation", type: "review"},
-                {id: 21, title: "SteerCo – Contract Award", date: "2026-04-30", time: "10:00", duration: 2, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "Contract award decision and approval, vendor notification authority", type: "steering"},
-                {id: 22, title: "Transition Planning Workshop", date: "2026-05-05", time: "09:00", duration: 4, location: "Main Conference Room", attendees: "Don Pillay, Laura Miller, Nick Housley, Selected Vendor", agenda: "Detailed transition planning, knowledge transfer timeline", type: "workshop"},
+                {id: 21, title: "SteerCo – Contract Award", date: "2026-04-30", time: "10:00", duration: 2, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "Contract award decision and approval, bidder notification authority", type: "steering"},
+                {id: 22, title: "Transition Planning Workshop", date: "2026-05-05", time: "09:00", duration: 4, location: "Main Conference Room", attendees: "Don Pillay, Laura Miller, Nick Housley, Selected Bidder", agenda: "Detailed transition planning, knowledge transfer timeline", type: "workshop"},
                 {id: 23, title: "SteerCo – Transition Progress", date: "2026-06-11", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "Transition progress, knowledge transfer status, risk update", type: "steering"},
-                {id: 24, title: "Go-Live Readiness Review", date: "2026-08-25", time: "09:00", duration: 3, location: "Main Conference Room", attendees: "Anders Linden, Laura Miller, Don Pillay, Nick Housley, Selected AMS Vendor", agenda: "Final readiness check before US Go-Live", type: "review"}
+                {id: 24, title: "Go-Live Readiness Review", date: "2026-08-25", time: "09:00", duration: 3, location: "Main Conference Room", attendees: "Anders Linden, Laura Miller, Don Pillay, Nick Housley, Selected AMS Bidder", agenda: "Final readiness check before US Go-Live", type: "review"}
             ],
             meetingNotes: []
         };
@@ -2527,7 +2527,7 @@
             startDate: new Date('2025-12-08'),
             goLiveDate: new Date('2026-09-01'),
             tasks: [],
-            vendors: [],
+            bidders: [],
             risks: [],
             milestones: [],
             evaluation: [],
@@ -2539,7 +2539,7 @@
             meetingNotes: [],
             meetingCalendarMonth: new Date('2025-12-01'),
             uploadedFiles: {},
-            vendorScores: {},
+            bidderScores: {},
             pqqCriteria: [],
             pqqPassFail: [],
             pqqScores: {},
@@ -2549,9 +2549,9 @@
             bafoData: {},
             bafoRecommendation: {},
             currentFilter: 'all',
-            currentVendorFilter: 'all',
+            currentBidderFilter: 'all',
             editingTaskId: null,
-            editingVendorId: null,
+            editingBidderId: null,
             editingRiskId: null,
             calendarMonth: new Date('2025-12-01'),
             theme: 'light'
@@ -2960,7 +2960,7 @@
 
         function initializeFromDefault() {
             appState.tasks = JSON.parse(JSON.stringify(INITIAL_DATA.tasks));
-            appState.vendors = JSON.parse(JSON.stringify(INITIAL_DATA.vendors));
+            appState.bidders = JSON.parse(JSON.stringify(INITIAL_DATA.bidders));
             appState.risks = JSON.parse(JSON.stringify(INITIAL_DATA.risks));
             appState.milestones = JSON.parse(JSON.stringify(INITIAL_DATA.milestones));
             appState.evaluation = JSON.parse(JSON.stringify(INITIAL_DATA.evaluation));
@@ -2970,7 +2970,7 @@
             appState.decisions = JSON.parse(JSON.stringify(INITIAL_DATA.decisions || []));
             appState.meetings = JSON.parse(JSON.stringify(INITIAL_DATA.meetings || []));
             appState.meetingNotes = JSON.parse(JSON.stringify(INITIAL_DATA.meetingNotes || []));
-            appState.vendorScores = JSON.parse(JSON.stringify(INITIAL_DATA.vendorScores || {}));
+            appState.bidderScores = JSON.parse(JSON.stringify(INITIAL_DATA.bidderScores || {}));
             appState.pqqCriteria = JSON.parse(JSON.stringify(INITIAL_DATA.pqqCriteria || []));
             appState.pqqPassFail = JSON.parse(JSON.stringify(INITIAL_DATA.pqqPassFail || []));
             appState.pqqScores = JSON.parse(JSON.stringify(INITIAL_DATA.pqqScores || {}));
@@ -3315,8 +3315,8 @@
             const progress = appState.tasks.length > 0 ? Math.round((complete / appState.tasks.length) * 100) : 0;
             document.getElementById('taskProgress').textContent = `${progress}%`;
 
-            // Vendor and risk counts
-            document.getElementById('vendorCount').textContent = appState.vendors.length;
+            // Bidder and risk counts
+            document.getElementById('bidderCount').textContent = appState.bidders.length;
             document.getElementById('riskCount').textContent = appState.risks.length;
 
             // Render charts and lists
@@ -3377,41 +3377,41 @@
             // Stage-specific KPIs
             let kpis = '';
             if (stage.id === 'pqq_eval') {
-                const pqqVendors = (appState.vendors || []).filter(v => v.status === 'shortlist');
-                const scored = pqqVendors.filter(v =>
+                const pqqBidders = (appState.bidders || []).filter(v => v.status === 'shortlist');
+                const scored = pqqBidders.filter(v =>
                     (appState.pqqCriteria || []).some(c => ((appState.pqqScores || {})[`${v.id}-${c.id}`] || '') !== '')
                 ).length;
-                const pfDone = pqqVendors.filter(v =>
+                const pfDone = pqqBidders.filter(v =>
                     (appState.pqqPassFail || []).length > 0 &&
                     (appState.pqqPassFail || []).every(s => ((appState.pqqPassFailResults || {})[`${v.id}-${s.id}`] || '') !== '')
                 ).length;
-                const aboveThreshold = pqqVendors.filter(v => {
+                const aboveThreshold = pqqBidders.filter(v => {
                     const total = (appState.pqqCriteria || []).reduce((sum, c) => sum + parseInt((appState.pqqScores || {})[`${v.id}-${c.id}`] || 0), 0);
                     return total >= 105;
                 }).length;
                 kpis = `
-                    <div class="stage-kpi"><div class="stage-kpi-value">${scored}/${pqqVendors.length}</div><div class="stage-kpi-label">Vendors Scored</div></div>
-                    <div class="stage-kpi"><div class="stage-kpi-value">${pfDone}/${pqqVendors.length}</div><div class="stage-kpi-label">P/F Decisions</div></div>
+                    <div class="stage-kpi"><div class="stage-kpi-value">${scored}/${pqqBidders.length}</div><div class="stage-kpi-label">Bidders Scored</div></div>
+                    <div class="stage-kpi"><div class="stage-kpi-value">${pfDone}/${pqqBidders.length}</div><div class="stage-kpi-label">P/F Decisions</div></div>
                     <div class="stage-kpi"><div class="stage-kpi-value">${aboveThreshold}</div><div class="stage-kpi-label">Above Threshold</div></div>
                     <div class="stage-kpi"><div class="stage-kpi-value">6</div><div class="stage-kpi-label">Shortlist Target</div></div>`;
             } else if (stage.id === 'rfp_active' || stage.id === 'rfp_ready') {
-                const shortlisted = (appState.vendors || []).filter(v => v.status === 'shortlist').length;
+                const shortlisted = (appState.bidders || []).filter(v => v.status === 'shortlist').length;
                 kpis = `
                     <div class="stage-kpi"><div class="stage-kpi-value">${shortlisted}</div><div class="stage-kpi-label">Shortlisted</div></div>
                     <div class="stage-kpi"><div class="stage-kpi-value">6</div><div class="stage-kpi-label">RFP Recipients</div></div>`;
             } else if (stage.id === 'rfp_eval') {
-                const shortlisted = (appState.vendors || []).filter(v => v.status === 'shortlist').length;
-                const rfpScored = (appState.vendors || []).filter(v => v.status === 'shortlist' &&
+                const shortlisted = (appState.bidders || []).filter(v => v.status === 'shortlist').length;
+                const rfpScored = (appState.bidders || []).filter(v => v.status === 'shortlist' &&
                     (appState.evaluation || []).some(c => ((appState.rfpScores || {})[`${v.id}-${c.id}`] || '') !== '')
                 ).length;
                 kpis = `
                     <div class="stage-kpi"><div class="stage-kpi-value">${rfpScored}/${shortlisted}</div><div class="stage-kpi-label">RFP Scored</div></div>
                     <div class="stage-kpi"><div class="stage-kpi-value">${shortlisted}</div><div class="stage-kpi-label">In Evaluation</div></div>`;
             } else if (stage.id === 'bafo') {
-                const finalists = (appState.vendors || []).filter(v => v.status === 'finalist' || v.status === 'shortlist').length;
+                const finalists = (appState.bidders || []).filter(v => v.status === 'finalist' || v.status === 'shortlist').length;
                 const bafoFilled = Object.keys(appState.bafoData || {}).length;
                 kpis = `
-                    <div class="stage-kpi"><div class="stage-kpi-value">${finalists}</div><div class="stage-kpi-label">BAFO Vendors</div></div>
+                    <div class="stage-kpi"><div class="stage-kpi-value">${finalists}</div><div class="stage-kpi-label">BAFO Bidders</div></div>
                     <div class="stage-kpi"><div class="stage-kpi-value">${bafoFilled > 0 ? 'In Progress' : 'Not Started'}</div><div class="stage-kpi-label">Comparison</div></div>`;
             } else {
                 const doneCount = (appState.tasks || []).filter(t => t.status === 'done').length;
@@ -3514,7 +3514,7 @@
             renderTaskList();
             renderMilestones();
             renderEvaluationTable();
-            renderVendorGrid();
+            renderBidderGrid();
             renderRiskList();
             renderRiskMatrix();
             renderDecisionList();
@@ -3686,27 +3686,27 @@
             if (totalEl) totalEl.textContent = total;
         }
 
-        function renderVendorGrid() {
-            let vendors = appState.vendors;
-            const f = appState.currentVendorFilter;
+        function renderBidderGrid() {
+            let bidders = appState.bidders;
+            const f = appState.currentBidderFilter;
 
             // Apply filter
             if (f === 'tier1') {
-                vendors = vendors.filter(v => v.tier === 'Tier 1');
+                bidders = bidders.filter(v => v.tier === 'Tier 1');
             } else if (f === 'tier2') {
-                vendors = vendors.filter(v => v.tier.includes('Tier 2') || v.tier === 'Mid' || v.tier === 'Niche');
+                bidders = bidders.filter(v => v.tier.includes('Tier 2') || v.tier === 'Mid' || v.tier === 'Niche');
             } else if (f === 'warm') {
-                vendors = vendors.filter(v => v.status === 'warm');
+                bidders = bidders.filter(v => v.status === 'warm');
             } else if (f === 'shortlist') {
-                vendors = vendors.filter(v => v.status === 'shortlist');
+                bidders = bidders.filter(v => v.status === 'shortlist');
             }
 
             // Apply search
-            const searchEl = document.getElementById('vendorSearch');
+            const searchEl = document.getElementById('bidderSearch');
             if (searchEl) {
                 const search = searchEl.value.toLowerCase();
                 if (search) {
-                    vendors = vendors.filter(v =>
+                    bidders = bidders.filter(v =>
                         v.name.toLowerCase().includes(search) ||
                         (v.strengths && v.strengths.toLowerCase().includes(search)) ||
                         (v.relevance && v.relevance.toLowerCase().includes(search))
@@ -3714,12 +3714,12 @@
                 }
             }
 
-            const html = vendors.map(v => {
+            const html = bidders.map(v => {
                 // Build contacts display HTML
                 let contactsHTML = '';
                 if (v.contacts && v.contacts.length > 0) {
                     contactsHTML = `
-                        <div class="vendor-contacts-display">
+                        <div class="bidder-contacts-display">
                             <strong style="font-size: 0.9em; display: block; margin-bottom: 8px;">Contacts:</strong>
                             ${v.contacts.map(c => {
                                 let contactParts = [];
@@ -3742,9 +3742,9 @@
                 }
 
                 return `
-                <div class="vendor-card" onclick="openVendorModal(${v.id})" style="cursor: pointer;">
-                    <div class="vendor-name">${v.name}</div>
-                    <span class="vendor-status status-${v.status}">
+                <div class="bidder-card" onclick="openBidderModal(${v.id})" style="cursor: pointer;">
+                    <div class="bidder-name">${v.name}</div>
+                    <span class="bidder-status status-${v.status}">
                         ${v.status === 'warm' ? '🟢 Warm' :
                           v.status === 'shortlist' ? '⭐ Shortlist' :
                           v.status === 'finalist' ? '🎯 Finalist' :
@@ -3758,7 +3758,7 @@
                         <strong>Hexagon Fit:</strong> ${v.relevance}
                     </div>
                     ${contactsHTML}
-                    <select class="form-select" style="margin-top: 10px;" onchange="event.stopPropagation(); updateVendorStatus(${v.id}, this.value)">
+                    <select class="form-select" style="margin-top: 10px;" onchange="event.stopPropagation(); updateBidderStatus(${v.id}, this.value)">
                         <option value="longlist" ${v.status === 'longlist' ? 'selected' : ''}>Long List</option>
                         <option value="warm" ${v.status === 'warm' ? 'selected' : ''}>Warm Lead</option>
                         <option value="shortlist" ${v.status === 'shortlist' ? 'selected' : ''}>Shortlist</option>
@@ -3766,12 +3766,12 @@
                         <option value="winner" ${v.status === 'winner' ? 'selected' : ''}>Winner</option>
                         <option value="rejected" ${v.status === 'rejected' ? 'selected' : ''}>Rejected</option>
                     </select>
-                    <button class="btn btn-small btn-danger" style="width: 100%; margin-top: 10px;" onclick="event.stopPropagation(); deleteVendor(${v.id})">Delete</button>
+                    <button class="btn btn-small btn-danger" style="width: 100%; margin-top: 10px;" onclick="event.stopPropagation(); deleteBidder(${v.id})">Delete</button>
                 </div>
                 `;
             }).join('');
 
-            const el = document.getElementById('vendorGrid');
+            const el = document.getElementById('bidderGrid');
             if (el) el.innerHTML = html;
         }
 
@@ -3848,10 +3848,10 @@
             if (e && e.target) e.target.classList.add('active');
         }
 
-        function filterVendors(f, e) {
-            appState.currentVendorFilter = f;
-            renderVendorGrid();
-            document.querySelectorAll('#vendors .filter-bar .filter-btn').forEach(b => b.classList.remove('active'));
+        function filterBidders(f, e) {
+            appState.currentBidderFilter = f;
+            renderBidderGrid();
+            document.querySelectorAll('#bidders .filter-bar .filter-btn').forEach(b => b.classList.remove('active'));
             if (e && e.target) e.target.classList.add('active');
         }
 
@@ -4015,38 +4015,38 @@
             alert('✓ Evaluation framework saved successfully!');
         }
 
-        // Vendor Management
-        let vendorContactsTemp = [];
+        // Bidder Management
+        let bidderContactsTemp = [];
 
-        function addVendorContact() {
-            const contactIndex = vendorContactsTemp.length;
-            vendorContactsTemp.push({
+        function addBidderContact() {
+            const contactIndex = bidderContactsTemp.length;
+            bidderContactsTemp.push({
                 name: '',
                 title: '',
                 company: '',
                 email: '',
                 phone: ''
             });
-            renderVendorContactsForm();
+            renderBidderContactsForm();
         }
 
-        function removeVendorContact(index) {
-            vendorContactsTemp.splice(index, 1);
-            renderVendorContactsForm();
+        function removeBidderContact(index) {
+            bidderContactsTemp.splice(index, 1);
+            renderBidderContactsForm();
         }
 
-        function renderVendorContactsForm() {
-            const container = document.getElementById('vendorContactsContainer');
+        function renderBidderContactsForm() {
+            const container = document.getElementById('bidderContactsContainer');
             if (!container) return;
 
-            if (vendorContactsTemp.length === 0) {
+            if (bidderContactsTemp.length === 0) {
                 container.innerHTML = '<p style="color: var(--gray-600); font-size: 0.9em; text-align: center; padding: 20px;">No contacts added yet. Click "+ Add Contact" to add one.</p>';
                 return;
             }
 
-            const html = vendorContactsTemp.map((contact, index) => `
-                <div class="vendor-contact-card">
-                    <button type="button" class="contact-remove-btn" onclick="removeVendorContact(${index})">✕ Remove</button>
+            const html = bidderContactsTemp.map((contact, index) => `
+                <div class="bidder-contact-card">
+                    <button type="button" class="contact-remove-btn" onclick="removeBidderContact(${index})">✕ Remove</button>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                         <div>
                             <label class="form-label" style="font-size: 0.9em;">Contact Name</label>
@@ -4079,46 +4079,46 @@
             container.innerHTML = html;
         }
 
-        function openVendorModal(id = null) {
-            appState.editingVendorId = id;
+        function openBidderModal(id = null) {
+            appState.editingBidderId = id;
             if (id) {
-                const v = appState.vendors.find(x => x.id === id);
+                const v = appState.bidders.find(x => x.id === id);
                 if (v) {
-                    document.getElementById('vendorModalTitle').textContent = 'Edit Vendor';
-                    document.getElementById('vendorName').value = v.name;
-                    document.getElementById('vendorType').value = v.type || '';
-                    document.getElementById('vendorTier').value = v.tier || 'Tier 2';
-                    document.getElementById('vendorStrengths').value = v.strengths || '';
-                    document.getElementById('vendorRelevance').value = v.relevance || '';
+                    document.getElementById('bidderModalTitle').textContent = 'Edit Bidder';
+                    document.getElementById('bidderName').value = v.name;
+                    document.getElementById('bidderType').value = v.type || '';
+                    document.getElementById('bidderTier').value = v.tier || 'Tier 2';
+                    document.getElementById('bidderStrengths').value = v.strengths || '';
+                    document.getElementById('bidderRelevance').value = v.relevance || '';
 
                     // Load existing contacts
-                    vendorContactsTemp = v.contacts ? JSON.parse(JSON.stringify(v.contacts)) : [];
-                    renderVendorContactsForm();
+                    bidderContactsTemp = v.contacts ? JSON.parse(JSON.stringify(v.contacts)) : [];
+                    renderBidderContactsForm();
                 }
             } else {
-                document.getElementById('vendorModalTitle').textContent = 'Add New Vendor';
-                document.getElementById('vendorName').value = '';
-                document.getElementById('vendorType').value = '';
-                document.getElementById('vendorTier').value = 'Tier 2';
-                document.getElementById('vendorStrengths').value = '';
-                document.getElementById('vendorRelevance').value = '';
+                document.getElementById('bidderModalTitle').textContent = 'Add New Bidder';
+                document.getElementById('bidderName').value = '';
+                document.getElementById('bidderType').value = '';
+                document.getElementById('bidderTier').value = 'Tier 2';
+                document.getElementById('bidderStrengths').value = '';
+                document.getElementById('bidderRelevance').value = '';
 
                 // Reset contacts
-                vendorContactsTemp = [];
-                renderVendorContactsForm();
+                bidderContactsTemp = [];
+                renderBidderContactsForm();
             }
-            document.getElementById('vendorModal').style.display = 'block';
+            document.getElementById('bidderModal').style.display = 'block';
         }
 
-        function saveVendor() {
-            const name = document.getElementById('vendorName').value.trim();
+        function saveBidder() {
+            const name = document.getElementById('bidderName').value.trim();
             if (!name) {
-                showToast('Please enter vendor name', 'error');
+                showToast('Please enter bidder name', 'error');
                 return;
             }
 
             // Collect contact information from form fields
-            const contacts = vendorContactsTemp.map((contact, index) => {
+            const contacts = bidderContactsTemp.map((contact, index) => {
                 const nameEl = document.getElementById(`contactName${index}`);
                 const titleEl = document.getElementById(`contactTitle${index}`);
                 const companyEl = document.getElementById(`contactCompany${index}`);
@@ -4136,47 +4136,47 @@
 
             const data = {
                 name: sanitizeHTML(name),
-                type: sanitizeHTML(document.getElementById('vendorType').value.trim()) || 'SI',
-                tier: document.getElementById('vendorTier').value,
-                strengths: sanitizeHTML(document.getElementById('vendorStrengths').value.trim()),
-                relevance: sanitizeHTML(document.getElementById('vendorRelevance').value.trim()),
+                type: sanitizeHTML(document.getElementById('bidderType').value.trim()) || 'SI',
+                tier: document.getElementById('bidderTier').value,
+                strengths: sanitizeHTML(document.getElementById('bidderStrengths').value.trim()),
+                relevance: sanitizeHTML(document.getElementById('bidderRelevance').value.trim()),
                 status: 'longlist',
                 contacts: contacts
             };
 
-            if (appState.editingVendorId) {
-                const i = appState.vendors.findIndex(v => v.id === appState.editingVendorId);
+            if (appState.editingBidderId) {
+                const i = appState.bidders.findIndex(v => v.id === appState.editingBidderId);
                 if (i !== -1) {
-                    appState.vendors[i] = { ...appState.vendors[i], ...data };
+                    appState.bidders[i] = { ...appState.bidders[i], ...data };
                 }
             } else {
-                const newId = Math.max(...appState.vendors.map(v => v.id), 0) + 1;
-                appState.vendors.push({ id: newId, ...data });
+                const newId = Math.max(...appState.bidders.map(v => v.id), 0) + 1;
+                appState.bidders.push({ id: newId, ...data });
             }
 
             saveState();
-            renderVendorGrid();
+            renderBidderGrid();
             updateDashboard();
-            closeModal('vendorModal');
-            showToast('Vendor saved successfully', 'success');
+            closeModal('bidderModal');
+            showToast('Bidder saved successfully', 'success');
         }
 
-        function updateVendorStatus(id, status) {
-            const v = appState.vendors.find(x => x.id === id);
+        function updateBidderStatus(id, status) {
+            const v = appState.bidders.find(x => x.id === id);
             if (v) {
                 v.status = status;
                 saveState();
-                renderVendorGrid();
+                renderBidderGrid();
             }
         }
 
-        function deleteVendor(id) {
-            showConfirm('Delete this vendor?', () => {
-                appState.vendors = appState.vendors.filter(v => v.id !== id);
+        function deleteBidder(id) {
+            showConfirm('Delete this bidder?', () => {
+                appState.bidders = appState.bidders.filter(v => v.id !== id);
                 saveState();
-                renderVendorGrid();
+                renderBidderGrid();
                 updateDashboard();
-                showToast('Vendor deleted', 'success');
+                showToast('Bidder deleted', 'success');
             });
         }
 
@@ -4298,7 +4298,7 @@
                 <h3 style="margin-top: 20px;">Executive Summary</h3>
                 <ul style="line-height: 2;">
                     <li>Overall Progress: ${pct}% (${done}/${appState.tasks.length} tasks complete)</li>
-                    <li>Vendors Tracking: ${appState.vendors.length}</li>
+                    <li>Bidders Tracking: ${appState.bidders.length}</li>
                     <li>Active Risks: ${appState.risks.length} (${appState.risks.filter(r => r.rag === 'red').length} red)</li>
                 </ul>
 
@@ -4321,43 +4321,43 @@
             document.getElementById('reportOutput').innerHTML = html;
         }
 
-        function generateVendorReport() {
+        function generateBidderReport() {
             const html = `
-                <h2>Vendor Pipeline Analysis</h2>
+                <h2>Bidder Pipeline Analysis</h2>
                 <p><strong>Generated:</strong> ${new Date().toLocaleDateString('en-GB', { 
                     day: 'numeric', 
                     month: 'long', 
                     year: 'numeric' 
                 })}</p>
                 
-                <h3 style="margin-top: 20px;">Vendor Status Summary</h3>
+                <h3 style="margin-top: 20px;">Bidder Status Summary</h3>
                 <ul style="line-height: 2;">
-                    <li>Long List: ${appState.vendors.filter(v => v.status === 'longlist').length}</li>
-                    <li>Warm Leads: ${appState.vendors.filter(v => v.status === 'warm').length}</li>
-                    <li>Shortlist: ${appState.vendors.filter(v => v.status === 'shortlist').length}</li>
-                    <li>Finalists: ${appState.vendors.filter(v => v.status === 'finalist').length}</li>
-                    <li>Winner: ${appState.vendors.filter(v => v.status === 'winner').length}</li>
+                    <li>Long List: ${appState.bidders.filter(v => v.status === 'longlist').length}</li>
+                    <li>Warm Leads: ${appState.bidders.filter(v => v.status === 'warm').length}</li>
+                    <li>Shortlist: ${appState.bidders.filter(v => v.status === 'shortlist').length}</li>
+                    <li>Finalists: ${appState.bidders.filter(v => v.status === 'finalist').length}</li>
+                    <li>Winner: ${appState.bidders.filter(v => v.status === 'winner').length}</li>
                 </ul>
 
                 <h3 style="margin-top: 20px;">Tier Breakdown</h3>
                 <ul style="line-height: 2;">
-                    <li>Tier 1 (Big 4 + IBM): ${appState.vendors.filter(v => v.tier === 'Tier 1').length}</li>
-                    <li>Tier 2 & Mid-tier: ${appState.vendors.filter(v => v.tier.includes('Tier 2') || v.tier === 'Mid').length}</li>
-                    <li>Niche Specialists: ${appState.vendors.filter(v => v.tier === 'Niche').length}</li>
+                    <li>Tier 1 (Big 4 + IBM): ${appState.bidders.filter(v => v.tier === 'Tier 1').length}</li>
+                    <li>Tier 2 & Mid-tier: ${appState.bidders.filter(v => v.tier.includes('Tier 2') || v.tier === 'Mid').length}</li>
+                    <li>Niche Specialists: ${appState.bidders.filter(v => v.tier === 'Niche').length}</li>
                 </ul>
 
                 <h3 style="margin-top: 20px;">Warm Leads for Priority Engagement</h3>
                 <table class="evaluation-table">
                     <thead>
                         <tr>
-                            <th>Vendor</th>
+                            <th>Bidder</th>
                             <th>Tier</th>
                             <th>Key Strengths</th>
                             <th>Hexagon Relevance</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${appState.vendors.filter(v => v.status === 'warm').map(v => `
+                        ${appState.bidders.filter(v => v.status === 'warm').map(v => `
                             <tr>
                                 <td><strong>${v.name}</strong></td>
                                 <td>${v.tier}</td>
@@ -4420,9 +4420,9 @@
 
         function renderStakeholders() {
             const html = appState.stakeholders.map(s => `
-                <div class="vendor-card">
-                    <div class="vendor-name">${s.name}</div>
-                    <span class="vendor-status" style="background: ${s.influence === 'high' ? '#ffe5e5' : '#e3f2fd'}; color: ${s.influence === 'high' ? '#c62828' : '#1976d2'};">
+                <div class="bidder-card">
+                    <div class="bidder-name">${s.name}</div>
+                    <span class="bidder-status" style="background: ${s.influence === 'high' ? '#ffe5e5' : '#e3f2fd'}; color: ${s.influence === 'high' ? '#c62828' : '#1976d2'};">
                         ${s.influence === 'high' ? '⬆️ High Influence' : '➡️ Medium Influence'}
                     </span>
                     <div style="margin: 10px 0; font-size: 0.9em; color: var(--gray-700);">
@@ -4736,9 +4736,9 @@
             showToast('RACI Matrix exported to Excel', 'success');
         }
 
-        function exportVendorsToExcel() {
-            if (appState.vendors.length === 0) {
-                showToast('No vendors to export', 'error');
+        function exportBiddersToExcel() {
+            if (appState.bidders.length === 0) {
+                showToast('No bidders to export', 'error');
                 return;
             }
 
@@ -4752,7 +4752,7 @@
                         <x:ExcelWorkbook>
                             <x:ExcelWorksheets>
                                 <x:ExcelWorksheet>
-                                    <x:Name>Vendors</x:Name>
+                                    <x:Name>Bidders</x:Name>
                                     <x:WorksheetOptions>
                                         <x:DisplayGridlines/>
                                     </x:WorksheetOptions>
@@ -4775,12 +4775,12 @@
                     </style>
                 </head>
                 <body>
-                    <h2>Hexagon RFP - Vendor List</h2>
+                    <h2>Hexagon RFP - Bidder List</h2>
                     <p>Generated: ${new Date().toLocaleDateString()}</p>
                     <table>
                         <thead>
                             <tr>
-                                <th>Vendor Name</th>
+                                <th>Bidder Name</th>
                                 <th>Type</th>
                                 <th>Tier</th>
                                 <th>Status</th>
@@ -4796,11 +4796,11 @@
                         <tbody>
             `;
 
-            appState.vendors.forEach(v => {
+            appState.bidders.forEach(v => {
                 const statusClass = `status-${v.status}`;
                 const tierClass = v.tier === 'Tier 1' ? 'tier1' : '';
 
-                // If vendor has contacts, create a row for each contact
+                // If bidder has contacts, create a row for each contact
                 if (v.contacts && v.contacts.length > 0) {
                     v.contacts.forEach((contact, index) => {
                         html += `
@@ -4848,8 +4848,8 @@
                 </html>
             `;
 
-            downloadExcel(html, `Hexagon-Vendors-${new Date().toISOString().split('T')[0]}.xls`);
-            showToast('Vendors exported to Excel', 'success');
+            downloadExcel(html, `Hexagon-Bidders-${new Date().toISOString().split('T')[0]}.xls`);
+            showToast('Bidders exported to Excel', 'success');
         }
 
         function downloadExcel(html, filename) {
@@ -5323,7 +5323,7 @@
                 <div class="decision-card ${d.status}">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <strong style="font-size: 1.1em;">${sanitizeHTML(d.title)}</strong>
-                        <span class="vendor-status status-${d.status === 'approved' ? 'warm' : d.status === 'rejected' ? 'longlist' : 'shortlist'}">
+                        <span class="bidder-status status-${d.status === 'approved' ? 'warm' : d.status === 'rejected' ? 'longlist' : 'shortlist'}">
                             ${d.status === 'approved' ? '✓ Approved' : d.status === 'rejected' ? '✗ Rejected' : '⏳ Pending'}
                         </span>
                     </div>
@@ -5446,19 +5446,19 @@
             closeModal('stakeholderModal');
         }
 
-        // Vendor Scoring Functions
+        // Bidder Scoring Functions
         function renderScoringTable() {
             const header = document.getElementById('scoringHeader');
             const body = document.getElementById('scoringBody');
             if (!header || !body) return;
 
-            const shortlistVendors = appState.vendors.filter(v =>
+            const shortlistBidders = appState.bidders.filter(v =>
                 ['warm', 'shortlist', 'finalist', 'winner'].includes(v.status)
             );
 
-            if (shortlistVendors.length === 0) {
-                header.innerHTML = '<tr><th>No vendors in shortlist</th></tr>';
-                body.innerHTML = '<tr><td>Move vendors to Warm Lead, Shortlist, or Finalist status to score them.</td></tr>';
+            if (shortlistBidders.length === 0) {
+                header.innerHTML = '<tr><th>No bidders in shortlist</th></tr>';
+                body.innerHTML = '<tr><td>Move bidders to Warm Lead, Shortlist, or Finalist status to score them.</td></tr>';
                 return;
             }
 
@@ -5466,7 +5466,7 @@
             header.innerHTML = `<tr>
                 <th>Criterion</th>
                 <th>Weight</th>
-                ${shortlistVendors.map(v => `<th style="min-width:100px;">${sanitizeHTML(v.name)}</th>`).join('')}
+                ${shortlistBidders.map(v => `<th style="min-width:100px;">${sanitizeHTML(v.name)}</th>`).join('')}
             </tr>`;
 
             // Body
@@ -5474,12 +5474,12 @@
                 <tr>
                     <td><strong>${sanitizeHTML(c.criterion)}</strong></td>
                     <td>${c.weight}%</td>
-                    ${shortlistVendors.map(v => {
+                    ${shortlistBidders.map(v => {
                         const key = `${v.id}-${c.id}`;
-                        const score = (appState.vendorScores || {})[key] || '';
+                        const score = (appState.bidderScores || {})[key] || '';
                         return `<td>
                             <input type="number" min="0" max="10" class="weight-input"
-                                value="${score}" data-vendor="${v.id}" data-criterion="${c.id}"
+                                value="${score}" data-bidder="${v.id}" data-criterion="${c.id}"
                                 onchange="updateScore(${v.id}, ${c.id}, this.value)"
                                 style="width:60px;">
                         </td>`;
@@ -5489,57 +5489,57 @@
                 <tr style="background: var(--gray-100); font-weight: 600;">
                     <td>Weighted Total</td>
                     <td>100%</td>
-                    ${shortlistVendors.map(v => `<td id="total-${v.id}">${calculateVendorScore(v.id).toFixed(1)}</td>`).join('')}
+                    ${shortlistBidders.map(v => `<td id="total-${v.id}">${calculateBidderScore(v.id).toFixed(1)}</td>`).join('')}
                 </tr>
             `;
 
-            renderScoringSummary(shortlistVendors);
+            renderScoringSummary(shortlistBidders);
         }
 
-        function updateScore(vendorId, criterionId, value) {
-            if (!appState.vendorScores) appState.vendorScores = {};
-            const key = `${vendorId}-${criterionId}`;
+        function updateScore(bidderId, criterionId, value) {
+            if (!appState.bidderScores) appState.bidderScores = {};
+            const key = `${bidderId}-${criterionId}`;
             const score = parseInt(value) || 0;
-            appState.vendorScores[key] = Math.min(10, Math.max(0, score));
+            appState.bidderScores[key] = Math.min(10, Math.max(0, score));
             saveState();
 
-            const totalEl = document.getElementById(`total-${vendorId}`);
-            if (totalEl) totalEl.textContent = calculateVendorScore(vendorId).toFixed(1);
+            const totalEl = document.getElementById(`total-${bidderId}`);
+            if (totalEl) totalEl.textContent = calculateBidderScore(bidderId).toFixed(1);
 
-            renderScoringSummary(appState.vendors.filter(v =>
+            renderScoringSummary(appState.bidders.filter(v =>
                 ['warm', 'shortlist', 'finalist', 'winner'].includes(v.status)
             ));
         }
 
-        function calculateVendorScore(vendorId) {
+        function calculateBidderScore(bidderId) {
             let total = 0;
             const totalWeight = appState.evaluation.reduce((sum, c) => sum + c.weight, 0);
 
             appState.evaluation.forEach(c => {
-                const key = `${vendorId}-${c.id}`;
-                const score = (appState.vendorScores || {})[key] || 0;
+                const key = `${bidderId}-${c.id}`;
+                const score = (appState.bidderScores || {})[key] || 0;
                 total += (score / 10) * c.weight;
             });
 
             return totalWeight > 0 ? (total / totalWeight) * 100 : 0;
         }
 
-        function renderScoringSummary(vendors) {
+        function renderScoringSummary(bidders) {
             const el = document.getElementById('scoringSummary');
-            if (!el || vendors.length === 0) return;
+            if (!el || bidders.length === 0) return;
 
-            const ranked = vendors.map(v => ({
+            const ranked = bidders.map(v => ({
                 ...v,
-                score: calculateVendorScore(v.id)
+                score: calculateBidderScore(v.id)
             })).sort((a, b) => b.score - a.score);
 
             el.innerHTML = `
-                <h3 style="margin-bottom: 15px;">Vendor Ranking</h3>
-                <div class="vendor-grid">
+                <h3 style="margin-bottom: 15px;">Bidder Ranking</h3>
+                <div class="bidder-grid">
                     ${ranked.map((v, i) => `
-                        <div class="vendor-card" style="border-left: 4px solid ${i === 0 ? 'var(--success)' : i === 1 ? 'var(--warning)' : 'var(--gray-200)'};">
+                        <div class="bidder-card" style="border-left: 4px solid ${i === 0 ? 'var(--success)' : i === 1 ? 'var(--warning)' : 'var(--gray-200)'};">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span class="vendor-name">#${i + 1} ${sanitizeHTML(v.name)}</span>
+                                <span class="bidder-name">#${i + 1} ${sanitizeHTML(v.name)}</span>
                                 <span class="score-badge ${v.score >= 70 ? 'score-high' : v.score >= 40 ? 'score-medium' : 'score-low'}">
                                     ${v.score.toFixed(1)}%
                                 </span>
@@ -5562,25 +5562,25 @@
         // PQQ SCORING FUNCTIONS
         // ==========================================
 
-        function getPQQVendors() {
-            return appState.vendors.filter(v => v.status === 'shortlist');
+        function getPQQBidders() {
+            return appState.bidders.filter(v => v.status === 'shortlist');
         }
 
-        function calculatePQQTotal(vendorId) {
+        function calculatePQQTotal(bidderId) {
             const criteria = appState.pqqCriteria || [];
             let total = 0;
             criteria.forEach(c => {
-                const key = `${vendorId}-${c.id}`;
+                const key = `${bidderId}-${c.id}`;
                 total += parseInt((appState.pqqScores || {})[key] || 0);
             });
             return total;
         }
 
-        function pqqPassFailOK(vendorId) {
+        function pqqPassFailOK(bidderId) {
             const pf = appState.pqqPassFail || [];
             if (pf.length === 0) return true;
             return pf.every(section => {
-                const key = `${vendorId}-${section.id}`;
+                const key = `${bidderId}-${section.id}`;
                 return (appState.pqqPassFailResults || {})[key] === 'pass';
             });
         }
@@ -5596,18 +5596,18 @@
             const body = document.getElementById('pqqPassFailBody');
             if (!header || !body) return;
 
-            const vendors = getPQQVendors();
+            const bidders = getPQQBidders();
             const sections = appState.pqqPassFail || [];
 
-            if (vendors.length === 0) {
-                header.innerHTML = '<tr><th>No PQQ vendors found</th></tr>';
-                body.innerHTML = '<tr><td>Vendors with Shortlist status will appear here.</td></tr>';
+            if (bidders.length === 0) {
+                header.innerHTML = '<tr><th>No PQQ bidders found</th></tr>';
+                body.innerHTML = '<tr><td>Bidders with Shortlist status will appear here.</td></tr>';
                 return;
             }
 
             header.innerHTML = `<tr>
                 <th style="min-width:200px;">Section</th>
-                ${vendors.map(v => `<th style="min-width:110px;text-align:center;">${sanitizeHTML(v.name)}</th>`).join('')}
+                ${bidders.map(v => `<th style="min-width:110px;text-align:center;">${sanitizeHTML(v.name)}</th>`).join('')}
             </tr>`;
 
             const pfLabels = {'pass': 'Pass', 'fail': 'Fail', '': '—'};
@@ -5623,7 +5623,7 @@
                     <td>
                         <strong>§${section.section}</strong> ${sanitizeHTML(section.title)}
                     </td>
-                    ${vendors.map(v => {
+                    ${bidders.map(v => {
                         const key = `${v.id}-${section.id}`;
                         const current = (appState.pqqPassFailResults || {})[key] || '';
                         const next = pfNext[current];
@@ -5638,7 +5638,7 @@
             `).join('') + `
                 <tr style="background:var(--gray-100);font-weight:600;">
                     <td>Overall P/F</td>
-                    ${vendors.map(v => {
+                    ${bidders.map(v => {
                         const ok = pqqPassFailOK(v.id);
                         const allSet = (appState.pqqPassFail || []).every(s => ((appState.pqqPassFailResults || {})[`${v.id}-${s.id}`] || '') !== '');
                         if (!allSet) return `<td style="text-align:center;color:var(--gray-400);">Pending</td>`;
@@ -5655,19 +5655,19 @@
             const body = document.getElementById('pqqScoredBody');
             if (!header || !body) return;
 
-            const vendors = getPQQVendors();
+            const bidders = getPQQBidders();
             const criteria = appState.pqqCriteria || [];
 
-            if (vendors.length === 0) {
-                header.innerHTML = '<tr><th>No PQQ vendors found</th></tr>';
-                body.innerHTML = '<tr><td>Vendors with Shortlist status will appear here.</td></tr>';
+            if (bidders.length === 0) {
+                header.innerHTML = '<tr><th>No PQQ bidders found</th></tr>';
+                body.innerHTML = '<tr><td>Bidders with Shortlist status will appear here.</td></tr>';
                 return;
             }
 
             header.innerHTML = `<tr>
                 <th style="min-width:220px;">Section</th>
                 <th style="min-width:60px;text-align:center;">Max</th>
-                ${vendors.map(v => `<th style="min-width:110px;text-align:center;">${sanitizeHTML(v.name)}</th>`).join('')}
+                ${bidders.map(v => `<th style="min-width:110px;text-align:center;">${sanitizeHTML(v.name)}</th>`).join('')}
             </tr>`;
 
             body.innerHTML = criteria.map(c => {
@@ -5678,13 +5678,13 @@
                         <div style="font-size:0.75rem;color:var(--gray-500);margin-top:3px;">${sanitizeHTML(subText)}</div>
                     </td>
                     <td style="text-align:center;color:var(--gray-500);">${c.maxPoints}</td>
-                    ${vendors.map(v => {
+                    ${bidders.map(v => {
                         const key = `${v.id}-${c.id}`;
                         const score = (appState.pqqScores || {})[key] || '';
                         return `<td style="text-align:center;">
                             <input type="number" min="0" max="${c.maxPoints}"
                                 value="${score}"
-                                data-vendor="${v.id}" data-criterion="${c.id}" data-max="${c.maxPoints}"
+                                data-bidder="${v.id}" data-criterion="${c.id}" data-max="${c.maxPoints}"
                                 onchange="updatePQQScore(${v.id}, ${c.id}, ${c.maxPoints}, this.value)"
                                 style="width:65px;text-align:center;border:1px solid var(--gray-200);border-radius:4px;padding:4px;background:var(--white);">
                         </td>`;
@@ -5694,7 +5694,7 @@
                 <tr style="background:var(--gray-100);font-weight:700;border-top:2px solid var(--gray-300);">
                     <td>TOTAL</td>
                     <td style="text-align:center;">150</td>
-                    ${vendors.map(v => {
+                    ${bidders.map(v => {
                         const total = calculatePQQTotal(v.id);
                         const hasAny = criteria.some(c => (appState.pqqScores || {})[`${v.id}-${c.id}`] !== undefined && (appState.pqqScores || {})[`${v.id}-${c.id}`] !== '');
                         if (!hasAny) return `<td style="text-align:center;color:var(--gray-400);">—</td>`;
@@ -5712,15 +5712,15 @@
             const el = document.getElementById('pqqShortlistSummary');
             if (!el) return;
 
-            const vendors = getPQQVendors();
+            const bidders = getPQQBidders();
             const criteria = appState.pqqCriteria || [];
 
-            if (vendors.length === 0) {
-                el.innerHTML = '<p style="color:var(--gray-500);padding:16px;">No shortlisted PQQ vendors found.</p>';
+            if (bidders.length === 0) {
+                el.innerHTML = '<p style="color:var(--gray-500);padding:16px;">No shortlisted PQQ bidders found.</p>';
                 return;
             }
 
-            const ranked = vendors.map(v => {
+            const ranked = bidders.map(v => {
                 const total = calculatePQQTotal(v.id);
                 const passOK = pqqPassFailOK(v.id);
                 const allPFSet = (appState.pqqPassFail || []).length === 0 ||
@@ -5749,12 +5749,12 @@
             const topSixLine = ranked.findIndex((v, i) => i >= 6);
 
             el.innerHTML = `
-                <div class="vendor-grid" style="margin-top:8px;">
+                <div class="bidder-grid" style="margin-top:8px;">
                     ${ranked.map((v, i) => `
                         ${i === 6 ? `<div style="grid-column:1/-1;border-top:2px dashed #dc3545;padding-top:8px;margin-bottom:4px;color:#dc3545;font-size:0.85rem;font-weight:600;">— Shortlist cut-off (Top 6) —</div>` : ''}
-                        <div class="vendor-card" style="border-left:4px solid ${v.borderColor};background:${v.bgColor};">
+                        <div class="bidder-card" style="border-left:4px solid ${v.borderColor};background:${v.bgColor};">
                             <div style="display:flex;justify-content:space-between;align-items:center;">
-                                <span class="vendor-name" style="color:var(--gray-800);">#${i + 1} ${sanitizeHTML(v.name)}</span>
+                                <span class="bidder-name" style="color:var(--gray-800);">#${i + 1} ${sanitizeHTML(v.name)}</span>
                                 <span style="background:${v.borderColor};color:#fff;padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:700;">
                                     ${v.hasScores ? v.total + ' / 150' : '— / 150'}
                                 </span>
@@ -5770,19 +5770,19 @@
             `;
         }
 
-        function updatePQQScore(vendorId, criterionId, maxPoints, value) {
+        function updatePQQScore(bidderId, criterionId, maxPoints, value) {
             if (!appState.pqqScores) appState.pqqScores = {};
             const parsed = parseInt(value);
             const clamped = isNaN(parsed) ? 0 : Math.min(Math.max(parsed, 0), maxPoints);
-            appState.pqqScores[`${vendorId}-${criterionId}`] = clamped;
+            appState.pqqScores[`${bidderId}-${criterionId}`] = clamped;
             saveState();
             renderPQQScoredMatrix();
             renderPQQShortlistSummary();
         }
 
-        function updatePQQPassFail(vendorId, pfId, result) {
+        function updatePQQPassFail(bidderId, pfId, result) {
             if (!appState.pqqPassFailResults) appState.pqqPassFailResults = {};
-            appState.pqqPassFailResults[`${vendorId}-${pfId}`] = result;
+            appState.pqqPassFailResults[`${bidderId}-${pfId}`] = result;
             saveState();
             renderPQQPassFailMatrix();
             renderPQQShortlistSummary();
@@ -5792,17 +5792,17 @@
         // RFP SCORING FUNCTIONS
         // ==========================================
 
-        function getRFPVendors() {
-            return (appState.vendors || []).filter(v => v.status === 'shortlist' || v.status === 'finalist');
+        function getRFPBidders() {
+            return (appState.bidders || []).filter(v => v.status === 'shortlist' || v.status === 'finalist');
         }
 
-        function calculateRFPTotal(vendorId) {
+        function calculateRFPTotal(bidderId) {
             const criteria = appState.evaluation || [];
             const totalWeight = criteria.reduce((s, c) => s + c.weight, 0);
             if (totalWeight === 0) return 0;
             let weighted = 0;
             criteria.forEach(c => {
-                const score = parseFloat((appState.rfpScores || {})[`${vendorId}-${c.id}`] || 0);
+                const score = parseFloat((appState.rfpScores || {})[`${bidderId}-${c.id}`] || 0);
                 weighted += (score / 10) * c.weight;
             });
             return (weighted / totalWeight) * 100;
@@ -5818,12 +5818,12 @@
             const body = document.getElementById('rfpScoredBody');
             if (!header || !body) return;
 
-            const vendors = getRFPVendors();
+            const bidders = getRFPBidders();
             const criteria = appState.evaluation || [];
 
-            if (vendors.length === 0) {
-                header.innerHTML = '<tr><th>No shortlisted vendors found</th></tr>';
-                body.innerHTML = '<tr><td>Vendors with Shortlist or Finalist status will appear here. Update vendor status in the Vendors tab.</td></tr>';
+            if (bidders.length === 0) {
+                header.innerHTML = '<tr><th>No shortlisted bidders found</th></tr>';
+                body.innerHTML = '<tr><td>Bidders with Shortlist or Finalist status will appear here. Update bidder status in the Bidders tab.</td></tr>';
                 return;
             }
             if (criteria.length === 0) {
@@ -5835,7 +5835,7 @@
             header.innerHTML = `<tr>
                 <th style="min-width:200px;">Criterion</th>
                 <th style="min-width:60px;text-align:center;">Weight</th>
-                ${vendors.map(v => `<th style="min-width:110px;text-align:center;">${sanitizeHTML(v.name)}</th>`).join('')}
+                ${bidders.map(v => `<th style="min-width:110px;text-align:center;">${sanitizeHTML(v.name)}</th>`).join('')}
             </tr>`;
 
             body.innerHTML = criteria.map(c => `
@@ -5845,7 +5845,7 @@
                         <div style="font-size:0.75rem;color:var(--gray-500);margin-top:2px;">${sanitizeHTML(c.goodLooks || '')}</div>
                     </td>
                     <td style="text-align:center;color:var(--gray-500);">${c.weight}%</td>
-                    ${vendors.map(v => {
+                    ${bidders.map(v => {
                         const key = `${v.id}-${c.id}`;
                         const score = (appState.rfpScores || {})[key] || '';
                         const numScore = parseFloat(score);
@@ -5862,7 +5862,7 @@
                 <tr style="background:var(--gray-100);font-weight:700;border-top:2px solid var(--gray-300);">
                     <td>WEIGHTED TOTAL</td>
                     <td style="text-align:center;">100%</td>
-                    ${vendors.map(v => {
+                    ${bidders.map(v => {
                         const total = calculateRFPTotal(v.id);
                         const hasAny = criteria.some(c => (appState.rfpScores || {})[`${v.id}-${c.id}`] !== undefined && (appState.rfpScores || {})[`${v.id}-${c.id}`] !== '');
                         if (!hasAny) return `<td style="text-align:center;color:var(--gray-400);">—</td>`;
@@ -5878,31 +5878,31 @@
             const el = document.getElementById('rfpDownSelectSummary');
             if (!el) return;
 
-            const vendors = getRFPVendors();
+            const bidders = getRFPBidders();
             const criteria = appState.evaluation || [];
 
-            if (vendors.length === 0) {
-                el.innerHTML = '<p style="color:var(--gray-500);padding:16px;">No shortlisted vendors to rank.</p>';
+            if (bidders.length === 0) {
+                el.innerHTML = '<p style="color:var(--gray-500);padding:16px;">No shortlisted bidders to rank.</p>';
                 return;
             }
 
-            const ranked = vendors.map(v => {
+            const ranked = bidders.map(v => {
                 const total = calculateRFPTotal(v.id);
                 const hasScores = criteria.some(c => (appState.rfpScores || {})[`${v.id}-${c.id}`] !== undefined && (appState.rfpScores || {})[`${v.id}-${c.id}`] !== '');
                 return { ...v, total, hasScores };
             }).sort((a, b) => b.total - a.total);
 
             el.innerHTML = `
-                <div class="vendor-grid" style="margin-top:8px;">
+                <div class="bidder-grid" style="margin-top:8px;">
                     ${ranked.map((v, i) => {
                         const isTop = i < 3;
                         const borderColor = i === 0 ? '#28a745' : i === 1 ? '#17a2b8' : i === 2 ? '#fd7e14' : 'var(--gray-200)';
                         const statusLabel = v.status === 'finalist' ? '★ Finalist' : '';
                         return `
                             ${i === 3 ? `<div style="grid-column:1/-1;border-top:2px dashed #fd7e14;padding-top:8px;margin-bottom:4px;color:#fd7e14;font-size:0.85rem;font-weight:600;">— BAFO cut-off (Top 3) —</div>` : ''}
-                            <div class="vendor-card" style="border-left:4px solid ${borderColor};">
+                            <div class="bidder-card" style="border-left:4px solid ${borderColor};">
                                 <div style="display:flex;justify-content:space-between;align-items:center;">
-                                    <span class="vendor-name">#${i+1} ${sanitizeHTML(v.name)}</span>
+                                    <span class="bidder-name">#${i+1} ${sanitizeHTML(v.name)}</span>
                                     <span style="background:${borderColor};color:#fff;padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:700;">
                                         ${v.hasScores ? v.total.toFixed(1) + '%' : '—'}
                                     </span>
@@ -5918,10 +5918,10 @@
                 </div>`;
         }
 
-        function updateRFPScore(vendorId, criterionId, value) {
+        function updateRFPScore(bidderId, criterionId, value) {
             if (!appState.rfpScores) appState.rfpScores = {};
             const parsed = parseFloat(value);
-            appState.rfpScores[`${vendorId}-${criterionId}`] = isNaN(parsed) ? '' : Math.min(Math.max(parsed, 0), 10);
+            appState.rfpScores[`${bidderId}-${criterionId}`] = isNaN(parsed) ? '' : Math.min(Math.max(parsed, 0), 10);
             saveState();
             renderRFPScoredMatrix();
             renderRFPDownSelectSummary();
@@ -5932,8 +5932,8 @@
             showToast('RFP scores saved', 'success');
         }
 
-        function markRFPFinalist(vendorId) {
-            const v = (appState.vendors || []).find(v => v.id === vendorId);
+        function markRFPFinalist(bidderId) {
+            const v = (appState.bidders || []).find(v => v.id === bidderId);
             if (!v) return;
             v.status = v.status === 'finalist' ? 'shortlist' : 'finalist';
             saveState();
@@ -5945,8 +5945,8 @@
         // BAFO FUNCTIONS
         // ==========================================
 
-        function getBAFOVendors() {
-            return (appState.vendors || []).filter(v => v.status === 'finalist' || v.status === 'shortlist');
+        function getBAFOBidders() {
+            return (appState.bidders || []).filter(v => v.status === 'finalist' || v.status === 'shortlist');
         }
 
         function renderBAFO() {
@@ -5959,19 +5959,19 @@
             const body = document.getElementById('bafoTableBody');
             if (!header || !body) return;
 
-            const vendors = getBAFOVendors();
+            const bidders = getBAFOBidders();
             const fields = appState.bafoFields || [];
 
-            if (vendors.length === 0) {
-                header.innerHTML = '<tr><th>No BAFO vendors</th></tr>';
-                body.innerHTML = '<tr><td>Mark vendors as Finalist in the RFP Scoring tab or Vendors tab to populate this comparison.</td></tr>';
+            if (bidders.length === 0) {
+                header.innerHTML = '<tr><th>No BAFO bidders</th></tr>';
+                body.innerHTML = '<tr><td>Mark bidders as Finalist in the RFP Scoring tab or Bidders tab to populate this comparison.</td></tr>';
                 return;
             }
 
             header.innerHTML = `<tr>
                 <th style="min-width:80px;">Category</th>
                 <th style="min-width:180px;">Criteria</th>
-                ${vendors.map(v => `<th style="min-width:160px;text-align:center;">${sanitizeHTML(v.name)}</th>`).join('')}
+                ${bidders.map(v => `<th style="min-width:160px;text-align:center;">${sanitizeHTML(v.name)}</th>`).join('')}
             </tr>`;
 
             let lastCategory = '';
@@ -5982,7 +5982,7 @@
                 return `<tr>
                     ${catCell}
                     <td><strong>${sanitizeHTML(f.name)}</strong></td>
-                    ${vendors.map(v => {
+                    ${bidders.map(v => {
                         const key = `${v.id}-${f.id}`;
                         const val = (appState.bafoData || {})[key] || '';
                         const isTextarea = f.id === 11 || f.id === 13;
@@ -6001,15 +6001,15 @@
         function renderBAFORecommendation() {
             const el = document.getElementById('bafoRecommendationSection');
             if (!el) return;
-            const vendors = getBAFOVendors();
-            if (vendors.length === 0) {
-                el.innerHTML = '<p style="color:var(--gray-500);padding:16px;">No BAFO vendors to assess.</p>';
+            const bidders = getBAFOBidders();
+            if (bidders.length === 0) {
+                el.innerHTML = '<p style="color:var(--gray-500);padding:16px;">No BAFO bidders to assess.</p>';
                 return;
             }
-            el.innerHTML = `<div class="vendor-grid">
-                ${vendors.map(v => {
+            el.innerHTML = `<div class="bidder-grid">
+                ${bidders.map(v => {
                     const rec = (appState.bafoRecommendation || {})[v.id] || {};
-                    return `<div class="vendor-card" style="border-left:4px solid var(--primary);">
+                    return `<div class="bidder-card" style="border-left:4px solid var(--primary);">
                         <div style="font-weight:700;font-size:1rem;margin-bottom:10px;">${sanitizeHTML(v.name)}</div>
                         <div style="margin-bottom:8px;">
                             <label style="font-size:0.8rem;color:var(--gray-500);display:block;margin-bottom:4px;">Final Score / Rating</label>
@@ -6029,16 +6029,16 @@
             </div>`;
         }
 
-        function updateBAFOData(vendorId, fieldId, value) {
+        function updateBAFOData(bidderId, fieldId, value) {
             if (!appState.bafoData) appState.bafoData = {};
-            appState.bafoData[`${vendorId}-${fieldId}`] = value;
+            appState.bafoData[`${bidderId}-${fieldId}`] = value;
             saveState();
         }
 
-        function updateBAFORec(vendorId, field, value) {
+        function updateBAFORec(bidderId, field, value) {
             if (!appState.bafoRecommendation) appState.bafoRecommendation = {};
-            if (!appState.bafoRecommendation[vendorId]) appState.bafoRecommendation[vendorId] = {};
-            appState.bafoRecommendation[vendorId][field] = value;
+            if (!appState.bafoRecommendation[bidderId]) appState.bafoRecommendation[bidderId] = {};
+            appState.bafoRecommendation[bidderId][field] = value;
             saveState();
         }
 
@@ -6048,17 +6048,17 @@
         }
 
         function generateScoreReport() {
-            const shortlistVendors = appState.vendors.filter(v =>
+            const shortlistBidders = appState.bidders.filter(v =>
                 ['warm', 'shortlist', 'finalist', 'winner'].includes(v.status)
             );
 
-            const ranked = shortlistVendors.map(v => ({
+            const ranked = shortlistBidders.map(v => ({
                 ...v,
-                score: calculateVendorScore(v.id)
+                score: calculateBidderScore(v.id)
             })).sort((a, b) => b.score - a.score);
 
             const html = `
-                <h2>Vendor Scoring Report</h2>
+                <h2>Bidder Scoring Report</h2>
                 <p><strong>Generated:</strong> ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
 
                 <h3 style="margin-top: 20px;">Ranking Summary</h3>
@@ -6066,7 +6066,7 @@
                     <thead>
                         <tr>
                             <th>Rank</th>
-                            <th>Vendor</th>
+                            <th>Bidder</th>
                             <th>Tier</th>
                             <th>Score</th>
                             <th>Recommendation</th>
@@ -6101,7 +6101,7 @@
                                 <td>${c.weight}%</td>
                                 ${ranked.map(v => {
                                     const key = `${v.id}-${c.id}`;
-                                    const score = (appState.vendorScores || {})[key] || 0;
+                                    const score = (appState.bidderScores || {})[key] || 0;
                                     return `<td>${score}/10</td>`;
                                 }).join('')}
                             </tr>
@@ -6124,7 +6124,7 @@
                     const data = JSON.parse(e.target.result);
 
                     // Validate basic structure
-                    if (!data.tasks || !data.vendors) {
+                    if (!data.tasks || !data.bidders) {
                         throw new Error('Invalid data format');
                     }
 
@@ -6303,7 +6303,7 @@
                 let eventsHtml = '';
                 dayMeetings.forEach(m => {
                     const typeColor = m.type === 'steering' ? '#dc3545' :
-                                     m.type === 'vendor' ? '#28a745' :
+                                     m.type === 'bidder' ? '#28a745' :
                                      m.type === 'workshop' ? '#ffc107' :
                                      m.type === 'review' ? '#17a2b8' : '#764ba2';
                     eventsHtml += `<div class="calendar-event" style="background: ${typeColor}20; color: ${typeColor}; font-size: 10px; padding: 2px 4px; margin: 1px 0; border-radius: 3px; cursor: pointer;" title="${m.title} - ${m.time}">${m.title.substring(0, 15)}${m.title.length > 15 ? '...' : ''}</div>`;
@@ -6350,14 +6350,14 @@
         function renderMeetingCard(m, isPast) {
             const typeLabels = {
                 'internal': 'Internal',
-                'vendor': 'Vendor',
+                'bidder': 'Bidder',
                 'steering': 'Steering Committee',
                 'workshop': 'Workshop',
                 'review': 'Review'
             };
             const typeColors = {
                 'internal': '#764ba2',
-                'vendor': '#28a745',
+                'bidder': '#28a745',
                 'steering': '#dc3545',
                 'workshop': '#ffc107',
                 'review': '#17a2b8'
