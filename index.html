@@ -2299,9 +2299,12 @@
                 {id: 23, name: "Genpact", type: "Global SI", tier: "Mid", strengths: "Process-driven SAP services with strong finance and operations expertise.", relevance: "Effective for AMS in finance-heavy SAP landscapes.", status: "longlist", contacts: []}
             ],
             risks: [
-                {id: 1, risk: "SAP USA Go-Live Date", impact: "Critical. If moves to Sept, transition period extends.", owner: "CIO / Program Lead", dueDate: "2025-12-15", rag: "red", mitigation: "Need Scenario A (June) and B (Sept) in RFP", probability: "high", impactLevel: "high"},
-                {id: 2, risk: "Access to Ticket Data", impact: "High. Vendors cannot price without ticket volumes.", owner: "IT Ops", dueDate: "2025-12-10", rag: "amber", mitigation: "Extract from ServiceNow/Jira", probability: "medium", impactLevel: "high"},
-                {id: 3, risk: "Deloitte Report Access", impact: "Medium. Delays Gap Analysis.", owner: "CIO Office", dueDate: "2025-12-08", rag: "green", mitigation: "Chase Monday AM", probability: "low", impactLevel: "medium"}
+                {id: 1, risk: "SAP USA Go-Live Date (Sept 2026)", impact: "Critical. AMS vendor must be mobilised before Sept Go-Live — any timeline slip compresses the transition window.", owner: "Anders Linden / Don Pillay", dueDate: "2026-04-30", rag: "red", mitigation: "RFP must include Go-Live readiness as a scored criterion. Mobilisation clause in contract.", probability: "medium", impactLevel: "high"},
+                {id: 2, risk: "PQQ Shortlist Below Quality Threshold", impact: "High. If fewer than 6 vendors meet the 70% threshold, RFP field will be thin.", owner: "Nick Housley / Don Pillay", dueDate: "2026-02-20", rag: "amber", mitigation: "Review evaluation scores before issuing shortlist notification. Escalate to SteerCo if needed.", probability: "medium", impactLevel: "high"},
+                {id: 3, risk: "RFP Timeline Compression", impact: "Medium. Tight window (Feb 24 – Mar 20) leaves vendors little time to respond with quality proposals.", owner: "Nick Housley", dueDate: "2026-02-24", rag: "amber", mitigation: "Ensure briefing sessions are thorough. Be prepared to extend deadline by 1 week if needed.", probability: "medium", impactLevel: "medium"},
+                {id: 4, risk: "Incumbent Vendor Conflict", impact: "Medium. Deloitte authored the Due Diligence Report and may have an advantage in RFP evaluation.", owner: "Nick Housley / Anders Linden", dueDate: "2026-03-01", rag: "amber", mitigation: "Ensure blind scoring where possible. Document conflict of interest management.", probability: "low", impactLevel: "medium"},
+                {id: 5, risk: "China Legal Entity Capability", impact: "High. Section 2.4 (15 pts) requires vendors to have or establish a China legal entity — not all 10 PQQ vendors may qualify.", owner: "Laura Miller / Don Pillay", dueDate: "2026-02-19", rag: "red", mitigation: "Flag in shortlist evaluation. Confirm China capability before including vendor in RFP shortlist.", probability: "high", impactLevel: "high"},
+                {id: 6, risk: "Knowledge Transfer Failure", impact: "High. If winning vendor cannot extract sufficient knowledge from current teams, Go-Live support quality suffers.", owner: "Don Pillay / Laura Miller", dueDate: "2026-08-15", rag: "green", mitigation: "Section 4 (Transition Capability) heavily weighted in PQQ. Include KT deliverables in contract.", probability: "low", impactLevel: "high"}
             ],
             decisions: [
                 {id: 1, title: "RFP Timeline Confirmed", description: "Agreed on 9-month programme timeline", rationale: "Balances speed with thoroughness", owner: "CIO", date: "2025-12-08", status: "approved"}
@@ -2366,8 +2369,8 @@
             bafoData: {},
             bafoRecommendation: {},
             milestones: [
-                {id: 1, title: "PQQ Launch", date: "2026-01-23", status: "complete"},
-                {id: 2, title: "PQQ Submission Deadline", date: "2026-02-13", status: "complete"},
+                {id: 1, title: "PQQ Launch", date: "2026-01-23", status: "done"},
+                {id: 2, title: "PQQ Submission Deadline", date: "2026-02-13", status: "done"},
                 {id: 3, title: "Shortlist Notification (~6 suppliers)", date: "2026-02-20", status: "notstarted"},
                 {id: 4, title: "RFP Issued to Shortlist", date: "2026-02-24", status: "notstarted"},
                 {id: 5, title: "Supplier Briefings", date: "2026-02-27", status: "notstarted"},
@@ -2940,6 +2943,12 @@
                     }
                     if (!appState.bafoData) appState.bafoData = {};
                     if (!appState.bafoRecommendation) appState.bafoRecommendation = {};
+                    // Migrate: normalise milestone status 'complete' → 'done'
+                    if (appState.milestones) {
+                        appState.milestones.forEach(m => {
+                            if (m.status === 'complete') m.status = 'done';
+                        });
+                    }
                 } catch(e) {
                     console.error('Error loading state:', e);
                     initializeFromDefault();
@@ -3325,7 +3334,7 @@
             const ms = appState.milestones || [];
             function msDone(title) {
                 const m = ms.find(m => m.title.toLowerCase().includes(title.toLowerCase()));
-                return m && m.status === 'complete';
+                return m && (m.status === 'done' || m.status === 'complete');
             }
             if (msDone('go-live') || msDone('us go-live')) return { id: 'complete', label: 'Complete', colour: '#28a745' };
             if (msDone('mobilisation')) return { id: 'transition', label: 'Mobilisation & Transition', colour: '#6f42c1' };
@@ -3343,7 +3352,7 @@
 
         function getNextGate() {
             const ms = (appState.milestones || [])
-                .filter(m => m.status !== 'complete')
+                .filter(m => m.status !== 'done' && m.status !== 'complete')
                 .sort((a, b) => new Date(a.date) - new Date(b.date));
             return ms.length ? ms[0] : null;
         }
