@@ -1148,6 +1148,7 @@
             <button class="nav-tab" onclick="switchTab('milestones', event)" role="tab" aria-selected="false" aria-controls="milestones" id="tab-milestones">Milestones</button>
             <button class="nav-tab" onclick="switchTab('evaluation', event)" role="tab" aria-selected="false" aria-controls="evaluation" id="tab-evaluation">Evaluation</button>
             <button class="nav-tab" onclick="switchTab('scoring', event)" role="tab" aria-selected="false" aria-controls="scoring" id="tab-scoring">Scoring</button>
+            <button class="nav-tab" onclick="switchTab('pqqscoring', event)" role="tab" aria-selected="false" aria-controls="pqqscoring" id="tab-pqqscoring">PQQ Scoring</button>
             <button class="nav-tab" onclick="switchTab('vendors', event)" role="tab" aria-selected="false" aria-controls="vendors" id="tab-vendors">Vendors</button>
             <button class="nav-tab" onclick="switchTab('documents', event)" role="tab" aria-selected="false" aria-controls="documents" id="tab-documents">Documents</button>
             <button class="nav-tab" onclick="switchTab('meetings', event)" role="tab" aria-selected="false" aria-controls="meetings" id="tab-meetings">Meetings</button>
@@ -1350,6 +1351,80 @@
                     </table>
                 </div>
                 <div id="scoringSummary" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+
+        <!-- PQQ Scoring -->
+        <div id="pqqscoring" class="tab-content" role="tabpanel" aria-labelledby="tab-pqqscoring">
+            <!-- Card 1: Overview -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>PQQ Evaluation — SAP Application Management Support</h2>
+                    <span style="background:#079fdb;color:#fff;padding:4px 12px;border-radius:12px;font-size:0.85rem;font-weight:600;">Evaluation In Progress</span>
+                </div>
+                <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:8px;">
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Submission Deadline</div>
+                        <div style="font-weight:700;margin-top:4px;">13 Feb 2026 <span style="color:#28a745;font-size:0.8rem;">(Closed)</span></div>
+                    </div>
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Contact</div>
+                        <div style="font-weight:700;margin-top:4px;font-size:0.9rem;">Didi Anolue</div>
+                    </div>
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Total Points</div>
+                        <div style="font-weight:700;margin-top:4px;">150 points</div>
+                    </div>
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Min. Threshold</div>
+                        <div style="font-weight:700;margin-top:4px;">105 / 150 (70%)</div>
+                    </div>
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Shortlist Target</div>
+                        <div style="font-weight:700;margin-top:4px;">Top 6 suppliers</div>
+                    </div>
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Participants</div>
+                        <div style="font-weight:700;margin-top:4px;">10 confirmed vendors</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Pass/Fail Matrix -->
+            <div class="card" style="margin-top:16px;">
+                <div class="card-header">
+                    <h2>Pass / Fail Sections</h2>
+                    <span style="font-size:0.85rem;color:var(--gray-500);">All sections must PASS for a vendor to be eligible</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="evaluation-table" id="pqqPassFailTable">
+                        <thead id="pqqPassFailHeader"></thead>
+                        <tbody id="pqqPassFailBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Card 3: Scored Sections Matrix -->
+            <div class="card" style="margin-top:16px;">
+                <div class="card-header">
+                    <h2>Scored Sections</h2>
+                    <span style="font-size:0.85rem;color:var(--gray-500);">Enter scores up to the section maximum. Total out of 150 points.</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="evaluation-table" id="pqqScoredTable">
+                        <thead id="pqqScoredHeader"></thead>
+                        <tbody id="pqqScoredBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Card 4: Shortlist Summary -->
+            <div class="card" style="margin-top:16px;">
+                <div class="card-header">
+                    <h2>Shortlist Ranking</h2>
+                    <span style="font-size:0.85rem;color:var(--gray-500);">Ranked by PQQ score. Top 6 eligible suppliers will be invited to RFP.</span>
+                </div>
+                <div id="pqqShortlistSummary"></div>
             </div>
         </div>
 
@@ -2018,61 +2093,71 @@
         // Initial Data from Hexagon Excel File
         const INITIAL_DATA = {
             tasks: [
-                {id: 1, name: "Kick-off & Data Gathering", owner: "CIO / Procurement Director", dueDate: "2025-12-08", status: "notstarted", phase: "discovery", description: "Validated Project Plan - Confirm access to Deloitte Report"},
-                {id: 2, name: "Deep Dive: Deloitte Report", owner: "Self / Deloitte Rep", dueDate: "2025-12-09", status: "notstarted", phase: "discovery", description: "Gap Analysis Summary - Identify missing ticket data"},
-                {id: 3, name: "Stakeholder Interviews (USA Focus)", owner: "USA Ops Lead / CIO", dueDate: "2025-12-10", status: "notstarted", phase: "discovery", description: "USA Requirements List - Focus on June vs Sept impact"},
-                {id: 4, name: "Stakeholder Interviews (Global)", owner: "CFO / Global Procurement", dueDate: "2025-12-11", status: "notstarted", phase: "discovery", description: "Commercial Constraints - Define Budget Envelope"},
-                {id: 5, name: "Draft Selection Questionnaire (SQ)", owner: "Self", dueDate: "2025-12-12", status: "notstarted", phase: "documentation", description: "Draft SQ V0.1"},
-                {id: 6, name: "Market Engagement (Soft Sounding)", owner: "Potential Vendors", dueDate: "2025-12-15", status: "notstarted", phase: "discovery", description: "Vendor Interest Heatmap - Gauge appetite for timeline"},
-                {id: 7, name: "Market Engagement (Incumbent)", owner: "Current SAP Partner", dueDate: "2025-12-16", status: "notstarted", phase: "discovery", description: "Incumbent Strategy Notes - Careful comms management"},
-                {id: 8, name: "Finalize SQ & Long List", owner: "Procurement Director", dueDate: "2025-12-17", status: "notstarted", phase: "documentation", description: "Approved SQ & List - Milestone Decision"},
-                {id: 9, name: "Draft Sourcing Strategy (Skeleton)", owner: "Self", dueDate: "2025-12-18", status: "notstarted", phase: "documentation", description: "Strategy V0.1"},
-                {id: 10, name: "Commercial Model Modelling", owner: "Finance", dueDate: "2025-12-19", status: "notstarted", phase: "documentation", description: "Pricing Template Draft - Fixed vs Variable validation"},
-                {id: 11, name: "Review Strategy with CIO", owner: "CIO", dueDate: "2025-12-22", status: "notstarted", phase: "documentation", description: "Feedback on Strategy"},
-                {id: 12, name: "Refine Strategy & RFP Roadmap", owner: "Self", dueDate: "2025-12-23", status: "notstarted", phase: "documentation", description: "Strategy V0.2"},
-                {id: 13, name: "Final Strategy Pack Creation", owner: "Self", dueDate: "2025-12-29", status: "notstarted", phase: "documentation", description: "Final Sourcing Strategy"},
-                {id: 14, name: "Executive Sign-off Meeting", owner: "CIO / CFO", dueDate: "2025-12-30", status: "notstarted", phase: "documentation", description: "Signed Approval"},
-                {id: 15, name: "RFP Readiness Check", owner: "Self", dueDate: "2025-12-31", status: "notstarted", phase: "documentation", description: "RFP Launch Pack Ready - Ready for Jan launch"},
-                {id: 16, name: "Issue Selection Questionnaire", owner: "Procurement Director", dueDate: "2026-01-05", status: "notstarted", phase: "evaluation", description: "Send SQ to long-listed vendors"},
-                {id: 17, name: "SQ Response Collection", owner: "Programme Lead", dueDate: "2026-01-20", status: "notstarted", phase: "evaluation", description: "Collect and log all vendor SQ responses"},
-                {id: 18, name: "SQ Evaluation & Scoring", owner: "Evaluation Team", dueDate: "2026-01-25", status: "notstarted", phase: "evaluation", description: "Score SQ responses against criteria"},
-                {id: 19, name: "Shortlist Decision Meeting", owner: "CIO / Procurement Director", dueDate: "2026-01-30", status: "notstarted", phase: "evaluation", description: "Select 5-6 vendors for final RFP"},
-                {id: 20, name: "Final RFP Document Preparation", owner: "Self", dueDate: "2026-02-01", status: "notstarted", phase: "evaluation", description: "Prepare detailed RFP for shortlist"},
-                {id: 21, name: "Issue Final RFP to Shortlist", owner: "Procurement Director", dueDate: "2026-02-05", status: "notstarted", phase: "evaluation", description: "Send RFP to shortlisted vendors"},
-                {id: 22, name: "Vendor Q&A Period", owner: "Programme Lead", dueDate: "2026-02-20", status: "notstarted", phase: "evaluation", description: "Manage vendor clarification questions"},
-                {id: 23, name: "RFP Response Collection", owner: "Programme Lead", dueDate: "2026-03-01", status: "notstarted", phase: "evaluation", description: "Collect final RFP responses"},
-                {id: 24, name: "Technical Evaluation", owner: "IT Ops Manager", dueDate: "2026-03-07", status: "notstarted", phase: "evaluation", description: "Technical assessment of proposals"},
-                {id: 25, name: "Commercial Evaluation", owner: "Finance / Procurement", dueDate: "2026-03-10", status: "notstarted", phase: "evaluation", description: "Commercial and pricing analysis"},
-                {id: 26, name: "Vendor Presentations Week 1", owner: "Evaluation Team", dueDate: "2026-03-12", status: "notstarted", phase: "evaluation", description: "First round of vendor presentations"},
-                {id: 27, name: "Vendor Presentations Week 2", owner: "Evaluation Team", dueDate: "2026-03-15", status: "notstarted", phase: "evaluation", description: "Second round of vendor presentations"},
-                {id: 28, name: "Reference Checks", owner: "Procurement Director", dueDate: "2026-03-25", status: "notstarted", phase: "selection", description: "Contact vendor references"},
-                {id: 29, name: "Final Evaluation Consolidation", owner: "Programme Lead", dueDate: "2026-04-01", status: "notstarted", phase: "selection", description: "Consolidate all evaluation scores"},
-                {id: 30, name: "Selection Recommendation", owner: "Evaluation Team", dueDate: "2026-04-10", status: "notstarted", phase: "selection", description: "Prepare recommendation for executives"},
-                {id: 31, name: "Executive Decision Meeting", owner: "CIO / CFO", dueDate: "2026-04-15", status: "notstarted", phase: "selection", description: "Final vendor selection decision"},
-                {id: 32, name: "Contract Negotiations", owner: "Procurement Director / Legal", dueDate: "2026-04-25", status: "notstarted", phase: "selection", description: "Negotiate final contract terms"},
-                {id: 33, name: "Contract Signature", owner: "CIO / CFO", dueDate: "2026-04-30", status: "notstarted", phase: "selection", description: "Sign AMS contract with selected vendor"},
-                {id: 34, name: "Transition Kick-off", owner: "Programme Lead", dueDate: "2026-05-05", status: "notstarted", phase: "selection", description: "Begin transition planning with vendor"},
-                {id: 35, name: "Knowledge Transfer Phase 1", owner: "IT Ops Manager", dueDate: "2026-05-30", status: "notstarted", phase: "selection", description: "Initial knowledge transfer sessions"},
-                {id: 36, name: "Knowledge Transfer Phase 2", owner: "IT Ops Manager", dueDate: "2026-06-30", status: "notstarted", phase: "selection", description: "Advanced knowledge transfer and handover"},
-                {id: 37, name: "Hypercare Planning", owner: "Programme Lead", dueDate: "2026-07-15", status: "notstarted", phase: "selection", description: "Plan hypercare support model"},
-                {id: 38, name: "Pre-Go-Live Readiness", owner: "IT Ops Manager", dueDate: "2026-08-15", status: "notstarted", phase: "selection", description: "Verify all systems ready for transition"},
-                {id: 39, name: "Mobilisation Complete", owner: "Programme Lead", dueDate: "2026-08-31", status: "notstarted", phase: "selection", description: "Full mobilisation of new AMS team"},
-                {id: 40, name: "US Go-Live Support", owner: "New AMS Vendor", dueDate: "2026-09-01", status: "notstarted", phase: "selection", description: "Hypercare support for US Go-Live"}
+                {id: 1, name: "Kick-off & Data Gathering", owner: "Anders Linden / Nick Housley", dueDate: "2025-12-08", status: "done", phase: "discovery", description: "Validated Project Plan - Confirm access to Deloitte Report"},
+                {id: 2, name: "Deep Dive: Deloitte Report", owner: "Nick Housley / Deloitte Rep", dueDate: "2025-12-09", status: "done", phase: "discovery", description: "Gap Analysis Summary - Identify missing ticket data"},
+                {id: 3, name: "Stakeholder Interviews (Business)", owner: "Pankaj Goswami / Jon Moran", dueDate: "2025-12-10", status: "done", phase: "discovery", description: "Business Requirements List - Focus on Go-Live timeline impact"},
+                {id: 4, name: "Stakeholder Interviews (Finance & IT)", owner: "Anders Linden / Laura Miller", dueDate: "2025-12-11", status: "done", phase: "discovery", description: "Commercial Constraints & IT requirements - Define Budget Envelope"},
+                {id: 5, name: "Draft PQQ Document", owner: "Nick Housley", dueDate: "2025-12-12", status: "done", phase: "documentation", description: "Draft PQQ V0.1 covering capability, experience and commercial model"},
+                {id: 6, name: "Market Engagement (Soft Sounding)", owner: "Nick Housley", dueDate: "2025-12-15", status: "done", phase: "discovery", description: "Vendor Interest Heatmap - Gauge appetite for timeline"},
+                {id: 7, name: "Market Engagement (Incumbent)", owner: "Nick Housley", dueDate: "2025-12-16", status: "done", phase: "discovery", description: "Incumbent Strategy Notes - Careful comms management"},
+                {id: 8, name: "Finalize PQQ & Long List (23 vendors)", owner: "Nick Housley", dueDate: "2025-12-17", status: "done", phase: "documentation", description: "Approved PQQ & 23-vendor long list"},
+                {id: 9, name: "Draft Sourcing Strategy", owner: "Nick Housley", dueDate: "2025-12-18", status: "done", phase: "documentation", description: "Sourcing Strategy V0.1"},
+                {id: 10, name: "Commercial Model Design", owner: "Anders Linden / Andreas Werner", dueDate: "2025-12-19", status: "done", phase: "documentation", description: "Pricing Template Draft - Fixed vs Variable validation"},
+                {id: 11, name: "Review Strategy with SteerCo", owner: "Anders Linden / Andreas Werner", dueDate: "2025-12-22", status: "done", phase: "documentation", description: "SteerCo feedback on sourcing strategy"},
+                {id: 12, name: "Refine Strategy & RFP Roadmap", owner: "Nick Housley", dueDate: "2025-12-23", status: "done", phase: "documentation", description: "Sourcing Strategy V0.2"},
+                {id: 13, name: "Final Strategy Pack Creation", owner: "Nick Housley", dueDate: "2025-12-29", status: "done", phase: "documentation", description: "Final Sourcing Strategy approved"},
+                {id: 14, name: "Executive Sign-off", owner: "Anders Linden / Andreas Werner", dueDate: "2025-12-30", status: "done", phase: "documentation", description: "SteerCo signed approval of strategy"},
+                {id: 15, name: "PQQ Launch Readiness Check", owner: "Nick Housley", dueDate: "2026-01-22", status: "done", phase: "documentation", description: "PQQ Launch Pack Ready"},
+                {id: 16, name: "Issue PQQ to Long List (23 vendors)", owner: "Nick Housley", dueDate: "2026-01-23", status: "done", phase: "evaluation", description: "PQQ issued to all 23 long-listed vendors"},
+                {id: 17, name: "Vendor PQQ Clarification Q&A", owner: "Nick Housley", dueDate: "2026-02-06", status: "done", phase: "evaluation", description: "Manage vendor clarification questions during PQQ period"},
+                {id: 18, name: "PQQ Submission Deadline", owner: "Nick Housley", dueDate: "2026-02-13", status: "done", phase: "evaluation", description: "Receive and log all PQQ responses"},
+                {id: 19, name: "Evaluate PQQ Responses", owner: "Don Pillay / Laura Miller / Nick Housley", dueDate: "2026-02-19", status: "inprogress", phase: "evaluation", description: "Score and evaluate all PQQ submissions against evaluation criteria"},
+                {id: 20, name: "Shortlist Notification (~6 suppliers)", owner: "Nick Housley", dueDate: "2026-02-20", status: "notstarted", phase: "evaluation", description: "Notify shortlisted and unsuccessful vendors"},
+                {id: 21, name: "Prepare RFP Document", owner: "Don Pillay / Nick Housley", dueDate: "2026-02-23", status: "notstarted", phase: "documentation", description: "Prepare detailed RFP for shortlisted vendors"},
+                {id: 22, name: "Issue RFP to Shortlist", owner: "Nick Housley", dueDate: "2026-02-24", status: "notstarted", phase: "evaluation", description: "Issue RFP to ~6 shortlisted vendors"},
+                {id: 23, name: "Supplier Briefing Sessions", owner: "Nick Housley / Don Pillay", dueDate: "2026-02-27", status: "notstarted", phase: "evaluation", description: "Host supplier briefing sessions WC 24th February"},
+                {id: 24, name: "Vendor Q&A Period", owner: "Nick Housley", dueDate: "2026-03-10", status: "notstarted", phase: "evaluation", description: "Manage vendor clarification questions during RFP period"},
+                {id: 25, name: "RFP Submissions Due", owner: "Nick Housley", dueDate: "2026-03-20", status: "notstarted", phase: "evaluation", description: "Receive and log all RFP responses"},
+                {id: 26, name: "Supplier Presentations – Week 1", owner: "Don Pillay / Laura Miller / Nick Housley", dueDate: "2026-03-27", status: "notstarted", phase: "evaluation", description: "First round of supplier presentations and Q&A (WC 23rd March)"},
+                {id: 27, name: "Supplier Presentations – Week 2", owner: "Don Pillay / Laura Miller / Nick Housley", dueDate: "2026-04-03", status: "notstarted", phase: "evaluation", description: "Second round of supplier presentations and Q&A"},
+                {id: 28, name: "Evaluation Consolidation & Scoring", owner: "Don Pillay / Laura Miller / Nick Housley", dueDate: "2026-04-07", status: "notstarted", phase: "evaluation", description: "Consolidate all evaluation scores and prepare recommendation"},
+                {id: 29, name: "Down Selection Decision", owner: "Anders Linden / Andreas Werner / SteerCo", dueDate: "2026-04-10", status: "notstarted", phase: "selection", description: "SteerCo down selection to BAFO vendors"},
+                {id: 30, name: "Issue BAFO to Down-Selected Vendors", owner: "Nick Housley", dueDate: "2026-04-13", status: "notstarted", phase: "selection", description: "Issue Best and Final Offer request to down-selected vendors"},
+                {id: 31, name: "BAFO Submissions Due", owner: "Nick Housley", dueDate: "2026-04-24", status: "notstarted", phase: "selection", description: "Receive and evaluate BAFO responses"},
+                {id: 32, name: "Contract Negotiations", owner: "Nick Housley / Legal", dueDate: "2026-04-28", status: "notstarted", phase: "selection", description: "Negotiate final contract terms with preferred vendor"},
+                {id: 33, name: "Contract Award", owner: "Anders Linden / Andreas Werner", dueDate: "2026-04-30", status: "notstarted", phase: "selection", description: "SteerCo contract award decision and vendor notification"},
+                {id: 34, name: "Transition Kick-off", owner: "Don Pillay / Laura Miller", dueDate: "2026-05-05", status: "notstarted", phase: "selection", description: "Begin transition planning with selected vendor"},
+                {id: 35, name: "Knowledge Transfer Phase 1", owner: "Laura Miller", dueDate: "2026-05-30", status: "notstarted", phase: "selection", description: "Initial knowledge transfer sessions"},
+                {id: 36, name: "Knowledge Transfer Phase 2", owner: "Laura Miller", dueDate: "2026-06-30", status: "notstarted", phase: "selection", description: "Advanced knowledge transfer and handover"},
+                {id: 37, name: "Hypercare Planning", owner: "Don Pillay / Laura Miller", dueDate: "2026-07-15", status: "notstarted", phase: "selection", description: "Plan hypercare support model"},
+                {id: 38, name: "Pre-Go-Live Readiness", owner: "Laura Miller / Don Pillay", dueDate: "2026-08-15", status: "notstarted", phase: "selection", description: "Verify all systems ready for transition"},
+                {id: 39, name: "Mobilisation Complete", owner: "Don Pillay", dueDate: "2026-08-31", status: "notstarted", phase: "selection", description: "Full mobilisation of new AMS team"},
+                {id: 40, name: "US Go-Live Support", owner: "Selected AMS Vendor", dueDate: "2026-09-01", status: "notstarted", phase: "selection", description: "Hypercare support for US Go-Live"}
             ],
             vendors: [
-                {id: 1, name: "Accenture", type: "Global SI", tier: "Tier 1", strengths: "Market leader in S/4HANA. Massive scale. 'Soar with Accenture' methodology.", relevance: "Deep expertise in High Tech & Manufacturing industries.", status: "longlist", contacts: []},
-                {id: 2, name: "Deloitte", type: "Global SI", tier: "Tier 1", strengths: "Strong on Business Transformation. Often already in the C-suite.", relevance: "Author of your Due Diligence Report (High Context).", status: "warm", contacts: []},
-                {id: 3, name: "Capgemini", type: "Global SI", tier: "Tier 1", strengths: "Very strong in Europe/Manufacturing. Focus on 'Intelligent Enterprise'.", relevance: "Excellent track record in discrete manufacturing.", status: "longlist", contacts: []},
-                {id: 4, name: "NTT DATA", type: "Global SI", tier: "Tier 2", strengths: "Strategic Note: Known partner for Hexagon's own products (HxGN EAM).", relevance: "High Synergy. They may already know Hexagon's ecosystem.", status: "warm", contacts: []},
-                {id: 5, name: "Infosys", type: "Global SI", tier: "Tier 1", strengths: "Strong on cost-optimization and AI automation (Infosys Cobalt).", relevance: "Good for 'keeping the lights on' at lower cost.", status: "longlist", contacts: []},
-                {id: 6, name: "TCS", type: "Global SI", tier: "Tier 1", strengths: "Massive scale, very process-driven. 'Perpetual Beta' model.", relevance: "Strong in Engineering & Industrial services.", status: "longlist", contacts: []},
-                {id: 7, name: "HCLTech", type: "Global SI", tier: "Tier 2", strengths: "'Engineering DNA'. Very strong in technical SAP landscape management.", relevance: "Culturally fits Hexagon's engineering background.", status: "longlist", contacts: []},
-                {id: 8, name: "IBM Consulting", type: "Tech Giant", tier: "Tier 1", strengths: "'Rise with SAP' premium partner. Deep AI/Watson integration capabilities.", relevance: "Heritage in complex legacy-to-cloud migrations.", status: "longlist", contacts: []},
-                {id: 9, name: "SAP (DBS)", type: "OEM", tier: "Tier 1", strengths: "SAP's own 'Digital Business Services' (MaxAttention).", relevance: "Highest cost, but 100% proximity to product dev.", status: "longlist", contacts: []},
-                {id: 10, name: "Lemongrass", type: "Boutique", tier: "Niche", strengths: "'SAP on Cloud' specialists (esp. AWS). Very technical, less functional.", relevance: "If Hexagon is moving SAP to AWS/Azure, they are top tier.", status: "longlist", contacts: []},
-                {id: 11, name: "BirlaSoft", type: "Boutique", tier: "Mid", strengths: "Strong in Manufacturing and Energy. 'Challenger' status.", relevance: "Good agile alternative to the Big 4.", status: "longlist", contacts: []},
-                {id: 12, name: "LTIMindtree", type: "Global SI", tier: "Mid", strengths: "'Challenger' to the big players. Agile and hungry for deals.", relevance: "Good balance of size vs. attention.", status: "longlist", contacts: []},
-                {id: 13, name: "Wipro", type: "Global SI", tier: "Tier 2", strengths: "Recognized for significant growth in SAP S/4HANA revenue recently.", relevance: "Strong presence in US markets.", status: "longlist", contacts: []}
+                {id: 1, name: "Accenture", type: "Global SI", tier: "Tier 1", strengths: "Market leader in S/4HANA. Massive scale. 'Soar with Accenture' methodology.", relevance: "Deep expertise in High Tech & Manufacturing industries.", status: "shortlist", contacts: []},
+                {id: 2, name: "Deloitte", type: "Global SI", tier: "Tier 1", strengths: "Strong on Business Transformation. Often already in the C-suite.", relevance: "Author of your Due Diligence Report (High Context).", status: "shortlist", contacts: []},
+                {id: 3, name: "Wipro", type: "Global SI", tier: "Tier 2", strengths: "Recognized for significant growth in SAP S/4HANA revenue recently.", relevance: "Strong presence in US markets.", status: "shortlist", contacts: []},
+                {id: 4, name: "Infosys", type: "Global SI", tier: "Tier 1", strengths: "Strong on cost-optimization and AI automation (Infosys Cobalt).", relevance: "Good for 'keeping the lights on' at lower cost.", status: "shortlist", contacts: []},
+                {id: 5, name: "HCL", type: "Global SI", tier: "Tier 2", strengths: "'Engineering DNA'. Very strong in technical SAP landscape management.", relevance: "Culturally fits Hexagon's engineering background.", status: "shortlist", contacts: []},
+                {id: 6, name: "Delaware", type: "Regional SI", tier: "Mid", strengths: "SAP-focused consultancy with deep functional expertise and agile delivery.", relevance: "Known for tailored SAP AMS services across Europe.", status: "shortlist", contacts: []},
+                {id: 7, name: "Cognizant", type: "Global SI", tier: "Tier 2", strengths: "Strong digital transformation and SAP practice with global delivery model.", relevance: "Competitive pricing with broad SAP support capability.", status: "shortlist", contacts: []},
+                {id: 8, name: "Nagarro", type: "Boutique", tier: "Niche", strengths: "Engineering-led digital transformation with agile SAP expertise.", relevance: "Nimble and innovation-focused, suitable for lean AMS models.", status: "shortlist", contacts: []},
+                {id: 9, name: "Tech Mahindra", type: "Global SI", tier: "Tier 2", strengths: "Strong SAP practice with industrial and manufacturing sector experience.", relevance: "Cost-effective AMS delivery with global support capability.", status: "shortlist", contacts: []},
+                {id: 10, name: "HCHI", type: "Boutique", tier: "Niche", strengths: "Specialist SAP support services with focused AMS delivery model.", relevance: "Niche SAP expertise suited to specific support requirements.", status: "shortlist", contacts: []},
+                {id: 11, name: "IBM Consulting", type: "Tech Giant", tier: "Tier 1", strengths: "'Rise with SAP' premium partner. Deep AI/Watson integration capabilities.", relevance: "Heritage in complex legacy-to-cloud migrations.", status: "longlist", contacts: []},
+                {id: 12, name: "Capgemini", type: "Global SI", tier: "Tier 1", strengths: "Very strong in Europe/Manufacturing. Focus on 'Intelligent Enterprise'.", relevance: "Excellent track record in discrete manufacturing.", status: "longlist", contacts: []},
+                {id: 13, name: "TCS", type: "Global SI", tier: "Tier 1", strengths: "Massive scale, very process-driven. 'Perpetual Beta' model.", relevance: "Strong in Engineering & Industrial services.", status: "longlist", contacts: []},
+                {id: 14, name: "Ernst & Young", type: "Global SI", tier: "Tier 1", strengths: "Strong advisory and transformation capability with SAP practice.", relevance: "Combines business advisory with SAP technical delivery.", status: "longlist", contacts: []},
+                {id: 15, name: "PwC", type: "Global SI", tier: "Tier 1", strengths: "Broad SAP S/4HANA expertise with strong commercial and risk management.", relevance: "Established in large enterprise SAP programmes.", status: "longlist", contacts: []},
+                {id: 16, name: "NTT Data", type: "Global SI", tier: "Tier 2", strengths: "Strategic Note: Known partner for Hexagon's own products (HxGN EAM).", relevance: "High Synergy. They may already know Hexagon's ecosystem.", status: "longlist", contacts: []},
+                {id: 17, name: "DXC Technology", type: "Global SI", tier: "Tier 2", strengths: "Large-scale SAP managed services with global delivery and ITIL alignment.", relevance: "Experience in complex multi-country SAP support environments.", status: "longlist", contacts: []},
+                {id: 18, name: "SAP DBS", type: "OEM", tier: "Tier 1", strengths: "SAP's own 'Digital Business Services' (MaxAttention).", relevance: "Highest cost, but 100% proximity to product dev.", status: "longlist", contacts: []},
+                {id: 19, name: "Atos", type: "Global SI", tier: "Tier 2", strengths: "Digital transformation and SAP services with strong infrastructure integration.", relevance: "Pan-European SAP support with hybrid cloud capability.", status: "longlist", contacts: []},
+                {id: 20, name: "LTI Mindtree", type: "Global SI", tier: "Mid", strengths: "'Challenger' to the big players. Agile and hungry for deals.", relevance: "Good balance of size vs. attention.", status: "longlist", contacts: []},
+                {id: 21, name: "Fujitsu", type: "Tech Giant", tier: "Tier 2", strengths: "Managed IT services and SAP support with strong APAC and European presence.", relevance: "Stable delivery model for infrastructure-heavy SAP environments.", status: "longlist", contacts: []},
+                {id: 22, name: "Samsung SDS", type: "Tech Giant", tier: "Tier 2", strengths: "SAP integration expertise with advanced logistics and supply chain capabilities.", relevance: "Strong in manufacturing and high-tech sector SAP support.", status: "longlist", contacts: []},
+                {id: 23, name: "Genpact", type: "Global SI", tier: "Mid", strengths: "Process-driven SAP services with strong finance and operations expertise.", relevance: "Effective for AMS in finance-heavy SAP landscapes.", status: "longlist", contacts: []}
             ],
             risks: [
                 {id: 1, risk: "SAP USA Go-Live Date", impact: "Critical. If moves to Sept, transition period extends.", owner: "CIO / Program Lead", dueDate: "2025-12-15", rag: "red", mitigation: "Need Scenario A (June) and B (Sept) in RFP", probability: "high", impactLevel: "high"},
@@ -2083,15 +2168,59 @@
                 {id: 1, title: "RFP Timeline Confirmed", description: "Agreed on 9-month programme timeline", rationale: "Balances speed with thoroughness", owner: "CIO", date: "2025-12-08", status: "approved"}
             ],
             vendorScores: {},
+            pqqCriteria: [
+                {id: 1, section: "2", title: "SAP Application Services Capability", maxPoints: 45, subCriteria: [
+                    {id: "2.1", title: "S/4HANA Support Experience", maxPoints: 10},
+                    {id: "2.2", title: "Personnel & Geographic Coverage", maxPoints: 10},
+                    {id: "2.3", title: "S/4HANA Public Cloud Edition Expertise", maxPoints: 10},
+                    {id: "2.4", title: "China Legal Entity & Delivery Capability", maxPoints: 15}
+                ]},
+                {id: 2, section: "3", title: "Post-Go-Live Support Experience", maxPoints: 25, subCriteria: [
+                    {id: "3.1", title: "Post-Go-Live Case Studies", maxPoints: 15},
+                    {id: "3.2", title: "Client Retention Rate", maxPoints: 5},
+                    {id: "3.3", title: "Inherited Implementation Challenges", maxPoints: 5}
+                ]},
+                {id: 3, section: "4", title: "Transition Capability", maxPoints: 25, subCriteria: [
+                    {id: "4.1", title: "Knowledge Transfer Methodology", maxPoints: 15},
+                    {id: "4.2", title: "Implementation Partner Transition", maxPoints: 10}
+                ]},
+                {id: 4, section: "5", title: "Hypercare Delivery Model", maxPoints: 25, subCriteria: [
+                    {id: "5.1", title: "Transition Approach", maxPoints: 10},
+                    {id: "5.2", title: "Resource Proposal", maxPoints: 10},
+                    {id: "5.3", title: "Performance Evidence", maxPoints: 5}
+                ]},
+                {id: 5, section: "6", title: "Global Scalability", maxPoints: 20, subCriteria: [
+                    {id: "6.1", title: "Phased Global Rollout Support", maxPoints: 10},
+                    {id: "6.2", title: "Global Rollout Experience", maxPoints: 5},
+                    {id: "6.3", title: "China-Specific Rollout Planning", maxPoints: 5}
+                ]},
+                {id: 6, section: "7", title: "Resource Commitment & Bench Strength", maxPoints: 10, subCriteria: [
+                    {id: "7.1", title: "Current Bench Strength", maxPoints: 5},
+                    {id: "7.2", title: "Scalability & Surge Capacity", maxPoints: 5}
+                ]}
+            ],
+            pqqPassFail: [
+                {id: 1, section: "1", title: "Company Information & Business Overview"},
+                {id: 2, section: "8", title: "Supporting Applications & Technical Breadth"},
+                {id: 3, section: "9", title: "Business Process Outsourcing Capabilities"},
+                {id: 4, section: "10", title: "Commercial Approach"},
+                {id: 5, section: "11", title: "Compliance & Declarations"}
+            ],
+            pqqScores: {},
+            pqqPassFailResults: {},
             milestones: [
-                {id: 1, title: "Discovery Phase Complete", date: "2025-12-31", status: "notstarted"},
-                {id: 2, title: "Selection Questionnaire Issued", date: "2026-01-05", status: "notstarted"},
-                {id: 3, title: "Shortlist Selected (13 → 5-6)", date: "2026-01-30", status: "notstarted"},
-                {id: 4, title: "Final RFP Issued to Shortlist", date: "2026-02-01", status: "notstarted"},
-                {id: 5, title: "Vendor Presentations Complete", date: "2026-03-15", status: "notstarted"},
-                {id: 6, title: "Contract Signed", date: "2026-04-30", status: "notstarted"},
-                {id: 7, title: "Mobilisation Complete", date: "2026-08-31", status: "notstarted"},
-                {id: 8, title: "US Go-Live", date: "2026-09-01", status: "notstarted"}
+                {id: 1, title: "PQQ Launch", date: "2026-01-23", status: "complete"},
+                {id: 2, title: "PQQ Submission Deadline", date: "2026-02-13", status: "complete"},
+                {id: 3, title: "Shortlist Notification (~6 suppliers)", date: "2026-02-20", status: "notstarted"},
+                {id: 4, title: "RFP Issued to Shortlist", date: "2026-02-24", status: "notstarted"},
+                {id: 5, title: "Supplier Briefings", date: "2026-02-27", status: "notstarted"},
+                {id: 6, title: "RFP Submissions Due", date: "2026-03-20", status: "notstarted"},
+                {id: 7, title: "Supplier Presentations & Evaluation", date: "2026-03-23", status: "notstarted"},
+                {id: 8, title: "Down Selection", date: "2026-04-10", status: "notstarted"},
+                {id: 9, title: "Best and Final Offer (BAFO)", date: "2026-04-13", status: "notstarted"},
+                {id: 10, title: "Contract Award", date: "2026-04-30", status: "notstarted"},
+                {id: 11, title: "Mobilisation Complete", date: "2026-08-31", status: "notstarted"},
+                {id: 12, title: "US Go-Live", date: "2026-09-01", status: "notstarted"}
             ],
             evaluation: [
                 {id: 1, criterion: "Transition Capability", weight: 25, goodLooks: "Detailed knowledge transfer plan, named transition manager, 30-day handover timeline", redFlags: "Vague 'we'll work it out', no transition plan, assumes implementation was perfect"},
@@ -2102,23 +2231,27 @@
                 {id: 6, criterion: "Value Beyond Support", weight: 5, goodLooks: "Proactive optimisation examples, continuous improvement methodology, release management", redFlags: "Break-fix mentality only, reactive not proactive"}
             ],
             stakeholders: [
-                {id: 1, name: "CIO", role: "Executive Sponsor", department: "IT Leadership", email: "", influence: "high", interest: "high", notes: "Ultimate decision maker for SAP AMS selection"},
-                {id: 2, name: "CFO", role: "Budget Owner", department: "Finance", email: "", influence: "high", interest: "medium", notes: "Controls budget envelope and commercial approval"},
-                {id: 3, name: "Procurement Director", role: "Process Owner", department: "Procurement", email: "", influence: "high", interest: "high", notes: "Leads RFP process and vendor negotiations"},
-                {id: 4, name: "USA Ops Lead", role: "Key User", department: "US Operations", email: "", influence: "medium", interest: "high", notes: "Critical for US Go-Live requirements"},
-                {id: 5, name: "IT Ops Manager", role: "Technical Lead", department: "IT Operations", email: "", influence: "medium", interest: "high", notes: "Manages current SAP support, ticket data owner"},
-                {id: 6, name: "Global Procurement", role: "Stakeholder", department: "Procurement", email: "", influence: "medium", interest: "medium", notes: "Coordinates global vendor management"},
-                {id: 7, name: "Programme Lead", role: "Project Manager", department: "PMO", email: "", influence: "medium", interest: "high", notes: "Day-to-day RFP coordination"}
+                {id: 1, name: "Anders Linden", role: "Executive Sponsor", department: "Finance", email: "", influence: "high", interest: "high", notes: "Executive Sponsor – strategic oversight of RFP, major gate approvals, supplier selection and contract award authority"},
+                {id: 2, name: "Andreas Werner", role: "Executive Sponsor", department: "Finance", email: "", influence: "high", interest: "high", notes: "Executive Sponsor – strategic oversight of RFP, major gate approvals, supplier selection and contract award authority"},
+                {id: 3, name: "Laura Miller", role: "IT Representative", department: "IT", email: "", influence: "high", interest: "high", notes: "IT SteerCo member – represents IT requirements and technical evaluation"},
+                {id: 4, name: "Don Pillay", role: "SAP Project Lead", department: "SAP Programme", email: "", influence: "high", interest: "high", notes: "SAP Project SteerCo member – leads SAP-specific requirements and evaluation"},
+                {id: 5, name: "Nick Housley", role: "Procurement Lead", department: "Procurement", email: "", influence: "high", interest: "high", notes: "Procurement SteerCo member – leads RFP process, supplier engagement and commercial negotiations"},
+                {id: 6, name: "Pankaj Goswami", role: "Business Representative", department: "Business", email: "", influence: "medium", interest: "high", notes: "Business SteerCo member – represents business requirements and end-user needs"},
+                {id: 7, name: "Simon Schmitt", role: "Business Representative", department: "Business", email: "", influence: "medium", interest: "high", notes: "Business SteerCo member – represents business requirements and end-user needs"},
+                {id: 8, name: "Jon Moran", role: "Business Representative", department: "Business", email: "", influence: "medium", interest: "high", notes: "Business SteerCo member – represents business requirements and end-user needs"},
+                {id: 9, name: "Feng Xuecheng", role: "Business Representative", department: "Business", email: "", influence: "medium", interest: "medium", notes: "Business SteerCo member – represents business requirements and end-user needs"}
             ],
             raciActivities: [
-                {id: 1, activity: "RFP Strategy & Planning", raci: {1: "A", 2: "C", 3: "R", 4: "I", 5: "C", 6: "C", 7: "R"}},
-                {id: 2, activity: "Vendor Long List Creation", raci: {1: "I", 2: "I", 3: "A", 4: "C", 5: "C", 6: "R", 7: "R"}},
-                {id: 3, activity: "Selection Questionnaire (SQ)", raci: {1: "I", 2: "I", 3: "A", 4: "C", 5: "C", 6: "C", 7: "R"}},
-                {id: 4, activity: "Vendor Evaluation & Scoring", raci: {1: "A", 2: "C", 3: "R", 4: "R", 5: "R", 6: "C", 7: "R"}},
-                {id: 5, activity: "Commercial Negotiation", raci: {1: "A", 2: "R", 3: "R", 4: "I", 5: "I", 6: "C", 7: "C"}},
-                {id: 6, activity: "Contract Award Decision", raci: {1: "A", 2: "A", 3: "R", 4: "C", 5: "C", 6: "I", 7: "I"}},
-                {id: 7, activity: "Transition Planning", raci: {1: "I", 2: "I", 3: "C", 4: "R", 5: "A", 6: "I", 7: "R"}},
-                {id: 8, activity: "US Go-Live Support", raci: {1: "I", 2: "I", 3: "I", 4: "A", 5: "R", 6: "I", 7: "C"}}
+                {id: 1, activity: "RFP Strategy & Planning", raci: {1: "A", 2: "A", 3: "C", 4: "C", 5: "R", 6: "I", 7: "I", 8: "I", 9: "I"}},
+                {id: 2, activity: "PQQ Design & Issue", raci: {1: "I", 2: "I", 3: "C", 4: "C", 5: "R", 6: "I", 7: "I", 8: "I", 9: "I"}},
+                {id: 3, activity: "PQQ Evaluation & Shortlisting", raci: {1: "A", 2: "A", 3: "R", 4: "R", 5: "R", 6: "C", 7: "C", 8: "C", 9: "I"}},
+                {id: 4, activity: "RFP Document Preparation", raci: {1: "I", 2: "I", 3: "C", 4: "R", 5: "A", 6: "C", 7: "C", 8: "I", 9: "I"}},
+                {id: 5, activity: "Supplier Briefings", raci: {1: "I", 2: "I", 3: "I", 4: "C", 5: "R", 6: "I", 7: "I", 8: "I", 9: "I"}},
+                {id: 6, activity: "Vendor Evaluation & Scoring", raci: {1: "A", 2: "A", 3: "R", 4: "R", 5: "R", 6: "C", 7: "C", 8: "C", 9: "I"}},
+                {id: 7, activity: "Down Selection Decision", raci: {1: "A", 2: "A", 3: "C", 4: "C", 5: "R", 6: "C", 7: "C", 8: "C", 9: "C"}},
+                {id: 8, activity: "BAFO Evaluation", raci: {1: "A", 2: "A", 3: "R", 4: "R", 5: "R", 6: "C", 7: "C", 8: "C", 9: "I"}},
+                {id: 9, activity: "Contract Award Decision", raci: {1: "A", 2: "A", 3: "C", 4: "C", 5: "R", 6: "I", 7: "I", 8: "I", 9: "I"}},
+                {id: 10, activity: "Transition Planning", raci: {1: "I", 2: "I", 3: "R", 4: "A", 5: "C", 6: "C", 7: "C", 8: "C", 9: "I"}}
             ],
             documents: [
                 {id: "discovery", name: "1. Discovery & Strategy", icon: "📂", documents: [
@@ -2131,9 +2264,9 @@
                     {id: 7, name: "Incumbent Strategy Notes.docx", status: "template", folder: "discovery"}
                 ]},
                 {id: "documentation", name: "2. RFP Documentation", icon: "📂", documents: [
-                    {id: 8, name: "Selection Questionnaire (SQ).docx", status: "draft", folder: "documentation"},
-                    {id: 9, name: "Vendor Long List.xlsx", status: "draft", folder: "documentation"},
-                    {id: 10, name: "Sourcing Strategy.docx", status: "template", folder: "documentation"},
+                    {id: 8, name: "PQQ Document - SAP AMS.pdf", status: "final", folder: "documentation"},
+                    {id: 9, name: "Vendor Long List (23 vendors).xlsx", status: "final", folder: "documentation"},
+                    {id: 10, name: "Sourcing Strategy.docx", status: "final", folder: "documentation"},
                     {id: 11, name: "Commercial Model Template.xlsx", status: "template", folder: "documentation"},
                     {id: 12, name: "Pricing Template.xlsx", status: "template", folder: "documentation"},
                     {id: 13, name: "RFP Document.docx", status: "template", folder: "documentation"},
@@ -2141,12 +2274,14 @@
                     {id: 15, name: "NDA Template.docx", status: "final", folder: "documentation"}
                 ]},
                 {id: "evaluation", name: "3. Evaluation & Selection", icon: "📂", documents: [
-                    {id: 16, name: "Evaluation Criteria Matrix.xlsx", status: "template", folder: "evaluation"},
-                    {id: 17, name: "Vendor Scorecard Template.xlsx", status: "template", folder: "evaluation"},
-                    {id: 18, name: "Presentation Agenda Template.docx", status: "template", folder: "evaluation"},
-                    {id: 19, name: "Reference Check Questions.docx", status: "template", folder: "evaluation"},
-                    {id: 20, name: "Technical Assessment Checklist.xlsx", status: "template", folder: "evaluation"},
-                    {id: 21, name: "Commercial Comparison Matrix.xlsx", status: "template", folder: "evaluation"}
+                    {id: 16, name: "PQQ Response Evaluation Matrix.xlsx", status: "draft", folder: "evaluation"},
+                    {id: 17, name: "PQQ Scoring Sheet.xlsx", status: "draft", folder: "evaluation"},
+                    {id: 18, name: "Evaluation Criteria Matrix.xlsx", status: "template", folder: "evaluation"},
+                    {id: 19, name: "Vendor Scorecard Template.xlsx", status: "template", folder: "evaluation"},
+                    {id: 20, name: "Presentation Agenda Template.docx", status: "template", folder: "evaluation"},
+                    {id: 21, name: "Reference Check Questions.docx", status: "template", folder: "evaluation"},
+                    {id: 22, name: "Technical Assessment Checklist.xlsx", status: "template", folder: "evaluation"},
+                    {id: 23, name: "Commercial Comparison Matrix.xlsx", status: "template", folder: "evaluation"}
                 ]},
                 {id: "selection", name: "4. Final Selection & Award", icon: "📂", documents: [
                     {id: 22, name: "Recommendation Report.docx", status: "template", folder: "selection"},
@@ -2166,26 +2301,30 @@
                 ]}
             ],
             meetings: [
-                {id: 1, title: "RFP Kick-off Meeting", date: "2025-12-08", time: "09:00", duration: 2, location: "Main Conference Room", attendees: "CIO, Procurement Director, Programme Lead", agenda: "Project objectives, timeline review, team introductions", type: "internal"},
-                {id: 2, title: "Stakeholder Workshop - USA Requirements", date: "2025-12-10", time: "14:00", duration: 3, location: "Teams", attendees: "USA Ops Lead, IT Ops Manager, CIO", agenda: "Deep dive into US operations requirements and June vs Sept scenarios", type: "workshop"},
-                {id: 3, title: "Deloitte Report Review", date: "2025-12-09", time: "10:00", duration: 1.5, location: "Teams", attendees: "Deloitte Rep, CIO, Programme Lead", agenda: "Review due diligence findings, identify gaps", type: "review"},
-                {id: 4, title: "CFO Budget Discussion", date: "2025-12-11", time: "11:00", duration: 1, location: "CFO Office", attendees: "CFO, CIO, Global Procurement", agenda: "Budget envelope discussion, commercial constraints", type: "internal"},
-                {id: 5, title: "Steering Committee Meeting", date: "2025-12-22", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "CIO, CFO, Procurement Director, Programme Lead", agenda: "Strategy review, milestone approval, risk escalation", type: "steering"},
-                {id: 6, title: "SQ Launch Briefing", date: "2026-01-05", time: "10:00", duration: 1, location: "Teams", attendees: "Procurement Director, Programme Lead", agenda: "Finalize SQ distribution, vendor communication plan", type: "internal"},
-                {id: 7, title: "Steering Committee - January", date: "2026-01-15", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "CIO, CFO, Procurement Director, Programme Lead", agenda: "SQ progress update, vendor response tracking", type: "steering"},
-                {id: 8, title: "Shortlist Decision Workshop", date: "2026-01-30", time: "09:00", duration: 4, location: "Main Conference Room", attendees: "CIO, Procurement Director, IT Ops, USA Ops Lead", agenda: "Review SQ scores, select shortlist vendors", type: "workshop"},
-                {id: 9, title: "RFP Final Review", date: "2026-02-01", time: "14:00", duration: 2, location: "Teams", attendees: "Procurement Director, Legal, Programme Lead", agenda: "Final RFP document review before issue", type: "review"},
-                {id: 10, title: "Steering Committee - February", date: "2026-02-15", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "CIO, CFO, Procurement Director, Programme Lead", agenda: "RFP status, vendor Q&A summary", type: "steering"},
-                {id: 11, title: "Vendor Presentation: Accenture", date: "2026-03-12", time: "09:00", duration: 3, location: "Main Conference Room", attendees: "Evaluation Team, CIO", agenda: "Vendor capability presentation and Q&A", type: "vendor"},
-                {id: 12, title: "Vendor Presentation: Deloitte", date: "2026-03-12", time: "14:00", duration: 3, location: "Main Conference Room", attendees: "Evaluation Team, CIO", agenda: "Vendor capability presentation and Q&A", type: "vendor"},
-                {id: 13, title: "Vendor Presentation: NTT DATA", date: "2026-03-13", time: "09:00", duration: 3, location: "Main Conference Room", attendees: "Evaluation Team, CIO", agenda: "Vendor capability presentation and Q&A", type: "vendor"},
-                {id: 14, title: "Vendor Presentation: Capgemini", date: "2026-03-13", time: "14:00", duration: 3, location: "Main Conference Room", attendees: "Evaluation Team, CIO", agenda: "Vendor capability presentation and Q&A", type: "vendor"},
-                {id: 15, title: "Steering Committee - March", date: "2026-03-20", time: "15:00", duration: 2, location: "Boardroom", attendees: "CIO, CFO, Procurement Director, Programme Lead", agenda: "Vendor presentation debrief, preliminary scoring", type: "steering"},
-                {id: 16, title: "Final Selection Board", date: "2026-04-15", time: "09:00", duration: 4, location: "Boardroom", attendees: "CIO, CFO, Procurement Director, USA Ops Lead, IT Ops", agenda: "Final vendor selection decision", type: "steering"},
-                {id: 17, title: "Contract Negotiation Kick-off", date: "2026-04-20", time: "10:00", duration: 2, location: "Teams", attendees: "Procurement Director, Legal, Selected Vendor", agenda: "Begin contract negotiations", type: "vendor"},
-                {id: 18, title: "Transition Planning Workshop", date: "2026-05-05", time: "09:00", duration: 4, location: "Main Conference Room", attendees: "Programme Lead, IT Ops, Selected Vendor", agenda: "Detailed transition planning", type: "workshop"},
-                {id: 19, title: "Steering Committee - Monthly", date: "2026-06-15", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "CIO, CFO, Procurement Director, Programme Lead", agenda: "Transition progress, knowledge transfer status", type: "steering"},
-                {id: 20, title: "Go-Live Readiness Review", date: "2026-08-25", time: "09:00", duration: 3, location: "Main Conference Room", attendees: "CIO, IT Ops, Programme Lead, AMS Vendor", agenda: "Final readiness check before US Go-Live", type: "review"}
+                {id: 1, title: "RFP Kick-off Meeting", date: "2025-12-08", time: "09:00", duration: 2, location: "Main Conference Room", attendees: "Anders Linden, Andreas Werner, Nick Housley, Don Pillay, Laura Miller", agenda: "Project objectives, timeline review, team introductions", type: "internal"},
+                {id: 2, title: "Stakeholder Workshop – Business Requirements", date: "2025-12-10", time: "14:00", duration: 3, location: "Teams", attendees: "Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng, Laura Miller, Don Pillay", agenda: "Deep dive into business and IT requirements", type: "workshop"},
+                {id: 3, title: "Deloitte Report Review", date: "2025-12-09", time: "10:00", duration: 1.5, location: "Teams", attendees: "Deloitte Rep, Anders Linden, Nick Housley", agenda: "Review due diligence findings, identify gaps", type: "review"},
+                {id: 4, title: "Finance & Commercial Workshop", date: "2025-12-11", time: "11:00", duration: 1, location: "Teams", attendees: "Anders Linden, Andreas Werner, Nick Housley", agenda: "Budget envelope discussion, commercial constraints", type: "internal"},
+                {id: 5, title: "SteerCo – Strategy Sign-off", date: "2025-12-22", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "Strategy review, milestone approval, risk escalation", type: "steering"},
+                {id: 6, title: "PQQ Launch Preparation", date: "2026-01-20", time: "10:00", duration: 1, location: "Teams", attendees: "Nick Housley, Don Pillay, Laura Miller", agenda: "Finalise PQQ document and vendor communication plan ahead of 23rd Jan launch", type: "internal"},
+                {id: 7, title: "SteerCo – PQQ Launch Update", date: "2026-01-29", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "PQQ issued update, vendor engagement status, programme progress", type: "steering"},
+                {id: 8, title: "SteerCo – PQQ Evaluation Progress", date: "2026-02-12", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "PQQ response review, shortlisting criteria, risk update", type: "steering"},
+                {id: 9, title: "PQQ Evaluation Workshop", date: "2026-02-16", time: "09:00", duration: 4, location: "Main Conference Room", attendees: "Nick Housley, Don Pillay, Laura Miller, Pankaj Goswami", agenda: "Score PQQ responses, agree shortlist of ~6 suppliers", type: "workshop"},
+                {id: 10, title: "Shortlist Notification", date: "2026-02-20", time: "14:00", duration: 1, location: "Teams", attendees: "Nick Housley, Don Pillay", agenda: "Notify shortlisted and unsuccessful vendors", type: "internal"},
+                {id: 11, title: "RFP Document Final Review", date: "2026-02-23", time: "14:00", duration: 2, location: "Teams", attendees: "Nick Housley, Don Pillay, Laura Miller", agenda: "Final RFP document review before issue to shortlist", type: "review"},
+                {id: 12, title: "Supplier Briefing Sessions", date: "2026-02-27", time: "09:00", duration: 4, location: "Main Conference Room", attendees: "Nick Housley, Don Pillay, Laura Miller, Shortlisted Suppliers", agenda: "Supplier briefings for shortlisted vendors WC 24th February", type: "vendor"},
+                {id: 13, title: "SteerCo – RFP Launch & Shortlist", date: "2026-02-26", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "RFP issued confirmation, shortlist approved, supplier briefing update", type: "steering"},
+                {id: 14, title: "SteerCo – RFP Period Progress", date: "2026-03-12", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "RFP Q&A summary, submission readiness, evaluation planning", type: "steering"},
+                {id: 15, title: "Supplier Presentations – Week 1", date: "2026-03-23", time: "09:00", duration: 6, location: "Main Conference Room", attendees: "Anders Linden, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng, Shortlisted Suppliers", agenda: "Supplier capability presentations and Q&A sessions", type: "vendor"},
+                {id: 16, title: "SteerCo – Presentations Debrief", date: "2026-03-26", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "Presentation debrief, preliminary scoring review, evaluation progress", type: "steering"},
+                {id: 17, title: "Supplier Presentations – Week 2", date: "2026-03-30", time: "09:00", duration: 6, location: "Main Conference Room", attendees: "Anders Linden, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng, Shortlisted Suppliers", agenda: "Remaining supplier presentations and final Q&A sessions", type: "vendor"},
+                {id: 18, title: "Evaluation Consolidation Workshop", date: "2026-04-07", time: "09:00", duration: 4, location: "Main Conference Room", attendees: "Nick Housley, Don Pillay, Laura Miller, Pankaj Goswami", agenda: "Consolidate scores, agree down-selection recommendation", type: "workshop"},
+                {id: 19, title: "SteerCo – Down Selection Decision", date: "2026-04-10", time: "14:00", duration: 2, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "Down selection gate approval, BAFO vendor approval, contract award authority", type: "steering"},
+                {id: 20, title: "BAFO Evaluation & Review", date: "2026-04-24", time: "09:00", duration: 3, location: "Main Conference Room", attendees: "Nick Housley, Don Pillay, Laura Miller, Anders Linden, Andreas Werner", agenda: "Evaluate BAFO responses, prepare contract award recommendation", type: "review"},
+                {id: 21, title: "SteerCo – Contract Award", date: "2026-04-30", time: "10:00", duration: 2, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "Contract award decision and approval, vendor notification authority", type: "steering"},
+                {id: 22, title: "Transition Planning Workshop", date: "2026-05-05", time: "09:00", duration: 4, location: "Main Conference Room", attendees: "Don Pillay, Laura Miller, Nick Housley, Selected Vendor", agenda: "Detailed transition planning, knowledge transfer timeline", type: "workshop"},
+                {id: 23, title: "SteerCo – Transition Progress", date: "2026-06-11", time: "15:00", duration: 1.5, location: "Boardroom", attendees: "Anders Linden, Andreas Werner, Laura Miller, Don Pillay, Nick Housley, Pankaj Goswami, Simon Schmitt, Jon Moran, Feng Xuecheng", agenda: "Transition progress, knowledge transfer status, risk update", type: "steering"},
+                {id: 24, title: "Go-Live Readiness Review", date: "2026-08-25", time: "09:00", duration: 3, location: "Main Conference Room", attendees: "Anders Linden, Laura Miller, Don Pillay, Nick Housley, Selected AMS Vendor", agenda: "Final readiness check before US Go-Live", type: "review"}
             ],
             meetingNotes: []
         };
@@ -2241,6 +2380,10 @@
             meetingCalendarMonth: new Date('2025-12-01'),
             uploadedFiles: {},
             vendorScores: {},
+            pqqCriteria: [],
+            pqqPassFail: [],
+            pqqScores: {},
+            pqqPassFailResults: {},
             currentFilter: 'all',
             currentVendorFilter: 'all',
             editingTaskId: null,
@@ -2621,6 +2764,15 @@
                         appState.raciActivities = preservedRaciActivities.length > 0 ? preservedRaciActivities : appState.raciActivities;
                         saveState();
                     }
+                    // Migrate: populate PQQ data if missing from older saves
+                    if (!appState.pqqCriteria || appState.pqqCriteria.length === 0) {
+                        appState.pqqCriteria = JSON.parse(JSON.stringify(INITIAL_DATA.pqqCriteria));
+                    }
+                    if (!appState.pqqPassFail || appState.pqqPassFail.length === 0) {
+                        appState.pqqPassFail = JSON.parse(JSON.stringify(INITIAL_DATA.pqqPassFail));
+                    }
+                    if (!appState.pqqScores) appState.pqqScores = {};
+                    if (!appState.pqqPassFailResults) appState.pqqPassFailResults = {};
                 } catch(e) {
                     console.error('Error loading state:', e);
                     initializeFromDefault();
@@ -2643,6 +2795,10 @@
             appState.meetings = JSON.parse(JSON.stringify(INITIAL_DATA.meetings || []));
             appState.meetingNotes = JSON.parse(JSON.stringify(INITIAL_DATA.meetingNotes || []));
             appState.vendorScores = JSON.parse(JSON.stringify(INITIAL_DATA.vendorScores || {}));
+            appState.pqqCriteria = JSON.parse(JSON.stringify(INITIAL_DATA.pqqCriteria || []));
+            appState.pqqPassFail = JSON.parse(JSON.stringify(INITIAL_DATA.pqqPassFail || []));
+            appState.pqqScores = JSON.parse(JSON.stringify(INITIAL_DATA.pqqScores || {}));
+            appState.pqqPassFailResults = JSON.parse(JSON.stringify(INITIAL_DATA.pqqPassFailResults || {}));
             saveState();
         }
 
@@ -3390,6 +3546,7 @@
 
             if (tab === 'dashboard') updateDashboard();
             if (tab === 'scoring') renderScoringTable();
+            if (tab === 'pqqscoring') renderPQQScoring();
         }
         window.scriptCheckpoint = 'SWITCHTAB_DEFINED';
         console.log('====== CHECKPOINT 4: switchTab function defined successfully ======');
@@ -5109,6 +5266,236 @@
         function saveScores() {
             saveState();
             showToast('Scores saved successfully', 'success');
+        }
+
+        // ==========================================
+        // PQQ SCORING FUNCTIONS
+        // ==========================================
+
+        function getPQQVendors() {
+            return appState.vendors.filter(v => v.status === 'shortlist');
+        }
+
+        function calculatePQQTotal(vendorId) {
+            const criteria = appState.pqqCriteria || [];
+            let total = 0;
+            criteria.forEach(c => {
+                const key = `${vendorId}-${c.id}`;
+                total += parseInt((appState.pqqScores || {})[key] || 0);
+            });
+            return total;
+        }
+
+        function pqqPassFailOK(vendorId) {
+            const pf = appState.pqqPassFail || [];
+            if (pf.length === 0) return true;
+            return pf.every(section => {
+                const key = `${vendorId}-${section.id}`;
+                return (appState.pqqPassFailResults || {})[key] === 'pass';
+            });
+        }
+
+        function renderPQQScoring() {
+            renderPQQPassFailMatrix();
+            renderPQQScoredMatrix();
+            renderPQQShortlistSummary();
+        }
+
+        function renderPQQPassFailMatrix() {
+            const header = document.getElementById('pqqPassFailHeader');
+            const body = document.getElementById('pqqPassFailBody');
+            if (!header || !body) return;
+
+            const vendors = getPQQVendors();
+            const sections = appState.pqqPassFail || [];
+
+            if (vendors.length === 0) {
+                header.innerHTML = '<tr><th>No PQQ vendors found</th></tr>';
+                body.innerHTML = '<tr><td>Vendors with Shortlist status will appear here.</td></tr>';
+                return;
+            }
+
+            header.innerHTML = `<tr>
+                <th style="min-width:200px;">Section</th>
+                ${vendors.map(v => `<th style="min-width:110px;text-align:center;">${sanitizeHTML(v.name)}</th>`).join('')}
+            </tr>`;
+
+            const pfLabels = {'pass': 'Pass', 'fail': 'Fail', '': '—'};
+            const pfNext   = {'': 'pass', 'pass': 'fail', 'fail': ''};
+            const pfStyle  = {
+                'pass': 'background:#d4edda;color:#155724;border-color:#c3e6cb;font-weight:600;',
+                'fail': 'background:#f8d7da;color:#721c24;border-color:#f5c6cb;font-weight:600;',
+                '': 'background:var(--gray-100);color:var(--gray-500);border-color:var(--gray-200);'
+            };
+
+            body.innerHTML = sections.map(section => `
+                <tr>
+                    <td>
+                        <strong>§${section.section}</strong> ${sanitizeHTML(section.title)}
+                    </td>
+                    ${vendors.map(v => {
+                        const key = `${v.id}-${section.id}`;
+                        const current = (appState.pqqPassFailResults || {})[key] || '';
+                        const next = pfNext[current];
+                        return `<td style="text-align:center;">
+                            <button onclick="updatePQQPassFail(${v.id}, ${section.id}, '${next}')"
+                                style="border:1px solid;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:0.85rem;${pfStyle[current]}">
+                                ${pfLabels[current]}
+                            </button>
+                        </td>`;
+                    }).join('')}
+                </tr>
+            `).join('') + `
+                <tr style="background:var(--gray-100);font-weight:600;">
+                    <td>Overall P/F</td>
+                    ${vendors.map(v => {
+                        const ok = pqqPassFailOK(v.id);
+                        const allSet = (appState.pqqPassFail || []).every(s => ((appState.pqqPassFailResults || {})[`${v.id}-${s.id}`] || '') !== '');
+                        if (!allSet) return `<td style="text-align:center;color:var(--gray-400);">Pending</td>`;
+                        return ok
+                            ? `<td style="text-align:center;color:#155724;">✔ Pass</td>`
+                            : `<td style="text-align:center;color:#721c24;">✘ Fail</td>`;
+                    }).join('')}
+                </tr>
+            `;
+        }
+
+        function renderPQQScoredMatrix() {
+            const header = document.getElementById('pqqScoredHeader');
+            const body = document.getElementById('pqqScoredBody');
+            if (!header || !body) return;
+
+            const vendors = getPQQVendors();
+            const criteria = appState.pqqCriteria || [];
+
+            if (vendors.length === 0) {
+                header.innerHTML = '<tr><th>No PQQ vendors found</th></tr>';
+                body.innerHTML = '<tr><td>Vendors with Shortlist status will appear here.</td></tr>';
+                return;
+            }
+
+            header.innerHTML = `<tr>
+                <th style="min-width:220px;">Section</th>
+                <th style="min-width:60px;text-align:center;">Max</th>
+                ${vendors.map(v => `<th style="min-width:110px;text-align:center;">${sanitizeHTML(v.name)}</th>`).join('')}
+            </tr>`;
+
+            body.innerHTML = criteria.map(c => {
+                const subText = c.subCriteria.map(s => `${s.id} ${s.title} (${s.maxPoints}pts)`).join(' · ');
+                return `<tr>
+                    <td>
+                        <div><strong>§${c.section} ${sanitizeHTML(c.title)}</strong></div>
+                        <div style="font-size:0.75rem;color:var(--gray-500);margin-top:3px;">${sanitizeHTML(subText)}</div>
+                    </td>
+                    <td style="text-align:center;color:var(--gray-500);">${c.maxPoints}</td>
+                    ${vendors.map(v => {
+                        const key = `${v.id}-${c.id}`;
+                        const score = (appState.pqqScores || {})[key] || '';
+                        return `<td style="text-align:center;">
+                            <input type="number" min="0" max="${c.maxPoints}"
+                                value="${score}"
+                                data-vendor="${v.id}" data-criterion="${c.id}" data-max="${c.maxPoints}"
+                                onchange="updatePQQScore(${v.id}, ${c.id}, ${c.maxPoints}, this.value)"
+                                style="width:65px;text-align:center;border:1px solid var(--gray-200);border-radius:4px;padding:4px;background:var(--white);">
+                        </td>`;
+                    }).join('')}
+                </tr>`;
+            }).join('') + `
+                <tr style="background:var(--gray-100);font-weight:700;border-top:2px solid var(--gray-300);">
+                    <td>TOTAL</td>
+                    <td style="text-align:center;">150</td>
+                    ${vendors.map(v => {
+                        const total = calculatePQQTotal(v.id);
+                        const hasAny = criteria.some(c => (appState.pqqScores || {})[`${v.id}-${c.id}`] !== undefined && (appState.pqqScores || {})[`${v.id}-${c.id}`] !== '');
+                        if (!hasAny) return `<td style="text-align:center;color:var(--gray-400);">—</td>`;
+                        const colour = total >= 105 ? '#155724' : '#721c24';
+                        const bg = total >= 105 ? '#d4edda' : '#f8d7da';
+                        return `<td id="pqq-total-${v.id}" style="text-align:center;color:${colour};background:${bg};font-size:1rem;">
+                            ${total} / 150
+                        </td>`;
+                    }).join('')}
+                </tr>
+            `;
+        }
+
+        function renderPQQShortlistSummary() {
+            const el = document.getElementById('pqqShortlistSummary');
+            if (!el) return;
+
+            const vendors = getPQQVendors();
+            const criteria = appState.pqqCriteria || [];
+
+            if (vendors.length === 0) {
+                el.innerHTML = '<p style="color:var(--gray-500);padding:16px;">No shortlisted PQQ vendors found.</p>';
+                return;
+            }
+
+            const ranked = vendors.map(v => {
+                const total = calculatePQQTotal(v.id);
+                const passOK = pqqPassFailOK(v.id);
+                const allPFSet = (appState.pqqPassFail || []).length === 0 ||
+                    (appState.pqqPassFail || []).every(s => ((appState.pqqPassFailResults || {})[`${v.id}-${s.id}`] || '') !== '');
+                const hasScores = criteria.some(c => (appState.pqqScores || {})[`${v.id}-${c.id}`] !== undefined && (appState.pqqScores || {})[`${v.id}-${c.id}`] !== '');
+                let status, borderColor, bgColor, textColor;
+                if (!allPFSet && !hasScores) {
+                    status = 'Not Yet Evaluated';
+                    borderColor = 'var(--gray-200)'; bgColor = 'var(--gray-50)'; textColor = 'var(--gray-500)';
+                } else if (allPFSet && !passOK) {
+                    status = 'Disqualified (P/F Fail)';
+                    borderColor = '#dc3545'; bgColor = '#fff5f5'; textColor = '#721c24';
+                } else if (hasScores && total >= 105 && passOK) {
+                    status = 'Eligible for RFP';
+                    borderColor = '#28a745'; bgColor = '#f0fff4'; textColor = '#155724';
+                } else if (hasScores && total < 105) {
+                    status = 'Below Threshold';
+                    borderColor = '#ffc107'; bgColor = '#fffbea'; textColor = '#856404';
+                } else {
+                    status = 'Evaluation In Progress';
+                    borderColor = '#079fdb'; bgColor = '#f0f9ff'; textColor = '#0447bb';
+                }
+                return { ...v, total, passOK, status, borderColor, bgColor, textColor, hasScores };
+            }).sort((a, b) => b.total - a.total);
+
+            const topSixLine = ranked.findIndex((v, i) => i >= 6);
+
+            el.innerHTML = `
+                <div class="vendor-grid" style="margin-top:8px;">
+                    ${ranked.map((v, i) => `
+                        ${i === 6 ? `<div style="grid-column:1/-1;border-top:2px dashed #dc3545;padding-top:8px;margin-bottom:4px;color:#dc3545;font-size:0.85rem;font-weight:600;">— Shortlist cut-off (Top 6) —</div>` : ''}
+                        <div class="vendor-card" style="border-left:4px solid ${v.borderColor};background:${v.bgColor};">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <span class="vendor-name" style="color:var(--gray-800);">#${i + 1} ${sanitizeHTML(v.name)}</span>
+                                <span style="background:${v.borderColor};color:#fff;padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:700;">
+                                    ${v.hasScores ? v.total + ' / 150' : '— / 150'}
+                                </span>
+                            </div>
+                            <div style="margin-top:6px;font-size:0.85rem;color:${v.textColor};font-weight:600;">${sanitizeHTML(v.status)}</div>
+                            <div style="margin-top:4px;font-size:0.8rem;color:var(--gray-500);">
+                                ${v.hasScores ? Math.round((v.total / 150) * 100) + '% of max score' : 'No scores entered'}
+                                ${v.passOK === false ? ' · Pass/Fail issue' : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function updatePQQScore(vendorId, criterionId, maxPoints, value) {
+            if (!appState.pqqScores) appState.pqqScores = {};
+            const parsed = parseInt(value);
+            const clamped = isNaN(parsed) ? 0 : Math.min(Math.max(parsed, 0), maxPoints);
+            appState.pqqScores[`${vendorId}-${criterionId}`] = clamped;
+            saveState();
+            renderPQQScoredMatrix();
+            renderPQQShortlistSummary();
+        }
+
+        function updatePQQPassFail(vendorId, pfId, result) {
+            if (!appState.pqqPassFailResults) appState.pqqPassFailResults = {};
+            appState.pqqPassFailResults[`${vendorId}-${pfId}`] = result;
+            saveState();
+            renderPQQPassFailMatrix();
+            renderPQQShortlistSummary();
         }
 
         function generateScoreReport() {
