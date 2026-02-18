@@ -615,6 +615,29 @@
         .decision-card.pending { border-left-color: var(--warning); }
         .decision-card.rejected { border-left-color: var(--danger); }
 
+        /* Stage Banner */
+        .stage-banner {
+            background: linear-gradient(135deg, #0447bb 0%, #079fdb 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .stage-banner-left { flex: 1; min-width: 200px; }
+        .stage-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: .1em; opacity: .8; }
+        .stage-name { font-size: 1.5rem; font-weight: 700; margin: 4px 0; }
+        .stage-next { font-size: 0.9rem; opacity: .85; }
+        .stage-banner-right { display: flex; gap: 12px; flex-wrap: wrap; }
+        .stage-kpi { background: rgba(255,255,255,.15); border-radius: 8px; padding: 12px 16px; text-align: center; min-width: 100px; }
+        .stage-kpi-value { font-size: 1.4rem; font-weight: 700; }
+        .stage-kpi-label { font-size: 0.72rem; opacity: .85; margin-top: 2px; }
+        .stage-kpi.alert { background: rgba(255,80,80,.25); }
+
         @media print {
             body { background: white !important; padding: 0; }
             .nav-tabs, .btn, .theme-toggle, .modal { display: none !important; }
@@ -1149,6 +1172,8 @@
             <button class="nav-tab" onclick="switchTab('evaluation', event)" role="tab" aria-selected="false" aria-controls="evaluation" id="tab-evaluation">Evaluation</button>
             <button class="nav-tab" onclick="switchTab('scoring', event)" role="tab" aria-selected="false" aria-controls="scoring" id="tab-scoring">Scoring</button>
             <button class="nav-tab" onclick="switchTab('pqqscoring', event)" role="tab" aria-selected="false" aria-controls="pqqscoring" id="tab-pqqscoring">PQQ Scoring</button>
+            <button class="nav-tab" onclick="switchTab('rfpscoring', event)" role="tab" aria-selected="false" aria-controls="rfpscoring" id="tab-rfpscoring">RFP Scoring</button>
+            <button class="nav-tab" onclick="switchTab('bafo', event)" role="tab" aria-selected="false" aria-controls="bafo" id="tab-bafo">BAFO</button>
             <button class="nav-tab" onclick="switchTab('vendors', event)" role="tab" aria-selected="false" aria-controls="vendors" id="tab-vendors">Vendors</button>
             <button class="nav-tab" onclick="switchTab('documents', event)" role="tab" aria-selected="false" aria-controls="documents" id="tab-documents">Documents</button>
             <button class="nav-tab" onclick="switchTab('meetings', event)" role="tab" aria-selected="false" aria-controls="meetings" id="tab-meetings">Meetings</button>
@@ -1163,6 +1188,9 @@
 
         <!-- Dashboard -->
         <div id="dashboard" class="tab-content active" role="tabpanel" aria-labelledby="tab-dashboard">
+            <!-- Stage-aware banner -->
+            <div id="stageBanner"></div>
+
             <div class="grid grid-4">
                 <div class="stat-card" onclick="switchTab('workplan', event)" role="button" tabindex="0" aria-label="View work plan - Tasks complete">
                     <div class="stat-value" id="taskProgress">0%</div>
@@ -1425,6 +1453,117 @@
                     <span style="font-size:0.85rem;color:var(--gray-500);">Ranked by PQQ score. Top 6 eligible suppliers will be invited to RFP.</span>
                 </div>
                 <div id="pqqShortlistSummary"></div>
+            </div>
+        </div>
+
+        <!-- RFP Scoring -->
+        <div id="rfpscoring" class="tab-content" role="tabpanel" aria-labelledby="tab-rfpscoring">
+            <!-- Overview -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>RFP Evaluation — Shortlisted Suppliers</h2>
+                    <span style="background:#17a2b8;color:#fff;padding:4px 12px;border-radius:12px;font-size:0.85rem;font-weight:600;">RFP Stage</span>
+                </div>
+                <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:8px;">
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">RFP Issued</div>
+                        <div style="font-weight:700;margin-top:4px;">24 Feb 2026</div>
+                    </div>
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Submissions Due</div>
+                        <div style="font-weight:700;margin-top:4px;">20 Mar 2026</div>
+                    </div>
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Presentations</div>
+                        <div style="font-weight:700;margin-top:4px;">23 Mar – 3 Apr 2026</div>
+                    </div>
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Down Selection</div>
+                        <div style="font-weight:700;margin-top:4px;">10 Apr 2026</div>
+                    </div>
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Scoring Scale</div>
+                        <div style="font-weight:700;margin-top:4px;">0 – 10 per criterion</div>
+                    </div>
+                </div>
+                <p style="font-size:0.85rem;color:var(--gray-500);margin:0;">
+                    Criteria and weights are set in the <strong>Evaluation</strong> tab. Weighted total is calculated automatically. Top 2–3 scoring vendors will progress to BAFO.
+                </p>
+            </div>
+
+            <!-- Scoring Matrix -->
+            <div class="card" style="margin-top:16px;">
+                <div class="card-header">
+                    <h2>Scoring Matrix</h2>
+                    <button class="btn btn-success" onclick="saveRFPScores()">Save Scores</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="evaluation-table" id="rfpScoredTable">
+                        <thead id="rfpScoredHeader"></thead>
+                        <tbody id="rfpScoredBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Down-Selection Summary -->
+            <div class="card" style="margin-top:16px;">
+                <div class="card-header">
+                    <h2>Down-Selection Ranking</h2>
+                    <span style="font-size:0.85rem;color:var(--gray-500);">Top 2–3 vendors will be invited to BAFO. Mark as Finalist to progress.</span>
+                </div>
+                <div id="rfpDownSelectSummary"></div>
+            </div>
+        </div>
+
+        <!-- BAFO -->
+        <div id="bafo" class="tab-content" role="tabpanel" aria-labelledby="tab-bafo">
+            <!-- Overview -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>BAFO — Best and Final Offer</h2>
+                    <span style="background:#e83e8c;color:#fff;padding:4px 12px;border-radius:12px;font-size:0.85rem;font-weight:600;">BAFO Stage</span>
+                </div>
+                <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:8px;">
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Down Selection</div>
+                        <div style="font-weight:700;margin-top:4px;">10 Apr 2026</div>
+                    </div>
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">BAFO Issued</div>
+                        <div style="font-weight:700;margin-top:4px;">13 Apr 2026</div>
+                    </div>
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">BAFO Due</div>
+                        <div style="font-weight:700;margin-top:4px;">24 Apr 2026</div>
+                    </div>
+                    <div style="background:var(--gray-50);border-radius:8px;padding:12px;">
+                        <div style="font-size:0.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;">Contract Award</div>
+                        <div style="font-weight:700;margin-top:4px;">30 Apr 2026</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Commercial Comparison -->
+            <div class="card" style="margin-top:16px;">
+                <div class="card-header">
+                    <h2>Commercial Comparison</h2>
+                    <button class="btn btn-success" onclick="saveBAFOData()">Save</button>
+                </div>
+                <p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:16px;">
+                    Vendors with <strong>Finalist</strong> or <strong>Shortlist</strong> status appear below. Update vendor status in the <strong>Vendors</strong> tab to control who appears here.
+                </p>
+                <div style="overflow-x:auto;">
+                    <table class="evaluation-table" id="bafoTable">
+                        <thead id="bafoTableHeader"></thead>
+                        <tbody id="bafoTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recommendation -->
+            <div class="card" style="margin-top:16px;">
+                <div class="card-header"><h2>Award Recommendation</h2></div>
+                <div id="bafoRecommendationSection"></div>
             </div>
         </div>
 
@@ -2208,6 +2347,24 @@
             ],
             pqqScores: {},
             pqqPassFailResults: {},
+            rfpScores: {},
+            bafoFields: [
+                {id: 1, category: "Commercial", name: "Year 1 Total Cost (€)"},
+                {id: 2, category: "Commercial", name: "Year 2+ Annual Cost (€)"},
+                {id: 3, category: "Commercial", name: "Contract Duration"},
+                {id: 4, category: "SLA", name: "P1 Incident Response Time"},
+                {id: 5, category: "SLA", name: "P2 Incident Response Time"},
+                {id: 6, category: "SLA", name: "P3 Incident Response Time"},
+                {id: 7, category: "SLA", name: "Support Coverage Hours"},
+                {id: 8, category: "Resource", name: "Onshore / Nearshore / Offshore Split"},
+                {id: 9, category: "Resource", name: "Dedicated Named Resources"},
+                {id: 10, category: "Terms", name: "Exit / Termination Clause"},
+                {id: 11, category: "Terms", name: "Key Commercial Concessions"},
+                {id: 12, category: "Assessment", name: "RFP Technical Score (%)"},
+                {id: 13, category: "Assessment", name: "Overall Recommendation"}
+            ],
+            bafoData: {},
+            bafoRecommendation: {},
             milestones: [
                 {id: 1, title: "PQQ Launch", date: "2026-01-23", status: "complete"},
                 {id: 2, title: "PQQ Submission Deadline", date: "2026-02-13", status: "complete"},
@@ -2384,6 +2541,10 @@
             pqqPassFail: [],
             pqqScores: {},
             pqqPassFailResults: {},
+            rfpScores: {},
+            bafoFields: [],
+            bafoData: {},
+            bafoRecommendation: {},
             currentFilter: 'all',
             currentVendorFilter: 'all',
             editingTaskId: null,
@@ -2773,6 +2934,12 @@
                     }
                     if (!appState.pqqScores) appState.pqqScores = {};
                     if (!appState.pqqPassFailResults) appState.pqqPassFailResults = {};
+                    if (!appState.rfpScores) appState.rfpScores = {};
+                    if (!appState.bafoFields || appState.bafoFields.length === 0) {
+                        appState.bafoFields = JSON.parse(JSON.stringify(INITIAL_DATA.bafoFields));
+                    }
+                    if (!appState.bafoData) appState.bafoData = {};
+                    if (!appState.bafoRecommendation) appState.bafoRecommendation = {};
                 } catch(e) {
                     console.error('Error loading state:', e);
                     initializeFromDefault();
@@ -2799,6 +2966,10 @@
             appState.pqqPassFail = JSON.parse(JSON.stringify(INITIAL_DATA.pqqPassFail || []));
             appState.pqqScores = JSON.parse(JSON.stringify(INITIAL_DATA.pqqScores || {}));
             appState.pqqPassFailResults = JSON.parse(JSON.stringify(INITIAL_DATA.pqqPassFailResults || {}));
+            appState.rfpScores = JSON.parse(JSON.stringify(INITIAL_DATA.rfpScores || {}));
+            appState.bafoFields = JSON.parse(JSON.stringify(INITIAL_DATA.bafoFields || []));
+            appState.bafoData = JSON.parse(JSON.stringify(INITIAL_DATA.bafoData || {}));
+            appState.bafoRecommendation = JSON.parse(JSON.stringify(INITIAL_DATA.bafoRecommendation || {}));
             saveState();
         }
 
@@ -3140,9 +3311,117 @@
             document.getElementById('riskCount').textContent = appState.risks.length;
 
             // Render charts and lists
+            renderStageBanner();
             renderStatusChart();
             renderUpcomingTasks();
             renderRedRisks();
+        }
+
+        // ==========================================
+        // STAGE DETECTION & STAGE BANNER
+        // ==========================================
+
+        function detectCurrentStage() {
+            const ms = appState.milestones || [];
+            function msDone(title) {
+                const m = ms.find(m => m.title.toLowerCase().includes(title.toLowerCase()));
+                return m && m.status === 'complete';
+            }
+            if (msDone('go-live') || msDone('us go-live')) return { id: 'complete', label: 'Complete', colour: '#28a745' };
+            if (msDone('mobilisation')) return { id: 'transition', label: 'Mobilisation & Transition', colour: '#6f42c1' };
+            if (msDone('contract award')) return { id: 'transition', label: 'Mobilisation & Transition', colour: '#6f42c1' };
+            if (msDone('best and final') || msDone('bafo')) return { id: 'bafo', label: 'BAFO Evaluation', colour: '#e83e8c' };
+            if (msDone('down selection')) return { id: 'bafo', label: 'BAFO Evaluation', colour: '#e83e8c' };
+            if (msDone('supplier presentations') || msDone('presentations & evaluation')) return { id: 'rfp_eval', label: 'RFP Evaluation & Presentations', colour: '#fd7e14' };
+            if (msDone('rfp submissions') || msDone('submissions due')) return { id: 'rfp_eval', label: 'RFP Evaluation & Presentations', colour: '#fd7e14' };
+            if (msDone('rfp issued') || msDone('supplier briefings')) return { id: 'rfp_active', label: 'RFP Active', colour: '#17a2b8' };
+            if (msDone('shortlist notification')) return { id: 'rfp_ready', label: 'Shortlist Selected — RFP Preparation', colour: '#20c997' };
+            if (msDone('pqq submission') || msDone('submission deadline')) return { id: 'pqq_eval', label: 'PQQ Evaluation', colour: '#079fdb' };
+            if (msDone('pqq launch')) return { id: 'pqq_open', label: 'PQQ Open — Awaiting Submissions', colour: '#0447bb' };
+            return { id: 'discovery', label: 'Discovery & Preparation', colour: '#495057' };
+        }
+
+        function getNextGate() {
+            const ms = (appState.milestones || [])
+                .filter(m => m.status !== 'complete')
+                .sort((a, b) => new Date(a.date) - new Date(b.date));
+            return ms.length ? ms[0] : null;
+        }
+
+        function renderStageBanner() {
+            const el = document.getElementById('stageBanner');
+            if (!el) return;
+
+            const stage = detectCurrentStage();
+            const nextGate = getNextGate();
+            const today = new Date();
+
+            let gateLine = '';
+            if (nextGate) {
+                const days = Math.round((new Date(nextGate.date) - today) / (1000*60*60*24));
+                const daysLabel = days < 0 ? `<span style="color:#ffcccc;">${Math.abs(days)} days overdue</span>`
+                    : days === 0 ? '<span style="color:#ffe066;">Today</span>'
+                    : `<span>${days} days away (${formatDate(nextGate.date)})</span>`;
+                gateLine = `<div class="stage-next">Next gate: <strong>${sanitizeHTML(nextGate.title)}</strong> — ${daysLabel}</div>`;
+            }
+
+            // Stage-specific KPIs
+            let kpis = '';
+            if (stage.id === 'pqq_eval') {
+                const pqqVendors = (appState.vendors || []).filter(v => v.status === 'shortlist');
+                const scored = pqqVendors.filter(v =>
+                    (appState.pqqCriteria || []).some(c => ((appState.pqqScores || {})[`${v.id}-${c.id}`] || '') !== '')
+                ).length;
+                const pfDone = pqqVendors.filter(v =>
+                    (appState.pqqPassFail || []).length > 0 &&
+                    (appState.pqqPassFail || []).every(s => ((appState.pqqPassFailResults || {})[`${v.id}-${s.id}`] || '') !== '')
+                ).length;
+                const aboveThreshold = pqqVendors.filter(v => {
+                    const total = (appState.pqqCriteria || []).reduce((sum, c) => sum + parseInt((appState.pqqScores || {})[`${v.id}-${c.id}`] || 0), 0);
+                    return total >= 105;
+                }).length;
+                kpis = `
+                    <div class="stage-kpi"><div class="stage-kpi-value">${scored}/${pqqVendors.length}</div><div class="stage-kpi-label">Vendors Scored</div></div>
+                    <div class="stage-kpi"><div class="stage-kpi-value">${pfDone}/${pqqVendors.length}</div><div class="stage-kpi-label">P/F Decisions</div></div>
+                    <div class="stage-kpi"><div class="stage-kpi-value">${aboveThreshold}</div><div class="stage-kpi-label">Above Threshold</div></div>
+                    <div class="stage-kpi"><div class="stage-kpi-value">6</div><div class="stage-kpi-label">Shortlist Target</div></div>`;
+            } else if (stage.id === 'rfp_active' || stage.id === 'rfp_ready') {
+                const shortlisted = (appState.vendors || []).filter(v => v.status === 'shortlist').length;
+                kpis = `
+                    <div class="stage-kpi"><div class="stage-kpi-value">${shortlisted}</div><div class="stage-kpi-label">Shortlisted</div></div>
+                    <div class="stage-kpi"><div class="stage-kpi-value">6</div><div class="stage-kpi-label">RFP Recipients</div></div>`;
+            } else if (stage.id === 'rfp_eval') {
+                const shortlisted = (appState.vendors || []).filter(v => v.status === 'shortlist').length;
+                const rfpScored = (appState.vendors || []).filter(v => v.status === 'shortlist' &&
+                    (appState.evaluation || []).some(c => ((appState.rfpScores || {})[`${v.id}-${c.id}`] || '') !== '')
+                ).length;
+                kpis = `
+                    <div class="stage-kpi"><div class="stage-kpi-value">${rfpScored}/${shortlisted}</div><div class="stage-kpi-label">RFP Scored</div></div>
+                    <div class="stage-kpi"><div class="stage-kpi-value">${shortlisted}</div><div class="stage-kpi-label">In Evaluation</div></div>`;
+            } else if (stage.id === 'bafo') {
+                const finalists = (appState.vendors || []).filter(v => v.status === 'finalist' || v.status === 'shortlist').length;
+                const bafoFilled = Object.keys(appState.bafoData || {}).length;
+                kpis = `
+                    <div class="stage-kpi"><div class="stage-kpi-value">${finalists}</div><div class="stage-kpi-label">BAFO Vendors</div></div>
+                    <div class="stage-kpi"><div class="stage-kpi-value">${bafoFilled > 0 ? 'In Progress' : 'Not Started'}</div><div class="stage-kpi-label">Comparison</div></div>`;
+            } else {
+                const doneCount = (appState.tasks || []).filter(t => t.status === 'done').length;
+                const totalTasks = (appState.tasks || []).length;
+                const redRisks = (appState.risks || []).filter(r => r.rag === 'red').length;
+                kpis = `
+                    <div class="stage-kpi"><div class="stage-kpi-value">${doneCount}/${totalTasks}</div><div class="stage-kpi-label">Tasks Done</div></div>
+                    ${redRisks > 0 ? `<div class="stage-kpi alert"><div class="stage-kpi-value">${redRisks}</div><div class="stage-kpi-label">Red Risks</div></div>` : ''}`;
+            }
+
+            el.innerHTML = `
+                <div class="stage-banner">
+                    <div class="stage-banner-left">
+                        <div class="stage-label">Current Programme Stage</div>
+                        <div class="stage-name">${sanitizeHTML(stage.label)}</div>
+                        ${gateLine}
+                    </div>
+                    <div class="stage-banner-right">${kpis}</div>
+                </div>`;
         }
 
         function renderStatusChart() {
@@ -3547,6 +3826,8 @@
             if (tab === 'dashboard') updateDashboard();
             if (tab === 'scoring') renderScoringTable();
             if (tab === 'pqqscoring') renderPQQScoring();
+            if (tab === 'rfpscoring') renderRFPScoring();
+            if (tab === 'bafo') renderBAFO();
         }
         window.scriptCheckpoint = 'SWITCHTAB_DEFINED';
         console.log('====== CHECKPOINT 4: switchTab function defined successfully ======');
@@ -5496,6 +5777,265 @@
             saveState();
             renderPQQPassFailMatrix();
             renderPQQShortlistSummary();
+        }
+
+        // ==========================================
+        // RFP SCORING FUNCTIONS
+        // ==========================================
+
+        function getRFPVendors() {
+            return (appState.vendors || []).filter(v => v.status === 'shortlist' || v.status === 'finalist');
+        }
+
+        function calculateRFPTotal(vendorId) {
+            const criteria = appState.evaluation || [];
+            const totalWeight = criteria.reduce((s, c) => s + c.weight, 0);
+            if (totalWeight === 0) return 0;
+            let weighted = 0;
+            criteria.forEach(c => {
+                const score = parseFloat((appState.rfpScores || {})[`${vendorId}-${c.id}`] || 0);
+                weighted += (score / 10) * c.weight;
+            });
+            return (weighted / totalWeight) * 100;
+        }
+
+        function renderRFPScoring() {
+            renderRFPScoredMatrix();
+            renderRFPDownSelectSummary();
+        }
+
+        function renderRFPScoredMatrix() {
+            const header = document.getElementById('rfpScoredHeader');
+            const body = document.getElementById('rfpScoredBody');
+            if (!header || !body) return;
+
+            const vendors = getRFPVendors();
+            const criteria = appState.evaluation || [];
+
+            if (vendors.length === 0) {
+                header.innerHTML = '<tr><th>No shortlisted vendors found</th></tr>';
+                body.innerHTML = '<tr><td>Vendors with Shortlist or Finalist status will appear here. Update vendor status in the Vendors tab.</td></tr>';
+                return;
+            }
+            if (criteria.length === 0) {
+                header.innerHTML = '<tr><th>No evaluation criteria</th></tr>';
+                body.innerHTML = '<tr><td>Add evaluation criteria in the Evaluation tab first.</td></tr>';
+                return;
+            }
+
+            header.innerHTML = `<tr>
+                <th style="min-width:200px;">Criterion</th>
+                <th style="min-width:60px;text-align:center;">Weight</th>
+                ${vendors.map(v => `<th style="min-width:110px;text-align:center;">${sanitizeHTML(v.name)}</th>`).join('')}
+            </tr>`;
+
+            body.innerHTML = criteria.map(c => `
+                <tr>
+                    <td>
+                        <div><strong>${sanitizeHTML(c.criterion)}</strong></div>
+                        <div style="font-size:0.75rem;color:var(--gray-500);margin-top:2px;">${sanitizeHTML(c.goodLooks || '')}</div>
+                    </td>
+                    <td style="text-align:center;color:var(--gray-500);">${c.weight}%</td>
+                    ${vendors.map(v => {
+                        const key = `${v.id}-${c.id}`;
+                        const score = (appState.rfpScores || {})[key] || '';
+                        const numScore = parseFloat(score);
+                        const bg = score === '' ? '' : numScore >= 8 ? 'background:#d4edda;' : numScore >= 5 ? 'background:#fff9e5;' : 'background:#ffe5e5;';
+                        return `<td style="text-align:center;${bg}">
+                            <input type="number" min="0" max="10" step="0.5"
+                                value="${score}"
+                                onchange="updateRFPScore(${v.id}, ${c.id}, this.value)"
+                                style="width:65px;text-align:center;border:1px solid var(--gray-200);border-radius:4px;padding:4px;background:inherit;">
+                        </td>`;
+                    }).join('')}
+                </tr>
+            `).join('') + `
+                <tr style="background:var(--gray-100);font-weight:700;border-top:2px solid var(--gray-300);">
+                    <td>WEIGHTED TOTAL</td>
+                    <td style="text-align:center;">100%</td>
+                    ${vendors.map(v => {
+                        const total = calculateRFPTotal(v.id);
+                        const hasAny = criteria.some(c => (appState.rfpScores || {})[`${v.id}-${c.id}`] !== undefined && (appState.rfpScores || {})[`${v.id}-${c.id}`] !== '');
+                        if (!hasAny) return `<td style="text-align:center;color:var(--gray-400);">—</td>`;
+                        const colour = total >= 70 ? '#155724' : total >= 50 ? '#856404' : '#721c24';
+                        const bg = total >= 70 ? '#d4edda' : total >= 50 ? '#fff9e5' : '#f8d7da';
+                        return `<td style="text-align:center;color:${colour};background:${bg};font-size:1rem;">${total.toFixed(1)}%</td>`;
+                    }).join('')}
+                </tr>
+            `;
+        }
+
+        function renderRFPDownSelectSummary() {
+            const el = document.getElementById('rfpDownSelectSummary');
+            if (!el) return;
+
+            const vendors = getRFPVendors();
+            const criteria = appState.evaluation || [];
+
+            if (vendors.length === 0) {
+                el.innerHTML = '<p style="color:var(--gray-500);padding:16px;">No shortlisted vendors to rank.</p>';
+                return;
+            }
+
+            const ranked = vendors.map(v => {
+                const total = calculateRFPTotal(v.id);
+                const hasScores = criteria.some(c => (appState.rfpScores || {})[`${v.id}-${c.id}`] !== undefined && (appState.rfpScores || {})[`${v.id}-${c.id}`] !== '');
+                return { ...v, total, hasScores };
+            }).sort((a, b) => b.total - a.total);
+
+            el.innerHTML = `
+                <div class="vendor-grid" style="margin-top:8px;">
+                    ${ranked.map((v, i) => {
+                        const isTop = i < 3;
+                        const borderColor = i === 0 ? '#28a745' : i === 1 ? '#17a2b8' : i === 2 ? '#fd7e14' : 'var(--gray-200)';
+                        const statusLabel = v.status === 'finalist' ? '★ Finalist' : '';
+                        return `
+                            ${i === 3 ? `<div style="grid-column:1/-1;border-top:2px dashed #fd7e14;padding-top:8px;margin-bottom:4px;color:#fd7e14;font-size:0.85rem;font-weight:600;">— BAFO cut-off (Top 3) —</div>` : ''}
+                            <div class="vendor-card" style="border-left:4px solid ${borderColor};">
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <span class="vendor-name">#${i+1} ${sanitizeHTML(v.name)}</span>
+                                    <span style="background:${borderColor};color:#fff;padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:700;">
+                                        ${v.hasScores ? v.total.toFixed(1) + '%' : '—'}
+                                    </span>
+                                </div>
+                                <div style="margin-top:6px;display:flex;gap:8px;align-items:center;">
+                                    ${statusLabel ? `<span style="background:#28a745;color:#fff;padding:2px 8px;border-radius:8px;font-size:0.75rem;">${statusLabel}</span>` : ''}
+                                    <button onclick="markRFPFinalist(${v.id})" style="font-size:0.75rem;padding:3px 10px;border:1px solid #17a2b8;border-radius:6px;background:transparent;color:#17a2b8;cursor:pointer;">
+                                        ${v.status === 'finalist' ? 'Remove Finalist' : 'Mark Finalist →'}
+                                    </button>
+                                </div>
+                            </div>`;
+                    }).join('')}
+                </div>`;
+        }
+
+        function updateRFPScore(vendorId, criterionId, value) {
+            if (!appState.rfpScores) appState.rfpScores = {};
+            const parsed = parseFloat(value);
+            appState.rfpScores[`${vendorId}-${criterionId}`] = isNaN(parsed) ? '' : Math.min(Math.max(parsed, 0), 10);
+            saveState();
+            renderRFPScoredMatrix();
+            renderRFPDownSelectSummary();
+        }
+
+        function saveRFPScores() {
+            saveState();
+            showToast('RFP scores saved', 'success');
+        }
+
+        function markRFPFinalist(vendorId) {
+            const v = (appState.vendors || []).find(v => v.id === vendorId);
+            if (!v) return;
+            v.status = v.status === 'finalist' ? 'shortlist' : 'finalist';
+            saveState();
+            renderRFPDownSelectSummary();
+            updateDashboard();
+        }
+
+        // ==========================================
+        // BAFO FUNCTIONS
+        // ==========================================
+
+        function getBAFOVendors() {
+            return (appState.vendors || []).filter(v => v.status === 'finalist' || v.status === 'shortlist');
+        }
+
+        function renderBAFO() {
+            renderBAFOTable();
+            renderBAFORecommendation();
+        }
+
+        function renderBAFOTable() {
+            const header = document.getElementById('bafoTableHeader');
+            const body = document.getElementById('bafoTableBody');
+            if (!header || !body) return;
+
+            const vendors = getBAFOVendors();
+            const fields = appState.bafoFields || [];
+
+            if (vendors.length === 0) {
+                header.innerHTML = '<tr><th>No BAFO vendors</th></tr>';
+                body.innerHTML = '<tr><td>Mark vendors as Finalist in the RFP Scoring tab or Vendors tab to populate this comparison.</td></tr>';
+                return;
+            }
+
+            header.innerHTML = `<tr>
+                <th style="min-width:80px;">Category</th>
+                <th style="min-width:180px;">Criteria</th>
+                ${vendors.map(v => `<th style="min-width:160px;text-align:center;">${sanitizeHTML(v.name)}</th>`).join('')}
+            </tr>`;
+
+            let lastCategory = '';
+            body.innerHTML = fields.map(f => {
+                const catCell = f.category !== lastCategory
+                    ? (() => { lastCategory = f.category; return `<td rowspan="${fields.filter(x => x.category === f.category).length}" style="font-weight:700;background:var(--gray-50);vertical-align:middle;text-align:center;font-size:0.8rem;color:var(--gray-600);text-transform:uppercase;letter-spacing:.05em;">${sanitizeHTML(f.category)}</td>`; })()
+                    : '';
+                return `<tr>
+                    ${catCell}
+                    <td><strong>${sanitizeHTML(f.name)}</strong></td>
+                    ${vendors.map(v => {
+                        const key = `${v.id}-${f.id}`;
+                        const val = (appState.bafoData || {})[key] || '';
+                        const isTextarea = f.id === 11 || f.id === 13;
+                        if (isTextarea) {
+                            return `<td><textarea rows="2" onchange="updateBAFOData(${v.id}, ${f.id}, this.value)"
+                                style="width:100%;border:1px solid var(--gray-200);border-radius:4px;padding:6px;font-size:0.85rem;resize:vertical;background:var(--white);">${sanitizeHTML(val)}</textarea></td>`;
+                        }
+                        return `<td><input type="text" value="${sanitizeHTML(val)}"
+                            onchange="updateBAFOData(${v.id}, ${f.id}, this.value)"
+                            style="width:100%;border:1px solid var(--gray-200);border-radius:4px;padding:6px;font-size:0.85rem;background:var(--white);"></td>`;
+                    }).join('')}
+                </tr>`;
+            }).join('');
+        }
+
+        function renderBAFORecommendation() {
+            const el = document.getElementById('bafoRecommendationSection');
+            if (!el) return;
+            const vendors = getBAFOVendors();
+            if (vendors.length === 0) {
+                el.innerHTML = '<p style="color:var(--gray-500);padding:16px;">No BAFO vendors to assess.</p>';
+                return;
+            }
+            el.innerHTML = `<div class="vendor-grid">
+                ${vendors.map(v => {
+                    const rec = (appState.bafoRecommendation || {})[v.id] || {};
+                    return `<div class="vendor-card" style="border-left:4px solid var(--primary);">
+                        <div style="font-weight:700;font-size:1rem;margin-bottom:10px;">${sanitizeHTML(v.name)}</div>
+                        <div style="margin-bottom:8px;">
+                            <label style="font-size:0.8rem;color:var(--gray-500);display:block;margin-bottom:4px;">Final Score / Rating</label>
+                            <input type="text" value="${sanitizeHTML(rec.score || '')}"
+                                placeholder="e.g. 82% / Preferred"
+                                onchange="updateBAFORec(${v.id}, 'score', this.value)"
+                                style="width:100%;border:1px solid var(--gray-200);border-radius:4px;padding:6px;font-size:0.9rem;background:var(--white);">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem;color:var(--gray-500);display:block;margin-bottom:4px;">Recommendation Notes</label>
+                            <textarea rows="3" placeholder="Key reasons for recommendation or rejection..."
+                                onchange="updateBAFORec(${v.id}, 'notes', this.value)"
+                                style="width:100%;border:1px solid var(--gray-200);border-radius:4px;padding:6px;font-size:0.85rem;resize:vertical;background:var(--white);">${sanitizeHTML(rec.notes || '')}</textarea>
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>`;
+        }
+
+        function updateBAFOData(vendorId, fieldId, value) {
+            if (!appState.bafoData) appState.bafoData = {};
+            appState.bafoData[`${vendorId}-${fieldId}`] = value;
+            saveState();
+        }
+
+        function updateBAFORec(vendorId, field, value) {
+            if (!appState.bafoRecommendation) appState.bafoRecommendation = {};
+            if (!appState.bafoRecommendation[vendorId]) appState.bafoRecommendation[vendorId] = {};
+            appState.bafoRecommendation[vendorId][field] = value;
+            saveState();
+        }
+
+        function saveBAFOData() {
+            saveState();
+            showToast('BAFO data saved', 'success');
         }
 
         function generateScoreReport() {
